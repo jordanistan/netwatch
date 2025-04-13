@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-04-13T17:45:00.065857",
+  "interface_info": {
+    "eth0": {
+      "ip": "192.168.65.3",
+      "mac": "0a:9c:db:d4:0b:c8",
+      "status": "UP",
+      "flags": 
