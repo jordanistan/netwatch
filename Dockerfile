@@ -70,7 +70,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8502/_stcore/health || exit 1
 
 # Run the application
-ENTRYPOINT ["streamlit", "run", "netwatch.py", \
+ENTRYPOINT ["/usr/local/bin/python", "-m", "streamlit", "run", "netwatch.py", \
     "--server.address=0.0.0.0", \
     "--server.port=8502", \
     "--browser.serverAddress=0.0.0.0", \
