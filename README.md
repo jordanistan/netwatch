@@ -1,8 +1,35 @@
-# NetWatch 🕵️‍♂️
+<div align="center" id="top"> 
+  <img src="https://media.tenor.com/images/af715c0a6016e077e27d332bb9858966/tenor.gif" alt="NetWatch" />
 
-## Purpose
+  &#xa0;
+</div>
 
-This tool is for **EDUCATIONAL PURPOSES ONLY**
+<h1 align="center">NetWatch 🕵️‍♂️</h1>
+
+<p align="center">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/jordanistan/netwatch?color=56BEB8">
+
+  <img alt="Github language count" src="https://img.shields.io/github/languages/count/jordanistan/netwatch?color=56BEB8">
+
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/jordanistan/netwatch?color=56BEB8">
+
+  <img alt="License" src="https://img.shields.io/github/license/jordanistan/netwatch?color=56BEB8">
+</p>
+
+<p align="center">
+  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
+  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
+  <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
+  <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
+  <a href="#memo-license">License</a> &#xa0; | &#xa0;
+  <a href="https://github.com/jordanistan" target="_blank">Author</a>
+</p>
+
+<br>
+
+## :dart: About
+
+**EDUCATIONAL PURPOSES ONLY**
 
 NetWatch is a network monitoring and traffic analysis tool with an interactive Streamlit dashboard, created for educational purposes to help students and security researchers understand network monitoring concepts, traffic analysis, and basic intrusion detection principles.
 
@@ -10,9 +37,9 @@ NetWatch is a network monitoring and traffic analysis tool with an interactive S
 
 This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It should only be used in controlled environments where you have explicit permission to monitor the network traffic. Using this tool to monitor networks or devices without authorization may be illegal and unethical.
 
-## 🎯 Features
+## :sparkles: Features
 
-### Core Features
+:heavy_check_mark: Core Features
 
 - Network device discovery using ARP scanning
 - Real-time traffic capture and analysis
@@ -44,9 +71,10 @@ This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It sho
    - Top talkers identification
    - Time-series visualization
 
-## 📋 Prerequisites
+## :white_check_mark: Requirements
 
-- Docker installed on your system ([Get Docker](https://docs.docker.com/get-docker/))
+Before starting :checkered_flag:, you need to have:
+- [Docker](https://docs.docker.com/get-docker/) installed on your system
 - Network access to the host machine
 
 ### Docker Security Setup (Recommended)
@@ -72,7 +100,7 @@ Refer to the [Docker Rootless Mode documentation](https://docs.docker.com/engine
 
 No other dependencies are required as everything runs inside the container!
 
-## 🚀 Quick Start Guide
+## :checkered_flag: Starting ##
 
 ### 1. Initial Setup
 
