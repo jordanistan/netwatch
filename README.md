@@ -392,10 +392,18 @@ When using this tool for educational purposes:
 - Follow ethical guidelines
 - Never use on production networks without permission
 
-## 📝 License
+## Support me with Coffee
+
+<a href="https://www.buymeacoffee.com/jordanistan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L4L4G6GQP)
+
+## :memo: License
 
 This project is released under the MIT License and is intended for educational purposes only.
 
-## ⚠️ Final Note
+Made with :heart: by <a href="https://github.com/jordanistan" target="_blank">Jordan Robison</a>
 
-This tool is part of an educational curriculum for understanding network monitoring and security concepts. Any use outside of educational purposes is strictly prohibited.
+&#xa0;
+
+<a href="#top">Back to top</a>
