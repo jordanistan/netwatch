@@ -49,6 +49,27 @@ This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It sho
 - Docker installed on your system ([Get Docker](https://docs.docker.com/get-docker/))
 - Network access to the host machine
 
+### Docker Security Setup (Recommended)
+
+For enhanced security, it's recommended to run Docker in rootless mode:
+
+```bash
+# Install Docker rootless mode
+dockerd-rootless-setuptool.sh install
+
+# Start the rootless Docker daemon
+systemctl --user start docker
+
+# Enable auto-start of rootless Docker daemon
+systemctl --user enable docker
+
+# Add environment variables to your shell configuration (~/.bashrc or ~/.zshrc)
+echo 'export PATH=/usr/bin:$PATH' >> ~/.bashrc
+echo 'export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock' >> ~/.bashrc
+```
+
+Refer to the [Docker Rootless Mode documentation](https://docs.docker.com/engine/security/rootless/) for more details.
+
 No other dependencies are required as everything runs inside the container!
 
 ## 🚀 Quick Start
@@ -67,6 +88,16 @@ docker build -t netwatch .
 ### 2. Run the Container
 
 ```bash
+# For rootless mode
+docker run -d \
+  --name netwatch \
+  --network host \
+  -v $(pwd)/captures:/app/captures \
+  -v $(pwd)/logs:/app/logs \
+  -v $(pwd)/reports:/app/reports \
+  netwatch
+
+# For privileged mode (if rootless mode is not available)
 docker run -d \
   --name netwatch \
   --network host \
@@ -77,6 +108,8 @@ docker run -d \
   -v $(pwd)/reports:/app/reports \
   netwatch
 ```
+
+> **Note**: In rootless mode, some network capabilities might be limited. If you need full network scanning capabilities, you may need to run in privileged mode with the appropriate security considerations.
 
 ### 3. Access the Dashboard
 
@@ -89,7 +122,7 @@ docker run -d \
    - Open `http://<host-ip>:8501`
    - Replace `<host-ip>` with your host machine's IP address
 
-## 🎯 Features
+## 🎯 Dashboard Features
 
 ### Network Discovery
 
@@ -192,6 +225,7 @@ The analysis reports include:
 ## 🎓 Educational Value
 
 This tool helps demonstrate:
+
 - Network scanning and device discovery techniques
 - Packet capture and analysis
 - Traffic monitoring and threshold detection
@@ -202,6 +236,7 @@ This tool helps demonstrate:
 ## 🔒 Security Considerations
 
 When using this tool for educational purposes:
+
 - Always obtain proper authorization
 - Use in isolated/controlled environments
 - Be aware of privacy implications
