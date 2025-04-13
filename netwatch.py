@@ -13,6 +13,7 @@ import pandas as pd
 import plotly.express as px
 
 import socket
+import json
 import variables
 from simulated_data import generate_simulated_stats, get_risk_assessment
 
@@ -779,6 +780,23 @@ def main():
                             
                     except Exception as e:
                         st.error(f"Error analyzing PCAP: {str(e)}")
+
+    elif page == "Security Scenarios":
+        st.header("🚨 Security Scenarios")
+        
+        # List scenario files
+        scenario_files = list(Path("examples/scenarios").glob("*.json"))
+        if scenario_files:
+            selected_scenario = st.selectbox(
+                "Select scenario to analyze",
+                scenario_files,
+                format_func=lambda x: x.name.split('_')[0].title()
+            )
+            
+            if selected_scenario:
+                analyze_scenario(selected_scenario)
+        else:
+            st.info("No security scenarios found. Generate some using generate_scenarios.py")
 
 if __name__ == "__main__":
     main()
