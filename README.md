@@ -81,9 +81,11 @@ docker run -d \
 ### 3. Access the Dashboard
 
 1. From the host machine:
+
    - Open `http://localhost:8501`
 
 2. From other devices on the LAN:
+
    - Open `http://<host-ip>:8501`
    - Replace `<host-ip>` with your host machine's IP address
 
