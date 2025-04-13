@@ -2,10 +2,12 @@
 from datetime import datetime
 from pathlib import Path
 from collections import defaultdict
+from typing import Dict, List, Optional, Union
 
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
 from scapy.layers.inet import IP, TCP, UDP, ICMP
+from scapy.layers.l2 import Ether, ARP
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -23,7 +25,7 @@ class NetWatch:
         for dir_path in [self.captures_dir, self.reports_dir, self.logs_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
 
-    def get_network_devices(self):
+    def get_network_devices(self) -> List[Dict[str, str]]:
         """Get a list of active devices on the network"""
         try:
             # Get the default interface
@@ -40,11 +42,11 @@ class NetWatch:
             devices = self.scan_network(network_range)
             return devices
             
-        except Exception as e:
+        except (OSError, PermissionError) as e:
             st.error(f"Error getting network devices: {str(e)}")
             return []
     
-    def get_default_interface(self):
+    def get_default_interface(self) -> Optional[str]:
         """Get the default network interface that's connected to LAN"""
         try:
             # On macOS, common LAN interfaces start with 'en' (ethernet/wifi)
@@ -62,7 +64,7 @@ class NetWatch:
                         if ip and not ip.startswith('169.254') and ip != '0.0.0.0':  # Exclude invalid IPs
                             st.info(f"📡 {iface}: {ip}")
                             active_interfaces.append((iface, ip))
-                    except:
+                    except (OSError, IOError):
                         continue
             
             # If no 'en' interface, try other interfaces except loopback and virtual
@@ -74,7 +76,7 @@ class NetWatch:
                             if ip and not ip.startswith('169.254') and ip != '0.0.0.0':
                                 st.info(f"📡 {iface}: {ip}")
                                 active_interfaces.append((iface, ip))
-                        except:
+                        except (OSError, IOError):
                             continue
             
             if active_interfaces:
@@ -93,7 +95,7 @@ class NetWatch:
             """)
             return None
             
-        except Exception as e:
+        except (OSError, PermissionError) as e:
             st.error(f"Error accessing network interfaces: {str(e)}")
             if 'permission' in str(e).lower():
                 st.info("💡 This feature requires admin privileges")
