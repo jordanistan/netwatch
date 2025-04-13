@@ -1,8 +1,8 @@
 # NetWatch 🕵️‍♂️
 
-## Educational Notice
+## Purpose
 
-**EDUCATIONAL PURPOSES ONLY**
+This tool is for **EDUCATIONAL PURPOSES ONLY**
 
 NetWatch is a network monitoring and traffic analysis tool with an interactive Streamlit dashboard, created for educational purposes to help students and security researchers understand network monitoring concepts, traffic analysis, and basic intrusion detection principles.
 
@@ -90,18 +90,21 @@ docker run -d \
 ## 🎯 Features
 
 ### Network Discovery
+
 - Automatic LAN interface detection
 - ARP-based device scanning
 - MAC address resolution
 - Hostname detection (when available)
 
 ### Traffic Analysis
+
 - Real-time packet capture
 - Protocol distribution visualization
 - Traffic volume monitoring
 - Interactive time-series graphs
 
 ### PCAP Management
+
 - Save captures for later analysis
 - Import existing PCAP files
 - Generate detailed traffic reports
@@ -164,10 +167,13 @@ docker run -d \
 ### Analysis Files
 
 - `reports/`: Individual analysis reports
+
   - `analysis.json`: Detailed packet analysis
   - `analysis.csv`: Tabular data export
   - `analysis.html`: Interactive visualizations
+
 - `dashboard/`: Web dashboard files
+
   - `index.html`: Main dashboard interface
   - `captures.json`: Capture history
 
