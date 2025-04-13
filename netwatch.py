@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 from datetime import datetime
 from pathlib import Path
+from collections import defaultdict
 
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
+from scapy.layers.inet import IP, TCP, UDP, ICMP
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+
+import variables
 
 class NetWatch:
     def __init__(self):
@@ -444,15 +448,19 @@ class NetWatch:
             return None
 
 def main():
+    # Apply theme settings
     st.set_page_config(
-        page_title="NetWatch Dashboard",
-        page_icon="🔍",
-        layout="wide",
+        page_title=variables.APP_CONFIG['title'],
+        page_icon=variables.APP_CONFIG['icon'],
+        layout=variables.APP_CONFIG['layout'],
         initial_sidebar_state="expanded"
     )
     
+    # Apply custom CSS
+    st.markdown(variables.CUSTOM_CSS, unsafe_allow_html=True)
+    
     # Main header with version
-    st.title("NetWatch Network Monitoring Dashboard 🔍")
+    st.title(f"{variables.APP_CONFIG['title']} {variables.APP_CONFIG['icon']}")
     st.caption("Version 1.0.0 - Educational Network Analysis Tool")
     
     try:
@@ -847,6 +855,9 @@ To capture network traffic, run the application with:
                 - **Created**: {pd.Timestamp(stats.st_ctime, unit='s').strftime('%Y-%m-%d %H:%M:%S')}
                 - **Modified**: {pd.Timestamp(stats.st_mtime, unit='s').strftime('%Y-%m-%d %H:%M:%S')}
                 """)
+
+    # Add footer
+    st.markdown(variables.FOOTER, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
