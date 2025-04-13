@@ -139,7 +139,7 @@ class NetWatch:
             st.error(f"Error determining network range: {str(e)}")
             return None
 
-    def scan_network(self, network_range=None):
+    def scan_network(self, network_range: Optional[str] = None) -> List[Dict[str, str]]:
         """Scan network for devices using ARP"""
         # Get the default interface
         interface = self.get_default_interface()
@@ -158,7 +158,7 @@ class NetWatch:
             # Create and send ARP request
             with st.spinner("🔍 Sending ARP requests..."):
                 ans, _ = scapy.srp(
-                    scapy.Ether(dst="ff:ff:ff:ff:ff:ff")/scapy.ARP(pdst=network_range),
+                    Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=network_range),
                     timeout=2,
                     iface=interface,
                     verbose=False
@@ -167,21 +167,23 @@ class NetWatch:
                 # Process results
                 devices = []
                 for _, rcv in ans:
-                    # Try to get vendor info from MAC address
-                    mac = rcv[scapy.Ether].src
-                    vendor = 'Unknown'
                     try:
+                        # Get vendor info from MAC address
+                        mac = rcv[Ether].src
+                        vendor = 'Unknown'
+                        
                         # Get first 3 octets of MAC (vendor part)
                         oui = ':'.join(mac.split(':')[:3]).upper()
                         vendor = f"OUI: {oui}"
-                    except:
-                        pass
-                    
-                    devices.append({
-                        'ip': rcv[scapy.ARP].psrc,
-                        'mac': mac,
-                        'vendor': vendor
-                    })
+                        
+                        devices.append({
+                            'ip': rcv[ARP].psrc,
+                            'mac': mac,
+                            'vendor': vendor
+                        })
+                    except (IndexError, KeyError, AttributeError) as e:
+                        st.warning(f"Error processing device: {str(e)}")
+                        continue
                 
                 if devices:
                     st.success(f"✨ Found {len(devices)} devices")
@@ -190,7 +192,7 @@ class NetWatch:
                 
                 return devices
                 
-        except Exception as e:
+        except (OSError, PermissionError) as e:
             st.error(f"Error during scan: {str(e)}")
             if 'permission' in str(e).lower():
                 st.info("""
