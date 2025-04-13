@@ -42,6 +42,7 @@ This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It sho
 :heavy_check_mark: Core Features
 
 - Network device discovery using ARP scanning
+
 - Real-time traffic capture and analysis
 - Device presence logging
 - Traffic threshold monitoring
@@ -74,8 +75,10 @@ This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It sho
 ## :white_check_mark: Requirements
 
 Before starting :checkered_flag:, you need to have:
+
 - [Docker](https://docs.docker.com/get-docker/) installed on your system
 - Network access to the host machine
+
 
 ### Docker Security Setup (Recommended)
 
