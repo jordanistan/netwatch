@@ -78,7 +78,7 @@ No other dependencies are required as everything runs inside the container!
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/netwatch.git
+git clone https://github.com/jordanistan/netwatch.git
 cd netwatch
 
 # Create necessary directories
@@ -248,7 +248,7 @@ docker exec netwatch cat /app/reports/test_report_<timestamp>.json
 2. Clone and deploy NetWatch:
 
    ```bash
-   git clone https://github.com/yourusername/netwatch.git
+   git clone https://github.com/jordanistan/netwatch.git
    cd netwatch
    docker build -t netwatch .
    docker run -d \
