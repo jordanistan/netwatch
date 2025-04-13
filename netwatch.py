@@ -200,12 +200,9 @@ def main():
 
     netwatch = NetWatch()
 
-    # Sidebar
-    st.sidebar.title("Controls")
-    action = st.sidebar.radio(
-        "Select Action",
-        ["Network Scan", "Traffic Capture", "PCAP Analysis"]
-    )
+    # Use the UI module for sidebar
+    import ui
+    action = ui.setup_sidebar()
 
     if action == "Network Scan":
         st.header("Network Device Scanner")
