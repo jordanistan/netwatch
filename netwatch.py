@@ -195,25 +195,74 @@ class NetWatch:
         return stats
 
 def main():
-    st.set_page_config(page_title="NetWatch Dashboard", layout="wide")
-    st.title("NetWatch Network Monitoring Dashboard")
-
-    netwatch = NetWatch()
+    st.set_page_config(
+        page_title="NetWatch Dashboard",
+        page_icon="🔍",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+    
+    # Main header with version
+    st.title("NetWatch Network Monitoring Dashboard 🔍")
+    st.caption("Version 1.0.0 - Educational Network Analysis Tool")
+    
+    try:
+        netwatch = NetWatch()
+    except Exception as e:
+        st.error(f"Error initializing NetWatch: {str(e)}")
+        st.info("""
+        💡 **Tip**: Some features require root/admin privileges. Try running with:
+        ```bash
+        sudo python3 netwatch.py
+        ```
+        """)
+        return
 
     # Use the UI module for sidebar
     import ui
     action = ui.setup_sidebar()
 
     if action == "Network Scan":
-        st.header("Network Device Scanner")
-        if st.button("Scan Network"):
-            with st.spinner("Scanning network..."):
-                devices = netwatch.scan_network()
-                if devices:
-                    df = pd.DataFrame(devices)
-                    st.dataframe(df)
-                else:
-                    st.warning("No devices found")
+        st.header("Network Device Scanner 📡")
+        
+        # Instructions
+        st.markdown("""
+        This tool scans your local network to discover active devices using ARP requests.
+        Results will show IP addresses, MAC addresses, and vendor information when available.
+        """)
+        
+        col1, col2 = st.columns([2,1])
+        with col1:
+            if st.button("🔍 Start Network Scan", use_container_width=True):
+                with st.spinner("🔄 Scanning network..."):
+                    try:
+                        devices = netwatch.scan_network()
+                        if devices:
+                            df = pd.DataFrame(devices)
+                            st.success(f"Found {len(devices)} devices")
+                            st.dataframe(
+                                df,
+                                column_config={
+                                    "ip": "IP Address",
+                                    "mac": "MAC Address",
+                                    "vendor": "Vendor"
+                                },
+                                use_container_width=True
+                            )
+                        else:
+                            st.warning("⚠️ No devices found. Try running with admin privileges.")
+                    except Exception as e:
+                        st.error(f"Error during scan: {str(e)}")
+                        if 'permission' in str(e).lower():
+                            st.info("💡 This feature requires admin privileges")
+        
+        with col2:
+            st.info("""
+            ### Tips
+            - Ensure you're connected to a network
+            - Some devices may not respond to ARP
+            - Scan may take a few seconds
+            """)
 
     elif action == "Traffic Capture":
         st.header("Traffic Capture")
