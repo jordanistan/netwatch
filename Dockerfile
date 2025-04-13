@@ -49,8 +49,9 @@ COPY --chown=netwatch:netwatch . .
 RUN setcap cap_net_raw,cap_net_admin=eip /usr/bin/tcpdump && \
     setcap cap_net_raw,cap_net_admin=eip /usr/bin/tshark
 
-# Configure Streamlit
-ENV STREAMLIT_SERVER_PORT=8502 \
+# Configure environment
+ENV PATH="/usr/local/bin:$PATH" \
+    STREAMLIT_SERVER_PORT=8502 \
     STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
     STREAMLIT_SERVER_HEADLESS=true \
     STREAMLIT_SERVER_ENABLE_CORS=false \
