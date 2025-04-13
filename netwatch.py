@@ -27,7 +27,7 @@ class NetWatch:
         for dir_path in [self.captures_dir, self.reports_dir, self.logs_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
 
-    def capture_traffic(self, target_ips=None, duration=60, is_suspicious=False):
+    def capture_traffic(self, target_ips=None, duration=60, is_suspicious=False, callback=None):
         """Capture network traffic for specific IPs or all traffic"""
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -51,8 +51,19 @@ class NetWatch:
                 filter_expr = ""
             
             # Start packet capture
-            st.info(f"📦 Starting packet capture for {duration} seconds...")
-            packets = scapy.sniff(filter=filter_expr, timeout=duration)
+            if duration:
+                st.info(f"📦 Starting packet capture for {duration} seconds...")
+                packets = scapy.sniff(filter=filter_expr, timeout=duration)
+            else:
+                st.info("📦 Starting unlimited packet capture (press Stop to end)...")
+                st.session_state.capture_status['active'] = True
+                st.session_state.capture_status['start_time'] = datetime.now()
+                
+                # Create a stop button
+                if st.button("⏹️ Stop Capture", type="primary"):
+                    st.session_state.capture_status['active'] = False
+                
+                packets = scapy.sniff(filter=filter_expr, timeout=None)
             
             # Save captured packets
             if packets:
@@ -510,14 +521,61 @@ def main():
                 help="Choose to capture specific devices or all network traffic"
             )
             
-            # Duration selection
-            duration = st.slider(
-                "Capture duration (seconds)",
-                min_value=10,
-                max_value=300,
-                value=60,
-                step=10
+            # Duration controls
+            unlimited_capture = st.checkbox(
+                "Unlimited Capture Duration",
+                help="⚠️ Warning: This will capture indefinitely until manually stopped"
             )
+            
+            if not unlimited_capture:
+                # Convert hours to seconds for the slider
+                max_seconds = 72 * 3600  # 72 hours in seconds
+                
+                # Create duration selection with units
+                duration_unit = st.selectbox(
+                    "Duration Unit",
+                    options=["Seconds", "Minutes", "Hours"],
+                    index=0
+                )
+                
+                if duration_unit == "Seconds":
+                    step = 10
+                    max_val = min(3600, max_seconds)  # Cap at 1 hour for seconds
+                    default = 60
+                elif duration_unit == "Minutes":
+                    step = 1
+                    max_val = min(60, max_seconds // 60)  # Cap at 1 hour for minutes
+                    default = 5
+                else:  # Hours
+                    step = 1
+                    max_val = max_seconds // 3600  # Full 72 hours
+                    default = 1
+                
+                duration_value = st.slider(
+                    f"Capture duration ({duration_unit.lower()})",
+                    min_value=1,
+                    max_value=max_val,
+                    value=default,
+                    step=step
+                )
+                
+                # Convert to seconds based on unit
+                if duration_unit == "Minutes":
+                    duration = duration_value * 60
+                elif duration_unit == "Hours":
+                    duration = duration_value * 3600
+                else:
+                    duration = duration_value
+            else:
+                duration = None  # Unlimited duration
+            
+            # Show capture status
+            if 'capture_status' not in st.session_state:
+                st.session_state.capture_status = {
+                    'active': False,
+                    'start_time': None,
+                    'packets_captured': 0
+                }
             
             if capture_mode == "Target Devices":
                 # Create options for multiselect
@@ -550,17 +608,27 @@ def main():
                 )
                 
                 # Start capture button for specific devices
-                if st.button("📦 Start Targeted Capture", type="primary"):
-                    target_ips = [device_options[device] for device in selected_devices] if selected_devices else None
-                    
-                    # Check if suspicious device is selected
-                    is_suspicious = target_ips and '192.168.86.42' in target_ips
-                    
-                    pcap_file = netwatch.capture_traffic(
-                        target_ips=target_ips,
-                        duration=duration,
-                        is_suspicious=is_suspicious
-                    )
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    if st.button("📦 Start Targeted Capture", type="primary", disabled=st.session_state.capture_status['active']):
+                        target_ips = [device_options[device] for device in selected_devices] if selected_devices else None
+                        
+                        # Check if suspicious device is selected
+                        is_suspicious = target_ips and '192.168.86.42' in target_ips
+                        
+                        pcap_file = netwatch.capture_traffic(
+                            target_ips=target_ips,
+                            duration=duration,
+                            is_suspicious=is_suspicious
+                        )
+                
+                # Show capture status
+                with col2:
+                    if st.session_state.capture_status['active']:
+                        elapsed = datetime.now() - st.session_state.capture_status['start_time']
+                        st.info(f"⏺️ Capturing... ({elapsed.seconds}s)")
+                    else:
+                        st.info("⏸️ Ready")
                     
                     if pcap_file:
                         st.success(f"✅ Traffic captured and saved as: {pcap_file.name}")
@@ -573,12 +641,22 @@ def main():
                 st.info("📡 This will capture all network traffic in your local network")
                 
                 # Start capture button for all traffic
-                if st.button("📦 Start Network-Wide Capture", type="primary"):
-                    pcap_file = netwatch.capture_traffic(
-                        target_ips=None,
-                        duration=duration,
-                        is_suspicious=False
-                    )
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    if st.button("📦 Start Network-Wide Capture", type="primary", disabled=st.session_state.capture_status['active']):
+                        pcap_file = netwatch.capture_traffic(
+                            target_ips=None,
+                            duration=duration,
+                            is_suspicious=False
+                        )
+                
+                # Show capture status
+                with col2:
+                    if st.session_state.capture_status['active']:
+                        elapsed = datetime.now() - st.session_state.capture_status['start_time']
+                        st.info(f"⏺️ Capturing... ({elapsed.seconds}s)")
+                    else:
+                        st.info("⏸️ Ready")
                     
                     if pcap_file:
                         st.success(f"✅ Traffic captured and saved as: {pcap_file.name}")
