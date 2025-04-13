@@ -263,44 +263,185 @@ class NetWatch:
                 """)
             return None
 
+    def extract_http_traffic(self, pcap_file):
+        """Extract HTTP traffic from PCAP file"""
+        try:
+            # Read PCAP file
+            packets = rdpcap(str(pcap_file))
+            http_traffic = []
+            
+            # Process packets
+            for packet in packets:
+                if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
+                    try:
+                        # Get payload
+                        payload = packet[scapy.Raw].load.decode('utf-8', errors='ignore')
+                        
+                        # Look for HTTP requests
+                        if payload.startswith('GET ') or payload.startswith('POST '):
+                            # Parse request
+                            request_line = payload.split('\r\n')[0]
+                            method = request_line.split()[0]
+                            path = request_line.split()[1]
+                            host = None
+                            content_type = None
+                            
+                            # Find Host and Content-Type headers
+                            for line in payload.split('\r\n'):
+                                if line.lower().startswith('host:'):
+                                    host = line.split(': ')[1].strip()
+                                elif line.lower().startswith('content-type:'):
+                                    content_type = line.split(': ')[1].strip()
+                            
+                            if host:
+                                url = f"http://{host}{path}"
+                                http_traffic.append({
+                                    'timestamp': datetime.fromtimestamp(float(packet.time)),
+                                    'method': method,
+                                    'url': url,
+                                    'src': packet[scapy.IP].src if packet.haslayer(scapy.IP) else None,
+                                    'dst': packet[scapy.IP].dst if packet.haslayer(scapy.IP) else None,
+                                    'size': len(packet),
+                                    'content_type': content_type
+                                })
+                    except:
+                        continue
+            
+            return http_traffic
+        except Exception as e:
+            st.error(f"Error extracting HTTP traffic: {str(e)}")
+            return []
+    
+    def extract_media_content(self, pcap_file):
+        """Extract media content from PCAP file"""
+        try:
+            # Read PCAP file
+            packets = rdpcap(str(pcap_file))
+            media_files = []
+            
+            # Create directory for extracted files
+            media_dir = self.captures_dir / 'media'
+            media_dir.mkdir(exist_ok=True)
+            
+            # Track TCP streams
+            streams = {}
+            
+            # Process packets
+            for packet in packets:
+                if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
+                    # Get stream ID
+                    stream_id = (packet[scapy.IP].src, packet[scapy.TCP].sport,
+                               packet[scapy.IP].dst, packet[scapy.TCP].dport)
+                    
+                    # Add payload to stream
+                    if stream_id not in streams:
+                        streams[stream_id] = {'data': b'', 'timestamp': packet.time}
+                    streams[stream_id]['data'] += packet[scapy.Raw].load
+            
+            # Process streams
+            for stream_id, stream in streams.items():
+                try:
+                    data = stream['data']
+                    # Check for common media headers
+                    if (data.startswith(b'\xff\xd8\xff') or  # JPEG
+                        data.startswith(b'\x89PNG\r\n') or   # PNG
+                        data.startswith(b'GIF87a') or     # GIF
+                        data.startswith(b'GIF89a') or     # GIF
+                        b'ftypmp4' in data[:32] or    # MP4
+                        data.startswith(b'ID3') or    # MP3
+                        b'ftypisom' in data[:32]):    # MP4/ISO
+                        
+                        # Determine file type
+                        ext = '.bin'
+                        mime_type = 'application/octet-stream'
+                        
+                        if data.startswith(b'\xff\xd8\xff'):
+                            ext = '.jpg'
+                            mime_type = 'image/jpeg'
+                        elif data.startswith(b'\x89PNG\r\n'):
+                            ext = '.png'
+                            mime_type = 'image/png'
+                        elif data.startswith(b'GIF'):
+                            ext = '.gif'
+                            mime_type = 'image/gif'
+                        elif b'ftyp' in data[:32]:
+                            ext = '.mp4'
+                            mime_type = 'video/mp4'
+                        elif data.startswith(b'ID3'):
+                            ext = '.mp3'
+                            mime_type = 'audio/mpeg'
+                        
+                        # Save file
+                        timestamp = datetime.fromtimestamp(float(stream['timestamp'])).strftime("%Y%m%d_%H%M%S")
+                        filename = f"media_{timestamp}_{stream_id[0]}_{stream_id[2]}{ext}"
+                        filepath = media_dir / filename
+                        
+                        with open(filepath, 'wb') as f:
+                            f.write(data)
+                        
+                        media_files.append({
+                            'filename': filename,
+                            'path': filepath,
+                            'type': ext[1:].upper(),
+                            'mime_type': mime_type,
+                            'size': len(data),
+                            'src': stream_id[0],
+                            'dst': stream_id[2],
+                            'timestamp': datetime.fromtimestamp(float(stream['timestamp']))
+                        })
+                except:
+                    continue
+            
+            return media_files
+        except Exception as e:
+            st.error(f"Error extracting media content: {str(e)}")
+            return []
+    
     def analyze_pcap(self, pcap_file):
         """Analyze a PCAP file and return statistics"""
-        packets = rdpcap(str(pcap_file))
-        stats = {
-            'total_packets': len(packets),
-            'protocols': {},
-            'packet_sizes': [],
-            'timestamps': [],
-            'ips': {'src': {}, 'dst': {}}
-        }
-        
-        for packet in packets:
-            # Collect timestamp
-            stats['timestamps'].append(float(packet.time))
+        try:
+            packets = rdpcap(str(pcap_file))
+            stats = {
+                'total_packets': len(packets),
+                'protocols': {},
+                'packet_sizes': [],
+                'timestamps': [],
+                'ips': {'src': {}, 'dst': {}},
+                'http_traffic': self.extract_http_traffic(pcap_file),
+                'media_files': self.extract_media_content(pcap_file)
+            }
             
-            # Collect packet size
-            stats['packet_sizes'].append(len(packet))
-            
-            # Analyze protocols
-            if packet.haslayer(scapy.TCP):
-                proto = 'TCP'
-            elif packet.haslayer(scapy.UDP):
-                proto = 'UDP'
-            elif packet.haslayer(scapy.ICMP):
-                proto = 'ICMP'
-            else:
-                proto = 'Other'
+            for packet in packets:
+                # Collect timestamp
+                stats['timestamps'].append(float(packet.time))
                 
-            stats['protocols'][proto] = stats['protocols'].get(proto, 0) + 1
+                # Collect packet size
+                stats['packet_sizes'].append(len(packet))
+                
+                # Analyze protocols
+                if packet.haslayer(scapy.TCP):
+                    proto = 'TCP'
+                elif packet.haslayer(scapy.UDP):
+                    proto = 'UDP'
+                elif packet.haslayer(scapy.ICMP):
+                    proto = 'ICMP'
+                else:
+                    proto = 'Other'
+                    
+                stats['protocols'][proto] = stats['protocols'].get(proto, 0) + 1
+                
+                # Collect IP information
+                if packet.haslayer(scapy.IP):
+                    src = packet[scapy.IP].src
+                    dst = packet[scapy.IP].dst
+                    stats['ips']['src'][src] = stats['ips']['src'].get(src, 0) + 1
+                    stats['ips']['dst'][dst] = stats['ips']['dst'].get(dst, 0) + 1
             
-            # Collect IP information
-            if packet.haslayer(scapy.IP):
-                src = packet[scapy.IP].src
-                dst = packet[scapy.IP].dst
-                stats['ips']['src'][src] = stats['ips']['src'].get(src, 0) + 1
-                stats['ips']['dst'][dst] = stats['ips']['dst'].get(dst, 0) + 1
-        
-        return stats
+            return stats
+            
+        except Exception as e:
+            st.error(f"Error analyzing PCAP: {str(e)}")
+            return None
 
 def main():
     st.set_page_config(
@@ -549,7 +690,92 @@ To capture network traffic, run the application with:
                         fig.update_traces(textposition='inside', textinfo='percent+label')
                         st.plotly_chart(fig, use_container_width=True)
 
-                        # Packet Sizes Over Time
+                        # HTTP Traffic Analysis
+                        st.subheader("🌐 HTTP Traffic")
+                        if stats['http_traffic']:
+                            # Convert to DataFrame for easier handling
+                            http_df = pd.DataFrame(stats['http_traffic'])
+                            http_df['timestamp'] = pd.to_datetime(http_df['timestamp'])
+                            
+                            # Group by domain
+                            domains = http_df['url'].apply(lambda x: x.split('/')[2]).value_counts().head(10)
+                            
+                            # Show top domains
+                            st.markdown("#### Top Domains")
+                            fig = px.bar(
+                                x=domains.index,
+                                y=domains.values,
+                                labels={'x': 'Domain', 'y': 'Requests'},
+                                title="Most Visited Domains"
+                            )
+                            fig.update_layout(showlegend=False)
+                            st.plotly_chart(fig, use_container_width=True)
+                            
+                            # Show HTTP requests
+                            st.markdown("#### HTTP Requests")
+                            for req in http_df.sort_values('timestamp', ascending=False).to_dict('records'):
+                                with st.expander(
+                                    f"{req['timestamp'].strftime('%H:%M:%S')} - {req['method']} {req['url']}",
+                                    expanded=False
+                                ):
+                                    st.markdown(f"""
+                                    - **Method**: {req['method']}
+                                    - **URL**: `{req['url']}`
+                                    - **Size**: {req['size']} bytes
+                                    - **Source**: {req['src']}
+                                    - **Destination**: {req['dst']}
+                                    - **Content Type**: {req['content_type'] or 'Not specified'}
+                                    """)
+                        else:
+                            st.info("💡 No HTTP traffic found in this capture")
+                        
+                        # Media Content Analysis
+                        st.subheader("🎥 Media Content")
+                        if stats['media_files']:
+                            # Convert to DataFrame
+                            media_df = pd.DataFrame(stats['media_files'])
+                            media_df['timestamp'] = pd.to_datetime(media_df['timestamp'])
+                            
+                            # Group by type
+                            media_types = media_df['type'].value_counts()
+                            
+                            # Show media type distribution
+                            fig = px.pie(
+                                values=media_types.values,
+                                names=media_types.index,
+                                title="Media Types",
+                                color_discrete_sequence=px.colors.qualitative.Set2
+                            )
+                            fig.update_traces(textposition='inside', textinfo='percent+label')
+                            st.plotly_chart(fig, use_container_width=True)
+                            
+                            # Show media files
+                            st.markdown("#### Extracted Media Files")
+                            for media in media_df.sort_values('timestamp', ascending=False).to_dict('records'):
+                                with st.expander(
+                                    f"{media['timestamp'].strftime('%H:%M:%S')} - {media['type']} ({media['size']/1024:.1f} KB)",
+                                    expanded=False
+                                ):
+                                    st.markdown(f"""
+                                    - **Type**: {media['type']}
+                                    - **MIME Type**: {media['mime_type']}
+                                    - **Size**: {media['size']/1024:.1f} KB
+                                    - **Source**: {media['src']}
+                                    - **Destination**: {media['dst']}
+                                    - **File**: `{media['filename']}`
+                                    """)
+                                    
+                                    # Preview/playback based on type
+                                    if media['type'] in ['JPG', 'PNG', 'GIF']:
+                                        st.image(media['path'])
+                                    elif media['type'] in ['MP4']:
+                                        st.video(media['path'])
+                                    elif media['type'] in ['MP3']:
+                                        st.audio(media['path'])
+                        else:
+                            st.info("💡 No media content found in this capture")
+
+                        # Traffic Analysis
                         st.subheader("📈 Traffic Analysis")
                         df = pd.DataFrame({
                             'timestamp': pd.to_datetime(stats['timestamps'], unit='s'),
@@ -566,7 +792,7 @@ To capture network traffic, run the application with:
                         st.plotly_chart(fig, use_container_width=True)
 
                         # Top IPs Analysis
-                        st.subheader("🏔 Top Network Endpoints")
+                        st.subheader("🏕 Top Network Endpoints")
                         col1, col2 = st.columns(2)
                         
                         with col1:
