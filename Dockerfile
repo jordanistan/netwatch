@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories
-RUN mkdir -p /app/captures /app/logs /app/reports
+RUN mkdir -p /app/captures /app/logs /app/reports /app/assets
+RUN chown -R root:root /app
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .

@@ -5,9 +5,12 @@ def setup_sidebar():
     """Setup the sidebar with profile and navigation"""
     st.sidebar.title("NetWatch 🔍")
     
-    # Only try to load profile picture if it exists
-    if variables.DEFAULT_PROFILE.exists():
-        st.sidebar.image(str(variables.DEFAULT_PROFILE))
+    # Add logo/icon
+    st.sidebar.markdown("""
+    <div style='text-align: center; margin-bottom: 1rem;'>
+        <h1 style='font-size: 3rem;'>🌐</h1>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.sidebar.markdown("---")
     
