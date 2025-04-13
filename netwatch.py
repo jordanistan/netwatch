@@ -12,6 +12,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+import socket
 import variables
 from simulated_data import generate_simulated_stats, get_risk_assessment
 
@@ -250,11 +251,17 @@ class NetWatch:
                 # Process responses
                 devices = []
                 for sent, received in result:
+                    # Get hostname using reverse DNS lookup
+                    try:
+                        hostname = socket.gethostbyaddr(received.psrc)[0]
+                    except (socket.herror, socket.gaierror):
+                        hostname = ''
+                    
                     devices.append({
                         'ip': received.psrc,
                         'mac': received.hwsrc,
-                        'hostname': '',  # Could add reverse DNS lookup
-                        'vendor': ''  # Could add MAC vendor lookup
+                        'hostname': hostname,
+                        'vendor': ''  # Could add MAC vendor lookup in the future
                     })
             
             if devices:
@@ -495,22 +502,12 @@ def main():
         if 'network_devices' in st.session_state and st.session_state['network_devices']:
             devices = st.session_state['network_devices']
             
-            # Create options for multiselect
-            device_options = {}
-            for device in devices:
-                ip = device['ip']
-                label = f"{ip}"
-                if device.get('hostname'):
-                    label += f" ({device['hostname']})"
-                if device.get('vendor'):
-                    label += f" - {device['vendor']}"
-                device_options[label] = ip
-            
-            # Device selection
-            selected_devices = st.multiselect(
-                "Select devices to monitor",
-                options=list(device_options.keys()),
-                default=None
+            # Create a radio button for capture mode
+            capture_mode = st.radio(
+                "Select Capture Mode",
+                options=["Target Devices", "Capture All"],
+                horizontal=True,
+                help="Choose to capture specific devices or all network traffic"
             )
             
             # Duration selection
@@ -522,25 +519,69 @@ def main():
                 step=10
             )
             
-            # Start capture button
-            if st.button("📦 Start Capture", type="primary"):
-                target_ips = [device_options[device] for device in selected_devices] if selected_devices else None
+            if capture_mode == "Target Devices":
+                # Create options for multiselect
+                device_options = {}
+                for device in devices:
+                    ip = device['ip']
+                    mac = device.get('mac', '')
+                    hostname = device.get('hostname', '')
+                    vendor = device.get('vendor', '')
+                    
+                    # Build a descriptive label
+                    label_parts = [ip]
+                    if mac:
+                        label_parts.append(f"MAC: {mac}")
+                    if hostname:
+                        label_parts.append(f"Host: {hostname}")
+                    if vendor:
+                        label_parts.append(vendor)
+                    if ip == '192.168.86.42':
+                        label_parts.append("🚨 SUSPICIOUS")
+                    
+                    label = " | ".join(label_parts)
+                    device_options[label] = ip
                 
-                # Check if suspicious device is selected
-                is_suspicious = target_ips and '192.168.86.42' in target_ips
-                
-                pcap_file = netwatch.capture_traffic(
-                    target_ips=target_ips,
-                    duration=duration,
-                    is_suspicious=is_suspicious
+                # Device selection
+                selected_devices = st.multiselect(
+                    "Select devices to monitor",
+                    options=list(device_options.keys()),
+                    default=None
                 )
                 
-                if pcap_file:
-                    st.success(f"✅ Traffic captured and saved as: {pcap_file.name}")
+                # Start capture button for specific devices
+                if st.button("📦 Start Targeted Capture", type="primary"):
+                    target_ips = [device_options[device] for device in selected_devices] if selected_devices else None
                     
-                    # If suspicious device was captured, show the analysis
-                    if is_suspicious:
-                        display_suspicious_activity('192.168.86.42')
+                    # Check if suspicious device is selected
+                    is_suspicious = target_ips and '192.168.86.42' in target_ips
+                    
+                    pcap_file = netwatch.capture_traffic(
+                        target_ips=target_ips,
+                        duration=duration,
+                        is_suspicious=is_suspicious
+                    )
+                    
+                    if pcap_file:
+                        st.success(f"✅ Traffic captured and saved as: {pcap_file.name}")
+                        
+                        # If suspicious device was captured, show the analysis
+                        if is_suspicious:
+                            display_suspicious_activity('192.168.86.42')
+                            
+            else:  # Capture All mode
+                st.info("📡 This will capture all network traffic in your local network")
+                
+                # Start capture button for all traffic
+                if st.button("📦 Start Network-Wide Capture", type="primary"):
+                    pcap_file = netwatch.capture_traffic(
+                        target_ips=None,
+                        duration=duration,
+                        is_suspicious=False
+                    )
+                    
+                    if pcap_file:
+                        st.success(f"✅ Traffic captured and saved as: {pcap_file.name}")
         else:
             st.warning("⚠️ No devices found. Please run a network scan first.")
             if st.button("🔍 Scan Network"):
