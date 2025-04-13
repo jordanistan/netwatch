@@ -1,4 +1,4 @@
-<div align="center" id="top"> 
+<div align="center" id="top">
   <img src="https://media.tenor.com/images/af715c0a6016e077e27d332bb9858966/tenor.gif" alt="NetWatch" />
 
   &#xa0;
@@ -103,7 +103,7 @@ Refer to the [Docker Rootless Mode documentation](https://docs.docker.com/engine
 
 No other dependencies are required as everything runs inside the container!
 
-## :checkered_flag: Starting ##
+## :checkered_flag: Starting
 
 ### 1. Initial Setup
 
