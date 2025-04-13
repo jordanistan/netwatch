@@ -72,23 +72,30 @@ Refer to the [Docker Rootless Mode documentation](https://docs.docker.com/engine
 
 No other dependencies are required as everything runs inside the container!
 
-## 🚀 Quick Start
+## 🚀 Quick Start Guide
 
-### 1. Clone and Build
+### 1. Initial Setup
 
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/netwatch.git
 cd netwatch
 
+# Create necessary directories
+mkdir -p captures logs reports
+
 # Build the Docker image
 docker build -t netwatch .
 ```
 
-### 2. Run the Container
+### 2. Choose Your Running Mode
+
+NetWatch supports two running modes:
+
+### Option A: Rootless Mode (Recommended for Learning)
 
 ```bash
-# For rootless mode
+# Start in rootless mode
 docker run -d \
   --name netwatch \
   --network host \
@@ -96,8 +103,12 @@ docker run -d \
   -v $(pwd)/logs:/app/logs \
   -v $(pwd)/reports:/app/reports \
   netwatch
+```
 
-# For privileged mode (if rootless mode is not available)
+### Option B: Privileged Mode (Full Features)
+
+```bash
+# Start with full network capabilities
 docker run -d \
   --name netwatch \
   --network host \
@@ -109,9 +120,25 @@ docker run -d \
   netwatch
 ```
 
+### 3. Verify Installation
+
+```bash
+# Check if container is running
+docker ps | grep netwatch
+
+# Should see output like:
+# CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS   PORTS   NAMES
+# abc123...      netwatch  "..."     1m ago    Up 1m           netwatch
+
+# View container logs
+docker logs netwatch
+```
+
+```bash
+
 > **Note**: In rootless mode, some network capabilities might be limited. If you need full network scanning capabilities, you may need to run in privileged mode with the appropriate security considerations.
 
-### 3. Access the Dashboard
+#### Access Methods
 
 1. From the host machine:
 
@@ -121,6 +148,61 @@ docker run -d \
 
    - Open `http://<host-ip>:8501`
    - Replace `<host-ip>` with your host machine's IP address
+
+## 🧪 Testing Features
+
+### 1. Basic Network Tests
+
+```bash
+# Copy and run the test script
+docker cp test_features.py netwatch:/app/
+docker exec netwatch python3 test_features.py
+
+# Expected output:
+# 🚀 Starting comprehensive network tests...
+# 🔍 Testing interface detection...
+# 🔍 Testing network scanning...
+# 🔍 Testing packet capture...
+```
+
+### 2. Security Analysis
+
+```bash
+# Run security scan
+docker cp security_scan.py netwatch:/app/
+docker exec netwatch python3 security_scan.py
+
+# Expected output:
+# 🔍 Starting security analysis...
+# 📊 Security Analysis Summary
+# - Threats Detected
+# - Suspicious Activities
+# - Vulnerabilities
+```
+
+### 3. Service Detection
+
+```bash
+# Run service analysis
+docker cp service_scan.py netwatch:/app/
+docker exec netwatch python3 service_scan.py
+
+# Expected output:
+# 🔍 Starting service analysis...
+# 📊 Service Analysis Summary
+# - Open Services
+# - Protocol Distribution
+```
+
+### 4. View Test Results
+
+```bash
+# Check test reports
+docker exec netwatch ls -l /app/reports/
+
+# View latest report
+docker exec netwatch cat /app/reports/test_report_<timestamp>.json
+```
 
 ## 🎯 Dashboard Features
 
@@ -144,6 +226,13 @@ docker run -d \
 - Import existing PCAP files
 - Generate detailed traffic reports
 - Export data in multiple formats
+
+### Security Features
+
+- Port scan detection
+- Service fingerprinting
+- Vulnerability assessment
+- Traffic pattern analysis
 
 ## 🍓 Raspberry Pi Deployment
 
@@ -191,26 +280,58 @@ docker run -d \
      ssh -L 8501:localhost:8501 pi@<raspberry-pi-ip>
      ```
 
-## 📊 Output Files
+## 📊 Understanding Output Files
 
-### Capture Files
+### Directory Structure
 
-- `captures/`: PCAP format traffic captures
-- `logs/`: Text-based device presence logs
-- `alerts/`: Threshold violation records
+```plaintext
+netwatch/
+├── captures/           # Network capture files
+│   └── *.pcap         # Raw packet captures
+├── logs/              # Application logs
+│   ├── app.log        # General application logs
+│   └── alerts.log     # Security alerts
+└── reports/           # Analysis reports
+    ├── test_*.json    # Feature test results
+    ├── security_*.json # Security scan results
+    └── service_*.json  # Service analysis results
+```
 
-### Analysis Files
+### Report Types
 
-- `reports/`: Individual analysis reports
+#### 1. Test Reports (`test_report_*.json`)
 
-  - `analysis.json`: Detailed packet analysis
-  - `analysis.csv`: Tabular data export
-  - `analysis.html`: Interactive visualizations
+- Interface information
+- Network scan results
+- Packet capture statistics
+- Traffic analysis
 
-- `dashboard/`: Web dashboard files
+#### 2. Security Reports (`security_scan_*.json`)
 
-  - `index.html`: Main dashboard interface
-  - `captures.json`: Capture history
+- Detected threats
+- Suspicious activities
+- Vulnerabilities
+- Protocol statistics
+
+#### 3. Service Reports (`service_scan_*.json`)
+
+- Open services
+- SSL certificates
+- Service vulnerabilities
+- Protocol distribution
+
+### Reading Reports
+
+```bash
+# View latest test report
+docker exec netwatch cat /app/reports/test_report_*.json
+
+# View security scan
+docker exec netwatch cat /app/reports/security_scan_*.json
+
+# View service analysis
+docker exec netwatch cat /app/reports/service_scan_*.json
+```
 
 ### Data Analysis
 
