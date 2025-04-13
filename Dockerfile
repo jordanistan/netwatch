@@ -38,7 +38,7 @@ ENV STREAMLIT_SERVER_ENABLE_CORS=false
 EXPOSE 8501
 
 # Run the application
-ENTRYPOINT ["streamlit", "run", "netwatch.py", \
+ENTRYPOINT ["streamlit", "run", "app.py", \
     "--server.address=0.0.0.0", \
     "--server.port=8501", \
     "--browser.serverAddress=0.0.0.0", \

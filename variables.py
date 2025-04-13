@@ -3,12 +3,11 @@ from pathlib import Path
 # Base paths
 BASE_DIR = Path(__file__).parent
 ASSETS_DIR = BASE_DIR / "assets"
+CAPTURES_DIR = BASE_DIR / "captures"
 
-# Ensure assets directory exists
+# Ensure directories exist
 ASSETS_DIR.mkdir(exist_ok=True)
-
-# Default profile picture path - relative to assets directory
-DEFAULT_PROFILE = ASSETS_DIR / "default_profile.png"
+CAPTURES_DIR.mkdir(exist_ok=True)
 
 # App configuration
 APP_CONFIG = {
