@@ -35,12 +35,12 @@ ENV STREAMLIT_SERVER_HEADLESS=true
 ENV STREAMLIT_SERVER_ENABLE_CORS=false
 
 # Expose Streamlit port
-EXPOSE 8501
+EXPOSE 8502
 
 # Run the application
 ENTRYPOINT ["streamlit", "run", "netwatch.py", \
     "--server.address=0.0.0.0", \
-    "--server.port=8501", \
+    "--server.port=8502", \
     "--browser.serverAddress=0.0.0.0", \
     "--server.enableCORS=false", \
     "--server.enableXsrfProtection=false"]

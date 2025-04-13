@@ -36,7 +36,8 @@ def generate_simulated_stats() -> Dict[str, Any]:
                 'size': 1500000,
                 'src': '192.168.86.42',
                 'dst': 'adult-site.example.com',
-                'playable': True
+                'playable': True,
+                'media_url': 'https://www.w3schools.com/html/mov_bbb.mp4'
             },
             {
                 'type': 'video',
@@ -45,7 +46,8 @@ def generate_simulated_stats() -> Dict[str, Any]:
                 'size': 2500000,
                 'src': '192.168.86.42',
                 'dst': 'torrent.example.net',
-                'playable': True
+                'playable': True,
+                'media_url': 'https://www.w3schools.com/html/mov_bbb.mp4'
             },
             {
                 'type': 'audio',
@@ -55,6 +57,7 @@ def generate_simulated_stats() -> Dict[str, Any]:
                 'src': '192.168.86.42',
                 'dst': '192.168.86.100',
                 'playable': True,
+                'media_url': 'https://www.w3schools.com/html/horse.mp3',
                 'voip_data': voip_data
             }
         ],
