@@ -1,11 +1,10 @@
 import streamlit as st
-import variables
 
 def setup_sidebar():
     """Setup the sidebar with profile and navigation"""
     st.sidebar.title("NetWatch 🔍")
     
-    # Add logo/icon
+    # Add logo/icon as emoji
     st.sidebar.markdown("""
     <div style='text-align: center; margin-bottom: 1rem;'>
         <h1 style='font-size: 3rem;'>🌐</h1>
