@@ -46,85 +46,66 @@ This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It sho
 
 ## 📋 Prerequisites
 
-- Linux/Unix-based system
-- Root/sudo privileges
-- Required packages:
-  - tcpdump
-  - arp-scan
-  - whiptail
-  - mailutils (for email alerts)
-  - curl (for Slack integration)
-  - tshark (for PCAP analysis)
-  - jq (for JSON processing)
-  - modern web browser (for dashboard)
+- Docker installed on your system ([Get Docker](https://docs.docker.com/get-docker/))
+- Network access to the host machine
 
-### Installation
+No other dependencies are required as everything runs inside the container!
+
+## 🚀 Quick Start
+
+### 1. Clone and Build
 
 ```bash
-# On Ubuntu/Debian
-sudo apt update
-sudo apt install tcpdump arp-scan whiptail mailutils curl tshark jq
+# Clone the repository
+git clone https://github.com/yourusername/netwatch.git
+cd netwatch
 
-# On macOS with Homebrew
-brew install tcpdump arp-scan whiptail mailutils curl wireshark jq
-```
-
-## 🚀 Local Usage
-
-### Prerequisites
-
-1. Install Python 3.9 or higher
-2. Install required packages:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Running Locally
-
-1. Start the Streamlit dashboard:
-
-   ```bash
-   sudo streamlit run netwatch.py
-   ```
-
-2. Open your browser to `http://localhost:8501`
-
-### Using the Dashboard
-
-1. **Network Scanning**:
-   - Click 'Scan Network' to discover devices
-   - View device IP and MAC addresses
-
-2. **Traffic Capture**:
-   - Enter target IP address
-   - Set capture duration
-   - Start capture and monitor progress
-
-3. **PCAP Analysis**:
-   - Select captured PCAP file
-   - View interactive visualizations
-   - Analyze protocol distribution
-   - Monitor packet sizes over time
-
-## 🐳 Docker Deployment
-
-### Building the Container
-
-```bash
 # Build the Docker image
 docker build -t netwatch .
 ```
 
+### 2. Run the Container
+
 ```bash
-# Run the container
 docker run -d \
   --name netwatch \
   --network host \
   --cap-add=NET_ADMIN \
   --cap-add=NET_RAW \
+  -v $(pwd)/captures:/app/captures \
+  -v $(pwd)/logs:/app/logs \
+  -v $(pwd)/reports:/app/reports \
   netwatch
 ```
+
+### 3. Access the Dashboard
+
+1. From the host machine:
+   - Open `http://localhost:8501`
+
+2. From other devices on the LAN:
+   - Open `http://<host-ip>:8501`
+   - Replace `<host-ip>` with your host machine's IP address
+
+## 🎯 Features
+
+### Network Discovery
+- Automatic LAN interface detection
+- ARP-based device scanning
+- MAC address resolution
+- Hostname detection (when available)
+
+### Traffic Analysis
+- Real-time packet capture
+- Protocol distribution visualization
+- Traffic volume monitoring
+- Interactive time-series graphs
+
+### PCAP Management
+- Save captures for later analysis
+- Import existing PCAP files
+- Generate detailed traffic reports
+- Export data in multiple formats
 
 ## 🍓 Raspberry Pi Deployment
 
