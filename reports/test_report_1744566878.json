@@ -1,0 +1,1640 @@
+{
+  "timestamp": "2025-04-13T17:54:14.668984",
+  "interface_info": {
+    "eth0": {
+      "ip": "192.168.65.3",
+      "mac": "0a:9c:db:d4:0b:c8",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    },
+    "services1": {
+      "ip": "192.168.65.6",
+      "mac": "fa:cd:10:64:86:aa",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    },
+    "br-fe32a753fb47": {
+      "ip": "172.18.0.1",
+      "mac": "f6:d6:2c:7d:0b:50",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    },
+    "docker0": {
+      "ip": "172.17.0.1",
+      "mac": "12:5e:de:77:d7:59",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    },
+    "br-8d13bee9ac4a": {
+      "ip": "172.20.0.1",
+      "mac": "1e:e0:5e:05:1d:4b",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    },
+    "veth94dcc7b": {
+      "ip": "0.0.0.0",
+      "mac": "82:9f:13:37:75:33",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    },
+    "vethd56d6d6": {
+      "ip": "0.0.0.0",
+      "mac": "5a:f1:db:6e:1b:2d",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    },
+    "veth9dadba1": {
+      "ip": "0.0.0.0",
+      "mac": "2a:0a:26:aa:0a:d7",
+      "status": "UP",
+      "flags": "UP+BROADCAST+RUNNING+SLAVE"
+    }
+  },
+  "network_scan": {
+    "interface": "eth0",
+    "network": "192.168.65.0/24",
+    "scan_time": 3.2073254585266113,
+    "devices_found": 2,
+    "devices": [
+      {
+        "ip": "192.168.65.1",
+        "mac": "5a:94:ef:e4:0c:dd",
+        "hostname": "Unknown"
+      },
+      {
+        "ip": "192.168.65.254",
+        "mac": "5a:94:ef:e4:0c:dd",
+        "hostname": "Unknown"
+      }
+    ]
+  },
+  "packet_capture": {
+    "interface": "eth0",
+    "duration": 20,
+    "capture_file": "/app/captures/test_capture_1744566857.pcap",
+    "analysis": {
+      "total_packets": 899,
+      "protocols": {
+        "TCP": 899
+      },
+      "packet_sizes": {
+        "65-512": 719,
+        ">1500": 143,
+        "513-1500": 37
+      },
+      "top_talkers": {
+        "192.168.65.7": 899,
+        "192.168.65.1": 899
+      },
+      "tcp_services": {},
+      "udp_services": {},
+      "tcp_flags": {
+        "A": 434,
+        "PA": 229,
+        "FA": 89,
+        "S": 74,
+        "SA": 73
+      },
+      "tcp_connections": {
+        "192.168.65.7:2375-192.168.65.1:43581": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:34463": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:34463-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:43581-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:55410": {
+          "syn": 0,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:44029": {
+          "syn": 0,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:18091": {
+          "syn": 0,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:55410-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:18091-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:44029-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:37434": {
+          "syn": 0,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:23637": {
+          "syn": 0,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:37434-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:23637-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:38607-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:38607": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:39845-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:39845": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:52264-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:52264": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:56160": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:56160-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:61888": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:61888-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:34705-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 8,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:34705": {
+          "syn": 1,
+          "syn_ack": 16,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:24835-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:24835": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:39747-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:39747": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:26098-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 10,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:26098": {
+          "syn": 1,
+          "syn_ack": 22,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:51200-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:51200": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:35278-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:50953-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:35278": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:50953": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:44151-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:64884-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:19051-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:43343-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:52147-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 7,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:24389-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:17439-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:44151": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:64884": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:19051": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:43343": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:52147": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:24389": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:17439": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:30066-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:30066": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:18318-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:18318": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:35427-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 10,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:35427": {
+          "syn": 1,
+          "syn_ack": 22,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:62773-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:51054-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:36502-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:65478-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:62773": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:51054": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:61103": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:16151": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:22140": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:36502": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:52474-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:17935-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:17935": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:54278-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:54278": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:57129-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 11,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:57129": {
+          "syn": 1,
+          "syn_ack": 22,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:17860-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:50788-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:17860": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:50788": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:17840-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:64430-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:54425-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:61535-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:17840": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:64430": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:54425": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:61535": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:25009-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:35019-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:51129-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:25009": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:35019": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:51129": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:46510-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:46510": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:61103-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:31804": {
+          "syn": 0,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:31804-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:26501": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:42359": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:28343": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:33256": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:33256-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:26501-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:28343-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:42359-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:21437": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:21437-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:19496-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 11,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:19496": {
+          "syn": 1,
+          "syn_ack": 22,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:16355-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 7,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:16355": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:18500-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:38028-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:18500": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:38028": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:49146-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:49146": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:60348-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:58462-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:60348": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:58462": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:32541-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:32541": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:42792-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:42792": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:26820-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 11,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:26820": {
+          "syn": 1,
+          "syn_ack": 22,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:33564-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:59184-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:65293-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:19588-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:33564": {
+          "syn": 1,
+          "syn_ack": 6,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:59184": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:65293": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:19588": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:42218-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:46061-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:60615-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:21198-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:42218": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:46061": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:60615": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:21198": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:33784-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:55471-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:33784": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:55471": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:51473-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:51473": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:54156-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:54156": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:36006-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 12,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:36006": {
+          "syn": 1,
+          "syn_ack": 22,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:60662-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:60662": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:20948-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:20948": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:36471-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:36471": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:48460-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 0,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:45417-192.168.65.7:2375": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:35516": {
+          "syn": 0,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:46973-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:46973": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:16364-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:16364": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:26680-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 9,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:26680": {
+          "syn": 1,
+          "syn_ack": 22,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:25558-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:63486-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:59909-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 5,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:22886-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:25558": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:63486": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:59909": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:22886": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:40418-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:34517-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:47111-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:39715-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:23184-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.1:38358-192.168.65.7:2375": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:40418": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:34517": {
+          "syn": 1,
+          "syn_ack": 3,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:47111": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:39715": {
+          "syn": 1,
+          "syn_ack": 1,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:23184": {
+          "syn": 1,
+          "syn_ack": 4,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        },
+        "192.168.65.7:2375-192.168.65.1:38358": {
+          "syn": 1,
+          "syn_ack": 2,
+          "fin": 0,
+          "rst": 0,
+          "bytes_sent": 0,
+          "bytes_received": 0
+        }
+      },
+      "dns_queries": [],
+      "http_methods": {},
+      "ip_ttl_distribution": {
+        "63": 488,
+        "64": 411
+      },
+      "packet_rate": {
+        "-19": 49,
+        "-18": 16,
+        "-15": 26,
+        "-11": 178,
+        "-10": 121,
+        "-9": 54,
+        "-8": 12,
+        "-5": 35,
+        "-4": 84,
+        "-3": 2,
+        "-2": 2,
+        "-1": 186,
+        "0": 134
+      },
+      "retransmissions": 221,
+      "average_packet_rate": 44.95,
+      "tcp_completion_rate": 0.0
+    }
+  },
+  "traffic_analysis": {},
+  "errors": []
+}

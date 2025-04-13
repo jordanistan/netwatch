@@ -98,32 +98,107 @@ class NetworkTest:
     def test_packet_capture(self):
         """Test packet capture and analysis"""
         try:
-            print("\n🔍 Testing packet capture...")
+            print("\n🔍 Testing packet capture and advanced analysis...")
             iface = next(i.name for i in get_working_ifaces() 
                         if 'lo' not in i.name and 'UP' in i.flags)
             
             capture_file = os.path.join(self.capture_dir, 
                                       f"test_capture_{int(time.time())}.pcap")
             
-            print(f"Starting 10-second capture on {iface}...")
-            packets = sniff(iface=iface, timeout=10)
+            print(f"Starting 20-second capture on {iface}...")
+            packets = sniff(iface=iface, timeout=20)
             wrpcap(capture_file, packets)
             
-            # Analyze captured packets
+            # Initialize analysis dictionaries
             analysis = {
                 "total_packets": len(packets),
                 "protocols": defaultdict(int),
                 "packet_sizes": defaultdict(int),
-                "top_talkers": defaultdict(int)
+                "top_talkers": defaultdict(int),
+                "tcp_services": defaultdict(set),
+                "udp_services": defaultdict(set),
+                "tcp_flags": defaultdict(int),
+                "tcp_connections": defaultdict(lambda: {
+                    "syn": 0, "syn_ack": 0, "fin": 0, "rst": 0,
+                    "bytes_sent": 0, "bytes_received": 0
+                }),
+                "dns_queries": [],
+                "http_methods": defaultdict(int),
+                "ip_ttl_distribution": defaultdict(int),
+                "packet_rate": defaultdict(int),
+                "retransmissions": 0
             }
             
+            # Track TCP sequence numbers for retransmission detection
+            seq_tracker = {}
+            start_time = time.time()
+            
             for pkt in packets:
-                # Protocol analysis
+                # Basic protocol analysis
                 if IP in pkt:
+                    # TTL distribution
+                    analysis["ip_ttl_distribution"][pkt[IP].ttl] += 1
+                    
+                    # Packet rate (per second)
+                    pkt_time = int(pkt.time - start_time)
+                    analysis["packet_rate"][pkt_time] += 1
+                    
                     if TCP in pkt:
                         analysis["protocols"]["TCP"] += 1
+                        
+                        # TCP flags analysis
+                        flags = pkt[TCP].flags
+                        analysis["tcp_flags"][str(flags)] += 1
+                        
+                        # Service discovery
+                        port = pkt[TCP].dport
+                        if port < 1024 or port in [1433, 3306, 5432, 8080, 8443]:
+                            analysis["tcp_services"][str(port)].add(pkt[IP].dst)
+                        
+                        # TCP connection tracking
+                        stream_id = f"{pkt[IP].src}:{pkt[TCP].sport}-{pkt[IP].dst}:{pkt[TCP].dport}"
+                        if flags & 0x02:  # SYN
+                            analysis["tcp_connections"][stream_id]["syn"] += 1
+                        elif flags & 0x12:  # SYN-ACK
+                            analysis["tcp_connections"][stream_id]["syn_ack"] += 1
+                        elif flags & 0x01:  # FIN
+                            analysis["tcp_connections"][stream_id]["fin"] += 1
+                        elif flags & 0x04:  # RST
+                            analysis["tcp_connections"][stream_id]["rst"] += 1
+                        
+                        # Retransmission detection
+                        seq = pkt[TCP].seq
+                        if stream_id in seq_tracker and seq in seq_tracker[stream_id]:
+                            analysis["retransmissions"] += 1
+                        if stream_id not in seq_tracker:
+                            seq_tracker[stream_id] = set()
+                        seq_tracker[stream_id].add(seq)
+                        
+                        # HTTP method detection
+                        if Raw in pkt and pkt[TCP].dport in [80, 8080]:
+                            payload = pkt[Raw].load.decode('utf-8', 'ignore')
+                            for method in ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']:
+                                if payload.startswith(method):
+                                    analysis["http_methods"][method] += 1
+                    
                     elif UDP in pkt:
                         analysis["protocols"]["UDP"] += 1
+                        
+                        # UDP service discovery
+                        port = pkt[UDP].dport
+                        if port < 1024 or port in [53, 67, 68, 123, 161, 162]:
+                            analysis["udp_services"][str(port)].add(pkt[IP].dst)
+                        
+                        # DNS analysis
+                        if port == 53 and DNS in pkt:
+                            if pkt[DNS].qr == 0:  # Query
+                                for i in range(pkt[DNS].qdcount):
+                                    name = pkt[DNS].qd[i].qname.decode('utf-8')
+                                    analysis["dns_queries"].append({
+                                        "query": name,
+                                        "type": pkt[DNS].qd[i].qtype
+                                    })
+                    
                     elif ICMP in pkt:
                         analysis["protocols"]["ICMP"] += 1
                     else:
@@ -146,22 +221,33 @@ class NetworkTest:
                     analysis["top_talkers"][src] += 1
                     analysis["top_talkers"][dst] += 1
             
-            # Convert defaultdict to regular dict for JSON serialization
+            # Post-processing for JSON serialization
             analysis["protocols"] = dict(analysis["protocols"])
             analysis["packet_sizes"] = dict(analysis["packet_sizes"])
             analysis["top_talkers"] = dict(sorted(
                 analysis["top_talkers"].items(), 
                 key=lambda x: x[1], 
                 reverse=True)[:5])
+            analysis["tcp_services"] = {k: list(v) for k, v in analysis["tcp_services"].items()}
+            analysis["udp_services"] = {k: list(v) for k, v in analysis["udp_services"].items()}
+            analysis["ip_ttl_distribution"] = dict(analysis["ip_ttl_distribution"])
+            analysis["packet_rate"] = dict(analysis["packet_rate"])
+            
+            # Calculate additional metrics
+            analysis["average_packet_rate"] = len(packets) / 20  # packets per second
+            analysis["tcp_completion_rate"] = sum(
+                1 for conn in analysis["tcp_connections"].values()
+                if conn["syn"] > 0 and conn["fin"] > 0
+            ) / len(analysis["tcp_connections"]) if analysis["tcp_connections"] else 0
             
             self.results["packet_capture"] = {
                 "interface": iface,
-                "duration": 10,
+                "duration": 20,
                 "capture_file": capture_file,
                 "analysis": analysis
             }
             
-            print(f"Captured {len(packets)} packets")
+            print(f"Captured and analyzed {len(packets)} packets")
             
         except Exception as e:
             self.results["errors"].append(f"Packet capture error: {str(e)}")
