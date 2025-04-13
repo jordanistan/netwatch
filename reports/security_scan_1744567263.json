@@ -1,0 +1,5497 @@
+{
+  "timestamp": "2025-04-13T18:00:33.476319",
+  "threats": [
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 12,
+        "timestamp": 1744567237.0546222
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 13,
+        "timestamp": 1744567237.0546525
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0546565
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0555944
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.056108
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0561426
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0561469
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0561504
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0561538
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.056159
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.056165
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0561724
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0561774
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 14,
+        "timestamp": 1744567237.0561807
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 15,
+        "timestamp": 1744567237.0561845
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.057001
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.057209
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.057772
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578094
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578108
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578117
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578184
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578368
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578463
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578601
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578766
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578878
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0578935
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.057903
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0579307
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0579512
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0579631
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0579863
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.057993
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.058007
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.058009
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.058033
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0580444
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0580473
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0580535
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0580978
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.058833
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0608785
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0694592
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0695689
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0695708
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0695715
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0696099
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0696108
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0696115
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.069612
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0696123
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.069619
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 16,
+        "timestamp": 1744567237.0718937
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 17,
+        "timestamp": 1744567237.0736468
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 18,
+        "timestamp": 1744567237.0746589
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 19,
+        "timestamp": 1744567237.0746927
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 19,
+        "timestamp": 1744567237.0746975
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 20,
+        "timestamp": 1744567237.074701
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 21,
+        "timestamp": 1744567237.0747046
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 22,
+        "timestamp": 1744567237.0747085
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 23,
+        "timestamp": 1744567237.0747123
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 24,
+        "timestamp": 1744567237.0747159
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 24,
+        "timestamp": 1744567237.076309
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 24,
+        "timestamp": 1744567237.0763466
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 25,
+        "timestamp": 1744567237.0763483
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 25,
+        "timestamp": 1744567237.0763488
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 25,
+        "timestamp": 1744567237.0763495
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 25,
+        "timestamp": 1744567237.0766356
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 26,
+        "timestamp": 1744567237.076638
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 26,
+        "timestamp": 1744567237.0804043
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 26,
+        "timestamp": 1744567237.0804183
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 26,
+        "timestamp": 1744567237.080424
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 26,
+        "timestamp": 1744567237.0804293
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 26,
+        "timestamp": 1744567237.0804307
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 27,
+        "timestamp": 1744567237.7961934
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 27,
+        "timestamp": 1744567237.7964692
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 27,
+        "timestamp": 1744567237.797721
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 27,
+        "timestamp": 1744567237.7983756
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 28,
+        "timestamp": 1744567237.7994125
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.7999058
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.7999454
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8002136
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8011384
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8042195
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8042874
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8042889
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8042893
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8043022
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.804304
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8043041
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8043046
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8043048
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8043146
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8046758
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.804678
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8046784
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8046787
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.804679
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8046794
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8046799
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.80468
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8047488
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.8047504
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 29,
+        "timestamp": 1744567237.806011
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 30,
+        "timestamp": 1744567237.8078895
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 31,
+        "timestamp": 1744567237.8079228
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 32,
+        "timestamp": 1744567237.8079274
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 33,
+        "timestamp": 1744567237.8079314
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 34,
+        "timestamp": 1744567237.8079348
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 35,
+        "timestamp": 1744567237.8086748
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 36,
+        "timestamp": 1744567237.8087041
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 37,
+        "timestamp": 1744567237.8087087
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 38,
+        "timestamp": 1744567237.8087122
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.808716
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.80872
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8087237
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8087273
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8087313
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8087528
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8095734
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8096201
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8096259
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8096297
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8096333
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.809772
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8097968
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8098526
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8098547
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8098702
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8099098
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.809919
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8099267
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8099349
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.809954
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8099616
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8099678
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8099756
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.8099923
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.810012
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567237.810019
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567238.0697649
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567238.0699592
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567238.069962
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567238.0704174
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567238.0735092
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0838943
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0838995
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0840092
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.084075
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.084078
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.084268
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0843139
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.086383
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.08664
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.088845
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0888922
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0888946
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0889
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.088901
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0889037
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0889044
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0889452
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0889466
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0891073
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0894704
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0895967
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0912426
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0919802
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.0920227
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.6070166
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.6070616
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.6070633
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.6070929
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.6071582
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 39,
+        "timestamp": 1744567239.6071737
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 41,
+        "timestamp": 1744567242.547715
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 43,
+        "timestamp": 1744567244.083254
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 44,
+        "timestamp": 1744567246.9925933
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 44,
+        "timestamp": 1744567246.9937944
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 44,
+        "timestamp": 1744567246.9948103
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 45,
+        "timestamp": 1744567246.9952204
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 45,
+        "timestamp": 1744567246.9956017
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567246.9957137
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567246.9960434
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567246.9967523
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0008748
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.001007
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0010083
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.001009
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.001173
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0011764
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0011766
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.001177
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0011773
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0014176
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.00142
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0014203
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0014207
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.001421
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0014215
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.001422
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0017889
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0017905
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0017908
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0017912
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 46,
+        "timestamp": 1744567247.0031812
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 47,
+        "timestamp": 1744567247.004714
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 48,
+        "timestamp": 1744567247.0048203
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 49,
+        "timestamp": 1744567247.0048258
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 50,
+        "timestamp": 1744567247.004973
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 51,
+        "timestamp": 1744567247.0050466
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 52,
+        "timestamp": 1744567247.0050542
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 53,
+        "timestamp": 1744567247.005058
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 54,
+        "timestamp": 1744567247.0051153
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 55,
+        "timestamp": 1744567247.0051596
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0052083
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0054462
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0054681
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0058267
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.005859
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0058634
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0058672
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.005871
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0058744
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0058782
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.005882
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0087354
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0088177
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.008904
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0089693
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0089724
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0089853
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0089962
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 56,
+        "timestamp": 1744567247.0090287
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 57,
+        "timestamp": 1744567247.024297
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 57,
+        "timestamp": 1744567247.0248213
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 57,
+        "timestamp": 1744567247.0264883
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 57,
+        "timestamp": 1744567247.027121
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 58,
+        "timestamp": 1744567247.02782
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 58,
+        "timestamp": 1744567247.0282705
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.028377
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.028666
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0294423
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0333989
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0334961
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.033497
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.033498
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0335104
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0335112
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0335119
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.033512
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0335126
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0338628
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0338647
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.033865
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0338655
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.033866
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0338664
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0338666
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0338671
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0339413
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0339448
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0339453
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 59,
+        "timestamp": 1744567247.0354517
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 60,
+        "timestamp": 1744567247.037068
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 61,
+        "timestamp": 1744567247.0372357
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 62,
+        "timestamp": 1744567247.0372968
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 63,
+        "timestamp": 1744567247.0377264
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 64,
+        "timestamp": 1744567247.0377314
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 64,
+        "timestamp": 1744567247.0392127
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 64,
+        "timestamp": 1744567247.0392718
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 64,
+        "timestamp": 1744567247.0394075
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 64,
+        "timestamp": 1744567247.0394297
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 65,
+        "timestamp": 1744567247.797118
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 65,
+        "timestamp": 1744567247.797411
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 65,
+        "timestamp": 1744567247.7992878
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 65,
+        "timestamp": 1744567247.799888
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 66,
+        "timestamp": 1744567247.8008394
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.801125
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8013
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.80141
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8023984
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8055928
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8057022
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8057036
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.805704
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8057365
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8057375
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8057377
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.805738
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8057382
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8060377
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8060393
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8060398
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8060403
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8060405
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8061137
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8061163
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8061168
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.806117
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8061175
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8061178
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.806427
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 67,
+        "timestamp": 1744567247.8079374
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 68,
+        "timestamp": 1744567247.809712
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 69,
+        "timestamp": 1744567247.8097436
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 70,
+        "timestamp": 1744567247.809748
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 71,
+        "timestamp": 1744567247.8097513
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 72,
+        "timestamp": 1744567247.8097548
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 73,
+        "timestamp": 1744567247.8097615
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 74,
+        "timestamp": 1744567247.8097937
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 75,
+        "timestamp": 1744567247.8102872
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 76,
+        "timestamp": 1744567247.810571
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 76,
+        "timestamp": 1744567247.8108168
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 76,
+        "timestamp": 1744567247.8108478
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 76,
+        "timestamp": 1744567247.8108506
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 76,
+        "timestamp": 1744567247.8108528
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8108554
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8108578
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.81086
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.810862
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8108642
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8108997
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8114054
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8127406
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8127713
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8127728
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8127735
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8127744
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8127906
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8128023
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.812809
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.812827
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.812854
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.812878
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567247.8128953
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567248.0197232
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567248.0199122
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567248.0199146
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567248.0203524
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 77,
+        "timestamp": 1744567248.0217795
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 78,
+        "timestamp": 1744567248.1793916
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 79,
+        "timestamp": 1744567248.179671
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 80,
+        "timestamp": 1744567248.1796746
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 81,
+        "timestamp": 1744567248.179695
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 82,
+        "timestamp": 1744567248.1797037
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 82,
+        "timestamp": 1744567249.0312152
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0315983
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0316088
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0316098
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.031687
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0316951
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0316968
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0318513
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0339587
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 83,
+        "timestamp": 1744567249.0347989
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.036853
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.036905
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.036908
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.036937
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0369394
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0369768
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0369787
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0370073
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0370111
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0371594
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.037168
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.037173
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0391927
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0392995
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.0393493
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.5617085
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.561758
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.5617754
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.5618052
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.5619898
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 84,
+        "timestamp": 1744567249.5620596
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 85,
+        "timestamp": 1744567257.06268
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 85,
+        "timestamp": 1744567257.0639257
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 85,
+        "timestamp": 1744567257.065552
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 86,
+        "timestamp": 1744567257.0663097
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 87,
+        "timestamp": 1744567257.066837
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 87,
+        "timestamp": 1744567257.0668721
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 88,
+        "timestamp": 1744567257.0668764
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 88,
+        "timestamp": 1744567257.0672226
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 88,
+        "timestamp": 1744567257.067247
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 88,
+        "timestamp": 1744567257.0683591
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 88,
+        "timestamp": 1744567257.068513
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 88,
+        "timestamp": 1744567257.0693636
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 89,
+        "timestamp": 1744567257.0701425
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 89,
+        "timestamp": 1744567257.0707068
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0707972
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0712097
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0721946
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.075585
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.076441
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.076448
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0764484
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0766041
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0766087
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0766094
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0766096
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.07661
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0777006
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0787113
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.078714
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0787146
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0787148
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0787153
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0787156
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.078716
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0787163
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0787165
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.078717
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0814621
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0816052
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0818167
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0818193
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0818195
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0818582
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0818594
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.08186
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.0818605
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 90,
+        "timestamp": 1744567257.081861
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0836902
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837188
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837202
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837204
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.083721
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837212
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837216
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837219
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837224
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837226
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837271
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 91,
+        "timestamp": 1744567257.0837276
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 92,
+        "timestamp": 1744567257.090758
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 93,
+        "timestamp": 1744567257.0915022
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 94,
+        "timestamp": 1744567257.0954142
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 94,
+        "timestamp": 1744567257.095487
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 95,
+        "timestamp": 1744567257.100746
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 96,
+        "timestamp": 1744567257.1008766
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 97,
+        "timestamp": 1744567257.1028748
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 97,
+        "timestamp": 1744567257.1029286
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 97,
+        "timestamp": 1744567257.102972
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 98,
+        "timestamp": 1744567257.801395
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 98,
+        "timestamp": 1744567257.8017397
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 98,
+        "timestamp": 1744567257.8030326
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 98,
+        "timestamp": 1744567257.803574
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 99,
+        "timestamp": 1744567257.8043356
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.804686
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8047276
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8049436
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.806023
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8111684
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8113048
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.811306
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8113062
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8113358
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8113368
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.811337
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8113372
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8113377
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.811812
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118134
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118136
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118138
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.811814
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118143
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118422
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118434
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118436
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118443
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8118448
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 100,
+        "timestamp": 1744567257.8132446
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 101,
+        "timestamp": 1744567257.8152828
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 102,
+        "timestamp": 1744567257.8156667
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 103,
+        "timestamp": 1744567257.8162093
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 103,
+        "timestamp": 1744567257.8162396
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 104,
+        "timestamp": 1744567257.8162436
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 105,
+        "timestamp": 1744567257.8162477
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 106,
+        "timestamp": 1744567257.816251
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 107,
+        "timestamp": 1744567257.8162546
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 108,
+        "timestamp": 1744567257.816258
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 108,
+        "timestamp": 1744567257.8162947
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 109,
+        "timestamp": 1744567257.8163202
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8169627
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8169937
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8169994
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8171382
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8171663
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.817174
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8171775
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.817181
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.817557
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8175936
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8176174
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.817716
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8177183
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8177564
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8178148
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8180408
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8184066
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8184097
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8184247
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.818441
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.8184423
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.9073656
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 110,
+        "timestamp": 1744567257.9074879
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 111,
+        "timestamp": 1744567258.100893
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 111,
+        "timestamp": 1744567258.101041
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 111,
+        "timestamp": 1744567258.1010435
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 111,
+        "timestamp": 1744567258.10156
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 111,
+        "timestamp": 1744567258.1027424
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 111,
+        "timestamp": 1744567258.931217
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 111,
+        "timestamp": 1744567259.1073895
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 112,
+        "timestamp": 1744567259.1074805
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1074824
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1074867
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1074874
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1074913
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.107492
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1075227
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.107524
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1076493
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1077232
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1077673
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1089826
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.110535
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1105704
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1113038
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1114602
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 113,
+        "timestamp": 1744567259.1114624
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.1118302
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.1118603
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.111903
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.1119037
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.112116
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.113402
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.113489
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.4432938
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.625648
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.6257265
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.6258368
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.6259468
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.6275773
+      }
+    },
+    {
+      "type": "Port Scan Detected",
+      "severity": "High",
+      "details": {
+        "source_ip": "192.168.65.7",
+        "target_ip": "192.168.65.1",
+        "ports_attempted": 114,
+        "timestamp": 1744567259.627808
+      }
+    }
+  ],
+  "suspicious_activities": [],
+  "vulnerabilities": [],
+  "statistics": {
+    "total_packets": 1060,
+    "duration": 30,
+    "packet_rate": 35.333333333333336,
+    "unique_ips": 2,
+    "threats_detected": 548,
+    "suspicious_activities": 0,
+    "vulnerabilities": 0
+  },
+  "scan_results": {}
+}

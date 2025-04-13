@@ -19,15 +19,36 @@ class SecurityAnalyzer:
         }
         
         # Initialize threat detection parameters
-        self.port_scan_threshold = 10  # ports/second
-        self.syn_flood_threshold = 50  # SYNs/second
-        self.failed_conn_threshold = 0.3  # 30% of total
+        self.port_scan_threshold = 30  # ports/second
+        self.syn_flood_threshold = 100  # SYNs/second
+        self.failed_conn_threshold = 0.5  # 50% of total
+        self.data_exfil_threshold = 5000000  # 5MB
+        
+        # Known safe ports/services
+        self.safe_ports = {2375, 2376}  # Docker daemon ports
+        
+        # Potentially dangerous ports
         self.blacklist_ports = {
             21: "FTP", 23: "Telnet", 445: "SMB",
             135: "RPC", 137: "NetBIOS", 139: "NetBIOS",
             3389: "RDP", 5900: "VNC"
         }
         
+        # Docker-related IPs and subnets to monitor but not alert on
+        self.docker_networks = [
+            "172.17.0.0/16",  # Default bridge network
+            "172.18.0.0/16",  # User-defined networks
+            "172.19.0.0/16",
+            "172.20.0.0/16",
+            "172.21.0.0/16",
+            "192.168.0.0/20"  # Docker Desktop subnet
+        ]
+        
+    def is_docker_traffic(self, ip):
+        """Check if IP is in Docker network ranges"""
+        ip_obj = ipaddress.ip_address(ip)
+        return any(ip_obj in ipaddress.ip_network(net) for net in self.docker_networks)
+
     def detect_port_scans(self, packets):
         """Detect potential port scanning activities"""
         port_attempts = defaultdict(lambda: defaultdict(set))
@@ -40,22 +61,33 @@ class SecurityAnalyzer:
                 dport = pkt[TCP].dport
                 timestamp = pkt.time
                 
+                # Skip if both source and destination are Docker-related
+                if self.is_docker_traffic(src) and self.is_docker_traffic(dst):
+                    continue
+                    
+                # Skip known safe ports
+                if dport in self.safe_ports:
+                    continue
+                
                 # Track unique ports per source
                 port_attempts[src][dst].add(dport)
                 
                 # Check rate of port attempts
                 if len(port_attempts[src][dst]) > self.port_scan_threshold:
                     if timestamp - scan_window[src][dst] <= 1.0:  # within 1 second
-                        self.results["threats"].append({
-                            "type": "Port Scan Detected",
-                            "severity": "High",
-                            "details": {
-                                "source_ip": src,
-                                "target_ip": dst,
-                                "ports_attempted": len(port_attempts[src][dst]),
-                                "timestamp": timestamp
-                            }
-                        })
+                        # Additional validation for Docker traffic
+                        if not (self.is_docker_traffic(src) or self.is_docker_traffic(dst)):
+                            self.results["threats"].append({
+                                "type": "Port Scan Detected",
+                                "severity": "High",
+                                "details": {
+                                    "source_ip": src,
+                                    "target_ip": dst,
+                                    "ports_attempted": len(port_attempts[src][dst]),
+                                    "timestamp": timestamp,
+                                    "ports": list(port_attempts[src][dst])
+                                }
+                            })
                     scan_window[src][dst] = timestamp
 
     def detect_syn_flood(self, packets):
