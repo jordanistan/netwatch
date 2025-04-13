@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from datetime import datetime
 from pathlib import Path
-from collections import defaultdict
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any, Tuple
 
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
-from scapy.layers.inet import IP, TCP, UDP, ICMP
+from scapy.layers.inet import IP, TCP, UDP
+from scapy.layers.http import HTTP
 from scapy.layers.l2 import Ether, ARP
 import streamlit as st
 import pandas as pd
@@ -405,7 +405,7 @@ class NetWatch:
             st.error(f"Error extracting media content: {str(e)}")
             return []
     
-    def analyze_pcap(self, pcap_file):
+    def analyze_pcap(self, pcap_file: Union[str, Path]) -> Optional[Dict[str, Any]]:
         """Analyze a PCAP file and return statistics"""
         try:
             packets = rdpcap(str(pcap_file))
@@ -427,27 +427,29 @@ class NetWatch:
                 stats['packet_sizes'].append(len(packet))
                 
                 # Analyze protocols
-                if packet.haslayer(scapy.TCP):
+                if packet.haslayer(TCP):
                     proto = 'TCP'
-                elif packet.haslayer(scapy.UDP):
+                elif packet.haslayer(UDP):
                     proto = 'UDP'
-                elif packet.haslayer(scapy.ICMP):
-                    proto = 'ICMP'
                 else:
                     proto = 'Other'
                     
                 stats['protocols'][proto] = stats['protocols'].get(proto, 0) + 1
                 
                 # Collect IP information
-                if packet.haslayer(scapy.IP):
-                    src = packet[scapy.IP].src
-                    dst = packet[scapy.IP].dst
-                    stats['ips']['src'][src] = stats['ips']['src'].get(src, 0) + 1
-                    stats['ips']['dst'][dst] = stats['ips']['dst'].get(dst, 0) + 1
+                if packet.haslayer(IP):
+                    try:
+                        src = packet[IP].src
+                        dst = packet[IP].dst
+                        stats['ips']['src'][src] = stats['ips']['src'].get(src, 0) + 1
+                        stats['ips']['dst'][dst] = stats['ips']['dst'].get(dst, 0) + 1
+                    except (IndexError, AttributeError) as e:
+                        st.warning(f"Error processing IP packet: {str(e)}")
+                        continue
             
             return stats
             
-        except Exception as e:
+        except (OSError, IOError) as e:
             st.error(f"Error analyzing PCAP: {str(e)}")
             return None
 
