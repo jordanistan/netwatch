@@ -192,6 +192,7 @@ class TrafficCapture:
                 'ftp': [],  # List of FTP transfers
                 'sftp': []  # List of SFTP transfers
             }
+        }
         
         for packet in packets:
             # Get timestamp and size

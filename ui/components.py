@@ -340,7 +340,6 @@ def show_pcap_analysis(stats):
     if stats['web']['urls']:
         st.subheader("🌐 Web Traffic")
         tabs = st.tabs(["URLs by Device", "Top Domains", "Media Types"])
-        
         with tabs[0]:
             # Show URLs visited by each device
             for ip, urls in stats['web']['urls'].items():
@@ -351,14 +350,12 @@ def show_pcap_analysis(stats):
                             st.markdown(f"[🌐 {visit['url']}]({visit['url']})")
                         with col2:
                             st.caption(datetime.fromtimestamp(visit['timestamp']).strftime('%H:%M:%S'))
-        
         with tabs[1]:
             # Show top domains
             domains_df = pd.DataFrame(
                 stats['web']['domains'].items(),
                 columns=['Domain', 'Visits']
             ).sort_values('Visits', ascending=False).head(20)
-            
             fig = px.bar(domains_df,
                          x='Domain', y='Visits',
                          title="Top Domains Visited",
@@ -366,7 +363,6 @@ def show_pcap_analysis(stats):
                          color_continuous_scale='Viridis')
             fig.update_layout(xaxis_tickangle=45)
             st.plotly_chart(fig, use_container_width=True)
-        
         with tabs[2]:
             # Show media types
             if stats['web']['media_types']:
@@ -374,17 +370,14 @@ def show_pcap_analysis(stats):
                     stats['web']['media_types'].items(),
                     columns=['Type', 'Count']
                 ).sort_values('Count', ascending=False)
-                
                 fig = px.pie(media_df,
                             values='Count',
                             names='Type',
                             title="Content Types Distribution")
                 st.plotly_chart(fig, use_container_width=True)
-    
     # Media Analysis
     if stats['media']['streams'] or stats['media']['files']:
         st.subheader("🎥 Media Analysis")
-        
         # Voice/Video Calls (SIP/RTP)
         if stats['media']['streams']:
             st.write("📞 Voice/Video Streams")
@@ -397,7 +390,6 @@ def show_pcap_analysis(stats):
                         st.write(f"Call {stream['method']}")
                         if stream['method'] == 'INVITE':
                             st.button("▶️ Play Call Recording", key=f"play_{stream['timestamp']}")
-        
         # Media Files
         if stats['media']['files']:
             st.write("🎨 Media Files")
@@ -406,11 +398,9 @@ def show_pcap_analysis(stats):
                     st.write(f"Time: {datetime.fromtimestamp(media['timestamp']).strftime('%H:%M:%S')}")
                     st.write(f"Size: {format_bytes(media['size'])}")
                     st.button("▶️ Play Media", key=f"play_media_{media['timestamp']}")
-    
     # File Transfer Analysis
     if stats['file_transfers']['ftp'] or stats['file_transfers']['sftp']:
         st.subheader("📁 File Transfers")
-        
         col1, col2 = st.columns(2)
         with col1:
             if stats['file_transfers']['ftp']:
@@ -418,18 +408,15 @@ def show_pcap_analysis(stats):
                 for transfer in sorted(stats['file_transfers']['ftp'], key=lambda x: x['timestamp']):
                     st.info(f"Command: {transfer['command']}")
                     st.caption(f"{transfer['source']} → {transfer['destination']} at {datetime.fromtimestamp(transfer['timestamp']).strftime('%H:%M:%S')}")
-        
         with col2:
             if stats['file_transfers']['sftp']:
                 st.write("🔒 SFTP Transfers")
                 for transfer in sorted(stats['file_transfers']['sftp'], key=lambda x: x['timestamp']):
                     st.info(f"Size: {format_bytes(transfer['size'])}")
                     st.caption(f"{transfer['source']} → {transfer['destination']} at {datetime.fromtimestamp(transfer['timestamp']).strftime('%H:%M:%S')}")
-    
     # BitTorrent Analysis
     if stats['torrents']['peers'] or stats['torrents']['data_transfer']:
         st.subheader("🔥 P2P Traffic")
-        
         col1, col2 = st.columns(2)
         with col1:
             # Show peer connections
@@ -442,7 +429,6 @@ def show_pcap_analysis(stats):
                             color='Peer Count',
                             color_continuous_scale='Viridis')
                 st.plotly_chart(fig, use_container_width=True)
-        
         with col2:
             # Show data transfer
             transfer_data = [(ip, bytes) for ip, bytes in stats['torrents']['data_transfer'].items()]
