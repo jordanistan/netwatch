@@ -118,10 +118,16 @@ class TrafficVisualizer:
 
         # Process connections
         for connection, weight in connections.items():
-            src_ip, dst_ip = connection.split('-')
-            nodes.add(src_ip)
-            nodes.add(dst_ip)
-            edges.append((src_ip, dst_ip, weight))
+            try:
+                parts = connection.split('-')
+                if len(parts) != 2:
+                    continue  # Skip malformed connections
+                src_ip, dst_ip = parts
+                nodes.add(src_ip)
+                nodes.add(dst_ip)
+                edges.append((src_ip, dst_ip, weight))
+            except Exception as e:
+                print(f"Warning: Skipping malformed connection {connection}: {e}")
         
         # Calculate node adjacencies (number of connections for each node)
         node_adjacencies = {}
@@ -258,17 +264,39 @@ class TrafficVisualizer:
         # Create matrix of connections
         ips = set()
         for connection in connections:
-            src, dst = connection.split('-')
-            ips.add(src)
-            ips.add(dst)
+            try:
+                parts = connection.split('-')
+                if len(parts) != 2:
+                    continue
+                src, dst = parts
+                ips.add(src)
+                ips.add(dst)
+            except Exception as e:
+                print(f"Warning: Skipping malformed connection {connection} in IP collection: {e}")
+                continue
+
         ips = sorted(list(ips))
+        if not ips:  # If no valid IPs were found
+            fig = go.Figure()
+            fig.update_layout(
+                title="No Valid Connection Data Available",
+                showlegend=False
+            )
+            return fig
 
         matrix = np.zeros((len(ips), len(ips)))
         for connection, weight in connections.items():
-            src, dst = connection.split('-')
-            i = ips.index(src)
-            j = ips.index(dst)
-            matrix[i][j] = weight
+            try:
+                parts = connection.split('-')
+                if len(parts) != 2:
+                    continue
+                src, dst = parts
+                i = ips.index(src)
+                j = ips.index(dst)
+                matrix[i][j] = weight
+            except Exception as e:
+                print(f"Warning: Skipping malformed connection {connection} in matrix creation: {e}")
+                continue
 
         # Create heatmap
         fig = go.Figure(data=go.Heatmap(
