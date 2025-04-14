@@ -5,40 +5,35 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    tcpdump \
-    tshark \
-    curl \
-    net-tools \
-    iputils-ping \
-    iproute2 \
-    libcap2-bin \
-    libpcap-dev \
-    gcc \
-    python3-dev \
+    tcpdump=4.99.1-3 \
+    tshark=3.4.9-1 \
+    curl=7.74.0-1.3+deb11u11 \
+    net-tools=1.60+git20181103.0eebece-1 \
+    iputils-ping=3:20210202-1 \
+    iproute2=5.10.0-4 \
+    libcap2-bin=1:2.44-1 \
+    libpcap-dev=1.10.0-2 \
+    gcc=4:10.2.1-1 \
+    python3-dev=3.9.2-3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create directories
-RUN mkdir -p /app/captures /app/logs /app/reports
+# Create directories and set up Python environment
+RUN mkdir -p /app/captures /app/logs /app/reports && \
+    pip install --no-cache-dir --upgrade pip==23.3.1 setuptools==69.0.2 wheel==0.42.0
 
-# Upgrade pip and install build tools
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel
-
-# Install Python dependencies in multiple steps to handle timeouts
+# Install Python dependencies
 COPY requirements.txt .
+# Install all Python dependencies in one layer to reduce image size
 RUN pip install --no-cache-dir --timeout 100 \
     streamlit==1.27.0 \
     scapy==2.5.0 \
     pandas==2.1.0 \
     plotly==5.17.0 \
-    python-dotenv==1.0.0
-
-RUN pip install --no-cache-dir --timeout 100 \
+    python-dotenv==1.0.0 \
     aiohttp==3.9.1 \
     requests==2.31.0 \
     slack-sdk==3.26.0 \
-    pyshark==0.6.0
-
-RUN pip install --no-cache-dir --timeout 100 \
+    pyshark==0.6.0 \
     psutil==5.9.6 \
     dnspython==2.4.2 \
     pypcap==1.3.0 \
@@ -49,10 +44,12 @@ RUN pip install --no-cache-dir --timeout 100 \
 # Copy application files
 COPY . .
 
-# Set permissions for network tools
+# Set permissions for network tools and create non-root user
 RUN setcap cap_net_raw,cap_net_admin=eip /usr/bin/tcpdump && \
     setcap cap_net_raw,cap_net_admin=eip /usr/bin/tshark && \
-    setcap cap_net_raw,cap_net_admin=eip /usr/local/bin/python3.9
+    setcap cap_net_raw,cap_net_admin=eip /usr/local/bin/python3.9 && \
+    useradd -m -s /bin/bash netwatch && \
+    chown -R netwatch:netwatch /app
 
 # Configure environment
 ENV STREAMLIT_SERVER_PORT=8502 \
@@ -65,12 +62,12 @@ ENV STREAMLIT_SERVER_PORT=8502 \
 # Expose port
 EXPOSE 8502
 
-# Create non-root user
-RUN useradd -m -s /bin/bash netwatch && \
-    chown -R netwatch:netwatch /app
-
 # Switch to non-root user
 USER netwatch
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8502/_stcore/health || exit 1
 
 # Run the application with network capabilities
 ENTRYPOINT ["python3", "-m", "streamlit", "run", "netwatch.py"]
