@@ -175,7 +175,53 @@ class NetworkScanner:
             reverse=True  # Newest first
         )
     
-    def get_new_devices(self, limit=10):
+    def is_device_tracked(self, mac):
+        """Check if a device is being tracked
+        Args:
+            mac: MAC address of the device
+        Returns:
+            bool: True if device is tracked, False otherwise
+        """
+        return mac in self.tracked_devices["devices"]
+
+    def track_device(self, mac):
+        """Add a device to tracked devices
+        Args:
+            mac: MAC address of the device to track
+        """
+        if mac not in self.tracked_devices["devices"]:
+            self.tracked_devices["devices"].append(mac)
+            self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
+
+    def untrack_device(self, mac):
+        """Remove a device from tracked devices
+        Args:
+            mac: MAC address of the device to untrack
+        """
+        if mac in self.tracked_devices["devices"]:
+            self.tracked_devices["devices"].remove(mac)
+            self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
+    
+    def get_tracked_devices(self):
+        """Get all tracked devices that are currently active
+        Returns:
+            List of tracked devices with their current status
+        """
+        tracked = []
+        for mac in self.tracked_devices["devices"]:
+            if mac in self.device_history["devices"]:
+                info = self.device_history["devices"][mac]
+                tracked.append({
+                    "mac": mac,
+                    "ip": info["ip_history"][-1],
+                    "hostname": info["hostname"],
+                    "first_seen": info["first_seen"],
+                    "last_seen": info["last_seen"],
+                    "activity": self._get_activity_status(info)
+                })
+        return tracked
+
+    def get_new_devices(self, limit=10, include_tracked=False):
         """Get recently active devices (new or rejoining)
         Args:
             limit: Maximum number of devices to return
@@ -184,7 +230,6 @@ class NetworkScanner:
         """
         if not self.device_history["devices"]:
             return []
-        
         # Get devices sorted by most recent activity
         sorted_devices = sorted(
             [
@@ -194,12 +239,13 @@ class NetworkScanner:
                     "hostname": info["hostname"],
                     "first_seen": info["first_seen"],
                     "last_seen": info["last_seen"],
-                    "activity": self._get_activity_status(info)
+                    "activity": self._get_activity_status(info),
+                    "tracked": self.is_device_tracked(mac)
                 }
                 for mac, info in self.device_history["devices"].items()
+                if include_tracked or not self.is_device_tracked(mac)
             ],
             key=lambda d: d["last_seen"],  # Sort by last_seen instead of first_seen
             reverse=True  # Newest first
         )
-        
         return sorted_devices[:limit]

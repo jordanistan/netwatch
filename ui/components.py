@@ -35,12 +35,59 @@ def show_network_info(interface, ip):
 def show_scan_results(devices, netwatch):
     """Display network scan results"""
     if devices:
-        # Show newest devices first
-        st.subheader("🌞 Latest Network Activity")
-        new_devices = netwatch.scanner.get_new_devices(limit=10)
-        if new_devices:
-            st.info(f"✨ {len(new_devices)} recently active devices")
-            # Create a DataFrame for new devices
+        # Show tracked devices first
+        st.subheader("📌 Tracked Devices")
+        tracked_devices = netwatch.scanner.get_tracked_devices()
+        if tracked_devices:
+            st.success(f"🎯 {len(tracked_devices)} tracked devices found")
+            tracked_df = pd.DataFrame([
+                {
+                    'IP Address': d['ip'],
+                    'MAC Address': d['mac'],
+                    'Device Name': d['hostname'],
+                    'Activity': d['activity'],
+                    'First Seen': datetime.fromisoformat(d['first_seen']).strftime('%Y-%m-%d %H:%M:%S'),
+                    'Last Seen': datetime.fromisoformat(d['last_seen']).strftime('%Y-%m-%d %H:%M:%S'),
+                    'Actions': False
+                }
+                for d in tracked_devices
+            ])
+            # Display tracked devices with untrack button
+            edited_tracked_df = st.data_editor(
+                tracked_df,
+                column_config={
+                    'IP Address': st.column_config.TextColumn(width="medium"),
+                    'MAC Address': st.column_config.TextColumn(width="medium"),
+                    'Device Name': st.column_config.TextColumn(width="medium"),
+                    'Activity': st.column_config.TextColumn(
+                        width="small",
+                        help="Device activity status"
+                    ),
+                    'First Seen': st.column_config.TextColumn(width="medium"),
+                    'Last Seen': st.column_config.TextColumn(width="medium"),
+                    'Actions': st.column_config.CheckboxColumn(
+                        "Untrack Device",
+                        help="Uncheck to stop tracking this device",
+                        default=False
+                    )
+                },
+                hide_index=True,
+                use_container_width=True
+            )
+            # Handle untracking devices
+            for _, row in edited_tracked_df.iterrows():
+                if row['Actions']:
+                    netwatch.scanner.untrack_device(row['MAC Address'])
+                    st.rerun()
+        else:
+            st.info("No tracked devices yet")
+        # Show other devices
+        st.subheader("🌞 Other Network Devices")
+        new_devices = netwatch.scanner.get_new_devices(limit=50, include_tracked=True)
+        untracked_devices = [d for d in new_devices if not d['tracked']]
+        if untracked_devices:
+            st.info(f"✨ {len(untracked_devices)} untracked devices")
+            # Create a DataFrame for untracked devices
             new_df = pd.DataFrame([
                 {
                     'IP Address': d['ip'],
@@ -48,11 +95,13 @@ def show_scan_results(devices, netwatch):
                     'Device Name': d['hostname'],
                     'Activity': d['activity'],
                     'First Seen': datetime.fromisoformat(d['first_seen']).strftime('%Y-%m-%d %H:%M:%S'),
-                    'Last Seen': datetime.fromisoformat(d['last_seen']).strftime('%Y-%m-%d %H:%M:%S')
+                    'Last Seen': datetime.fromisoformat(d['last_seen']).strftime('%Y-%m-%d %H:%M:%S'),
+                    'Track': False
                 }
-                for d in new_devices
+                for d in untracked_devices
             ])
-            st.dataframe(
+            # Display untracked devices with track button
+            edited_df = st.data_editor(
                 new_df,
                 column_config={
                     'IP Address': st.column_config.TextColumn(width="medium"),
@@ -60,44 +109,28 @@ def show_scan_results(devices, netwatch):
                     'Device Name': st.column_config.TextColumn(width="medium"),
                     'Activity': st.column_config.TextColumn(
                         width="small",
-                        help="Whether this is a new device or a device that has rejoined the network"
+                        help="Device activity status"
                     ),
                     'First Seen': st.column_config.TextColumn(width="medium"),
-                    'Last Seen': st.column_config.TextColumn(width="medium")
+                    'Last Seen': st.column_config.TextColumn(width="medium"),
+                    'Track': st.column_config.CheckboxColumn(
+                        "Track Device",
+                        help="Check to start tracking this device",
+                        default=False
+                    )
                 },
                 hide_index=True,
                 use_container_width=True
             )
-
-        # Show all devices
-        st.subheader("📶 All Network Devices")
-        st.success(f"✨ Found {len(devices)} total devices")
-        # Create a nice looking dataframe
-        df = pd.DataFrame(devices)
-        df = df.fillna("N/A")
-        # Add styling
-        st.dataframe(
-            df,
-            column_config={
-                "ip": st.column_config.TextColumn(
-                    "IP Address",
-                    help="Device IP address",
-                    width="medium"
-                ),
-                "mac": st.column_config.TextColumn(
-                    "MAC Address",
-                    help="Physical hardware address",
-                    width="medium"
-                ),
-                "hostname": st.column_config.TextColumn(
-                    "Device Name",
-                    help="Network hostname if available"
-                )
-            },
-            hide_index=True,
-            use_container_width=True
-        )
-        st.balloons()
+            # Handle tracking new devices
+            for _, row in edited_df.iterrows():
+                if row['Track']:
+                    netwatch.scanner.track_device(row['MAC Address'])
+                    st.rerun()
+        else:
+            st.warning("No other devices found")
+        if tracked_devices or untracked_devices:
+            st.balloons()
     else:
         st.warning("😕 No devices found")
 
