@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-from datetime import datetime
+import json
 from pathlib import Path
 
-import scapy.all as scapy
-from scapy.utils import wrpcap, rdpcap
 import streamlit as st
-import pandas as pd
-import plotly.express as px
+
+from network.scanner import NetworkScanner
+from network.capture import TrafficCapture
+from ui.components import setup_page, show_network_info, show_scan_results, show_pcap_analysis, show_traffic_capture_ui
 
 class NetWatch:
     def __init__(self):
@@ -14,266 +14,93 @@ class NetWatch:
         self.captures_dir = self.base_dir / "captures"
         self.reports_dir = self.base_dir / "reports"
         self.logs_dir = self.base_dir / "logs"
-        
         # Create necessary directories
         for dir_path in [self.captures_dir, self.reports_dir, self.logs_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
-
-    def get_default_interface(self):
-        """Get the default network interface that's connected to LAN"""
-        try:
-            # On macOS, common LAN interfaces start with 'en' (ethernet/wifi)
-            interfaces = scapy.get_if_list()
-            
-            # First, try to find active ethernet or wifi interface
-            for iface in interfaces:
-                if iface.startswith('en'):
-                    ip = scapy.get_if_addr(iface)
-                    if ip and not ip.startswith('169.254'):  # Exclude self-assigned IPs
-                        st.debug(f"Found active interface {iface} with IP {ip}")
-                        return iface
-            
-            # If no 'en' interface, try other interfaces except loopback and virtual
-            for iface in interfaces:
-                if not any(iface.startswith(x) for x in ['lo', 'docker', 'br-', 'vbox', 'vmnet']):
-                    ip = scapy.get_if_addr(iface)
-                    if ip and not ip.startswith('169.254'):
-                        st.debug(f"Found alternative interface {iface} with IP {ip}")
-                        return iface
-            
-            st.error("No suitable network interface found")
-            return None
-        except Exception as e:
-            st.error(f"Error finding network interface: {str(e)}")
-            return None
-
-    def get_network_range(self, interface):
-        """Get the network range for the given interface"""
-        try:
-            if not interface:
-                raise ValueError("No interface provided")
-
-            # Get IP address of interface
-            ip = scapy.get_if_addr(interface)
-            if not ip:
-                raise ValueError(f"No IP address found for interface {interface}")
-            
-            if ip.startswith('127.'):
-                raise ValueError(f"Interface {interface} is bound to loopback")
-            
-            # Parse IP components
-            ip_parts = ip.split('.')
-            if len(ip_parts) != 4:
-                raise ValueError(f"Invalid IP format: {ip}")
-            
-            # Determine network class and range
-            first_octet = int(ip_parts[0])
-            if first_octet == 10:  # Class A private network
-                return "10.0.0.0/8"
-            elif first_octet == 172 and 16 <= int(ip_parts[1]) <= 31:  # Class B private network
-                return f"172.{ip_parts[1]}.0.0/16"
-            elif first_octet == 192 and ip_parts[1] == '168':  # Class C private network
-                return f"192.168.{ip_parts[2]}.0/24"
-            else:
-                st.warning(f"IP {ip} is not in a private network range")
-                return f"{'.'.join(ip_parts[:3])}.0/24"
-                
-        except Exception as e:
-            st.error(f"Error determining network range: {str(e)}")
-            return None
-
-    def scan_network(self, network_range=None):
-        """Scan network for devices using ARP"""
-        # Get the default interface
-        interface = self.get_default_interface()
-        if not interface:
-            st.error("Could not find a suitable network interface")
-            return []
-
-        # Get the network range
-        if network_range is None:
-            network_range = self.get_network_range(interface)
-            if not network_range:
-                st.error("Could not determine network range")
-                return []
-
-        st.info(f"📡 Interface: {interface}")
-        st.info(f"🌐 Network: {network_range}")
-
-        # Create and send ARP request
-        try:
-            with st.spinner("Scanning network..."):
-                # Configure Scapy for the interface
-                scapy.conf.iface = interface
-                
-                # Create ARP request
-                arp = scapy.ARP(pdst=network_range)
-                ether = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
-                packet = ether/arp
-
-                # Send packet and get responses
-                result = scapy.srp(packet, timeout=5, verbose=0, iface=interface)[0]
-                
-                # Process responses
-                devices = []
-                for sent, received in result:
-                    device = {
-                        'ip': received.psrc,
-                        'mac': received.hwsrc,
-                        'hostname': None
-                    }
-                    try:
-                        # Try to get hostname (optional)
-                        hostname = scapy.conf.socket.gethostbyaddr(received.psrc)[0]
-                        device['hostname'] = hostname
-                    except:
-                        pass
-                    devices.append(device)
-
-                # Show results
-                if devices:
-                    st.success(f"✨ Found {len(devices)} devices")
-                    return devices
-                else:
-                    st.warning("⚠️ No devices responded to ARP scan")
-                    return []
-
-        except Exception as e:
-            st.error(f"❌ Scan failed: {str(e)}")
-            return []
-
-    def capture_traffic(self, target_ip, duration=60):
-        """Capture network traffic for a specific IP"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = self.captures_dir / f"traffic_{target_ip.replace('.', '_')}_{timestamp}.pcap"
-        
-        # Using scapy for capture
-        packets = scapy.sniff(
-            filter=f"host {target_ip}",
-            timeout=duration
-        )
-        wrpcap(str(output_file), packets)
-        return output_file
-
-    def analyze_pcap(self, pcap_file):
-        """Analyze a PCAP file and return statistics"""
-        packets = rdpcap(str(pcap_file))
-        stats = {
-            'total_packets': len(packets),
-            'protocols': {},
-            'packet_sizes': [],
-            'timestamps': [],
-            'ips': {'src': {}, 'dst': {}}
-        }
-        
-        for packet in packets:
-            # Collect timestamp
-            stats['timestamps'].append(float(packet.time))
-            
-            # Collect packet size
-            stats['packet_sizes'].append(len(packet))
-            
-            # Analyze protocols
-            if packet.haslayer(scapy.TCP):
-                proto = 'TCP'
-            elif packet.haslayer(scapy.UDP):
-                proto = 'UDP'
-            elif packet.haslayer(scapy.ICMP):
-                proto = 'ICMP'
-            else:
-                proto = 'Other'
-                
-            stats['protocols'][proto] = stats['protocols'].get(proto, 0) + 1
-            
-            # Collect IP information
-            if packet.haslayer(scapy.IP):
-                src = packet[scapy.IP].src
-                dst = packet[scapy.IP].dst
-                stats['ips']['src'][src] = stats['ips']['src'].get(src, 0) + 1
-                stats['ips']['dst'][dst] = stats['ips']['dst'].get(dst, 0) + 1
-        
-        return stats
+        # Initialize components
+        self.scanner = NetworkScanner()
+        self.capture = TrafficCapture(self.captures_dir)
 
 def main():
-    st.set_page_config(page_title="NetWatch Dashboard", layout="wide")
-    st.title("NetWatch Network Monitoring Dashboard")
-
+    # Initialize NetWatch
     netwatch = NetWatch()
-
-    # Sidebar
-    st.sidebar.title("Controls")
+    # Setup page
+    setup_page()
+    # Navigation in sidebar
+    st.sidebar.title("Navigation")
     action = st.sidebar.radio(
         "Select Action",
         ["Network Scan", "Traffic Capture", "PCAP Analysis"]
     )
+    # Get network interface
+    interface, ip = netwatch.scanner.get_default_interface()
+    show_network_info(interface, ip)
 
     if action == "Network Scan":
-        st.header("Network Device Scanner")
-        if st.button("Scan Network"):
-            with st.spinner("Scanning network..."):
-                devices = netwatch.scan_network()
-                if devices:
-                    df = pd.DataFrame(devices)
-                    st.dataframe(df)
-                else:
-                    st.warning("No devices found")
+        st.header("Network Scan")
+        # Scan button at the top
+        if st.button("🔍 Start Network Scan", type="primary", use_container_width=True):
+            if interface and ip:
+                # Get network range
+                network_range = netwatch.scanner.get_network_range(interface, ip)
+                if network_range:
+                    st.info(f"📡 Interface: {interface}")
+                    st.info(f"🌐 Network: {network_range}")
+                    # Scan for devices
+                    with st.spinner("Scanning network..."):
+                        devices = netwatch.scanner.scan_devices(interface, network_range)
+                        show_scan_results(devices, netwatch)
+            else:
+                st.error("No suitable network interface found")
 
     elif action == "Traffic Capture":
-        st.header("Traffic Capture")
-        target_ip = st.text_input("Target IP")
-        duration = st.slider("Capture Duration (seconds)", 10, 300, 60)
-        
-        if st.button("Start Capture"):
-            with st.spinner(f"Capturing traffic for {duration} seconds..."):
-                pcap_file = netwatch.capture_traffic(target_ip, duration)
-                st.success(f"Capture completed: {pcap_file}")
+        # Initialize devices list
+        devices = []
+        # Check for tracked devices first
+        tracked_devices_file = Path("data/tracked_devices.json")
+        tracked_macs = set()
+        if tracked_devices_file.exists():
+            tracked_devices = json.loads(tracked_devices_file.read_text())
+            tracked_macs = {d["mac"] for d in tracked_devices["devices"]}
+            # If we have tracked devices but no cached devices, do a scan
+            if tracked_macs and not netwatch.scanner.get_cached_devices():
+                st.info("✨ Checking for tracked devices...")
+                if interface and ip:
+                    network_range = netwatch.scanner.get_network_range(interface, ip)
+                    if network_range:
+                        with st.spinner("Scanning for tracked devices..."):
+                            scan_devices = netwatch.scanner.scan_devices(interface, network_range)
+                            # Filter to show only tracked devices
+                            devices = [d for d in scan_devices if d["mac"] in tracked_macs]
+                            if devices:
+                                st.success(f"Found {len(devices)} tracked devices")
+                            else:
+                                st.warning("No tracked devices found on the network")
+        # If no devices found from tracked scan, use cached devices
+        if not devices:
+            devices = netwatch.scanner.get_cached_devices() or []
+            if not devices:
+                st.info("🔍 Click 'Scan for Devices' to discover network devices")
+        # Show traffic capture UI
+        show_traffic_capture_ui(netwatch, devices)
 
     elif action == "PCAP Analysis":
         st.header("PCAP Analysis")
         pcap_files = list(netwatch.captures_dir.glob("*.pcap"))
-        
+
         if not pcap_files:
             st.warning("No PCAP files found")
-            return
+        else:
+            selected_file = st.selectbox(
+                "Select PCAP file",
+                pcap_files,
+                format_func=lambda x: x.name
+            )
 
-        selected_file = st.selectbox(
-            "Select PCAP file",
-            pcap_files,
-            format_func=lambda x: x.name
-        )
-
-        if st.button("Analyze"):
-            with st.spinner("Analyzing PCAP file..."):
-                stats = netwatch.analyze_pcap(selected_file)
-                
-                # Display statistics
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.subheader("Protocol Distribution")
-                    fig = px.pie(
-                        values=list(stats['protocols'].values()),
-                        names=list(stats['protocols'].keys()),
-                        title="Protocol Distribution"
-                    )
-                    st.plotly_chart(fig)
-
-                with col2:
-                    st.subheader("Packet Sizes Over Time")
-                    df = pd.DataFrame({
-                        'timestamp': pd.to_datetime(stats['timestamps'], unit='s'),
-                        'size': stats['packet_sizes']
-                    })
-                    fig = px.line(df, x='timestamp', y='size', title="Packet Sizes Over Time")
-                    st.plotly_chart(fig)
-
-                # Top IPs
-                st.subheader("Top Source IPs")
-                src_ips = pd.DataFrame(
-                    stats['ips']['src'].items(),
-                    columns=['IP', 'Count']
-                ).sort_values('Count', ascending=False).head(10)
-                st.bar_chart(src_ips.set_index('IP'))
+            if st.button("Analyze"):
+                with st.spinner("Analyzing PCAP file..."):
+                    stats = netwatch.capture.analyze_pcap(selected_file)
+                    show_pcap_analysis(stats)
 
 if __name__ == "__main__":
     main()
