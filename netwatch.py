@@ -206,9 +206,8 @@ class NetWatch:
     def analyze_pcap(self, pcap_file: Union[str, Path]) -> Optional[Dict[str, Any]]:
         """Analyze a PCAP file and return statistics"""
         try:
-            packets = rdpcap(str(pcap_file))
-            stats = {
-                'total_packets': len(packets),
+            pcap_stats = {
+                'total_packets': 0,
                 'protocols': {},
                 'packet_sizes': [],
                 'timestamps': [],
@@ -217,35 +216,41 @@ class NetWatch:
                 'media_files': self.extract_media_content(pcap_file)
             }
             
-            for packet in packets:
+            # Use PcapReader to avoid loading entire file into memory
+            for packet in scapy.PcapReader(str(pcap_file)):
+                pcap_stats['total_packets'] += 1
+                
                 # Collect timestamp
                 if packet.time:
-                    stats['timestamps'].append(packet.time)
+                    pcap_stats['timestamps'].append(packet.time)
                 
                 # Collect packet size
-                stats['packet_sizes'].append(len(packet))
+                pcap_stats['packet_sizes'].append(len(packet))
                 
                 # Collect protocol information
                 if packet.haslayer(TCP):
-                    stats['protocols']['TCP'] = stats['protocols'].get('TCP', 0) + 1
+                    pcap_stats['protocols']['TCP'] = pcap_stats['protocols'].get('TCP', 0) + 1
                 elif packet.haslayer(UDP):
-                    stats['protocols']['UDP'] = stats['protocols'].get('UDP', 0) + 1
+                    pcap_stats['protocols']['UDP'] = pcap_stats['protocols'].get('UDP', 0) + 1
                 
                 # Collect IP information
                 if packet.haslayer(IP):
                     try:
                         src = packet[IP].src
                         dst = packet[IP].dst
-                        stats['ips']['src'][src] = stats['ips']['src'].get(src, 0) + 1
-                        stats['ips']['dst'][dst] = stats['ips']['dst'].get(dst, 0) + 1
+                        pcap_stats['ips']['src'][src] = pcap_stats['ips']['src'].get(src, 0) + 1
+                        pcap_stats['ips']['dst'][dst] = pcap_stats['ips']['dst'].get(dst, 0) + 1
                     except (IndexError, AttributeError) as e:
                         st.warning(f"Error processing IP packet: {str(e)}")
                         continue
             
-            return stats
+            return pcap_stats
             
         except (OSError, IOError) as e:
             st.error(f"Error analyzing PCAP: {str(e)}")
+            return None
+        except Exception as e:
+            st.error(f"Unexpected error analyzing PCAP: {str(e)}")
             return None
 
     def extract_http_traffic(self, pcap_file):
@@ -358,7 +363,7 @@ class NetWatch:
                 
                 # Process responses
                 devices = []
-                for sent, received in result:
+                for _, received in result:
                     # Get hostname using reverse DNS lookup
                     try:
                         hostname = socket.gethostbyaddr(received.psrc)[0]
