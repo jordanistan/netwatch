@@ -1,7 +1,5 @@
-import requests
 import asyncio
 import aiohttp
-import time
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -10,7 +8,7 @@ def generate_voip_sample():
     return {
         'type': 'voip_call',
         'protocol': 'SIP/RTP',
-        'src_ip': '192.168.86.42',
+        'src_ip': '10.0.0.100',
         'dst_ip': '192.168.86.100',
         'start_time': datetime.now() - timedelta(minutes=5),
         'duration': 300,  # 5 minutes in seconds
@@ -19,7 +17,7 @@ def generate_voip_sample():
         'status': 'completed',
         'media_url': 'https://example.com/sample-call.wav',
         'call_id': 'CALL-001-2025',
-        'participants': ['Alice <sip:alice@192.168.86.42>', 'Bob <sip:bob@192.168.86.100>'],
+        'participants': ['Alice <sip:alice@10.0.0.100>', 'Bob <sip:bob@192.168.86.100>'],
         'quality_metrics': {
             'jitter': '15ms',
             'latency': '50ms',
@@ -49,7 +47,7 @@ async def generate_test_traffic():
         "https://malware.example.com/payload.exe",
         
         # Simulated VoIP traffic
-        "sip:alice@192.168.86.42",
+        "sip:alice@10.0.0.100",
         "sip:bob@192.168.86.100",
         "https://cryptominer.example.net/worker.js",
         "https://botnet.example.org/command.php",

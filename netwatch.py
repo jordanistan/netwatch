@@ -517,7 +517,6 @@ def main():
     def display_suspicious_activity(ip: str):
         if is_suspicious_ip(ip):
             st.error("🚨 HIGH RISK DEVICE DETECTED")
-            stats = generate_simulated_stats()
             risk = get_risk_assessment()
             
             col1, col2 = st.columns(2)

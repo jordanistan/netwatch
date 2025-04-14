@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any
 from test_traffic import generate_voip_sample
 
 def generate_simulated_stats() -> Dict[str, Any]:
