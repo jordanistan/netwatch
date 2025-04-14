@@ -1,16 +1,26 @@
 """Traffic capture functionality for NetWatch"""
 import time
+import re
 from datetime import datetime
 from pathlib import Path
 from collections import defaultdict
+from urllib.parse import urlparse
 
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
 import streamlit as st
 
 # Import additional Scapy layers
-from scapy.layers.inet import UDP, IP
+from scapy.layers.inet import UDP, IP, TCP
 from scapy.layers.dns import DNS
+from scapy.layers.http import HTTPRequest, HTTPResponse
+
+# Try to import TLS layer
+try:
+    from scapy.layers.tls import TLS
+    HAS_TLS_LAYER = True
+except ImportError:
+    HAS_TLS_LAYER = False
 
 # Try to import optional layers
 try:
@@ -19,7 +29,6 @@ try:
     HAS_VOIP_LAYERS = True
 except ImportError:
     HAS_VOIP_LAYERS = False
-    st.warning("VoIP analysis features are not available. Install scapy[voip] for full functionality.")
 
 class TrafficCapture:
     def __init__(self, captures_dir):
@@ -178,9 +187,13 @@ class TrafficCapture:
                 'SYN': 0, 'ACK': 0, 'FIN': 0, 'RST': 0, 'PSH': 0, 'URG': 0
             },
             'web': {
-                'urls': defaultdict(list),  # URLs visited by each IP
+                'urls': defaultdict(lambda: []),  # URLs visited by each IP
                 'domains': defaultdict(int),  # Domain visit counts
-                'media_types': defaultdict(int)  # Content-Type counts
+                'media_types': defaultdict(int),  # Content-Type counts
+                'thumbnails': defaultdict(str),  # URL thumbnails
+                'titles': defaultdict(str),  # Page titles
+                'descriptions': defaultdict(str),  # Meta descriptions
+                'favicons': defaultdict(str)  # Favicon URLs
             },
             'media': {
                 'streams': [],  # List of media streams (SIP, RTP, etc.)
@@ -281,6 +294,82 @@ class TrafficCapture:
                                 'destination': ip.dst,
                                 'size': size
                             })
+                
+                # HTTP Analysis
+                elif TCP in packet and packet[TCP].dport == 80:
+                    app_proto = "HTTP"
+                    if packet.haslayer(HTTPRequest):
+                        http_layer = packet[HTTPRequest]
+                        if hasattr(http_layer, 'Host') and hasattr(http_layer, 'Path'):
+                            try:
+                                host = http_layer.Host.decode()
+                                path = http_layer.Path.decode()
+                                url = f"http://{host}{path}"
+                                ip_src = packet[IP].src
+                                # Store URL visit
+                                stats['web']['urls'][ip_src].append({
+                                    'url': url,
+                                    'timestamp': timestamp,
+                                    'method': http_layer.Method.decode() if hasattr(http_layer, 'Method') else 'GET'
+                                })
+                                # Parse domain
+                                parsed_url = urlparse(url)
+                                stats['web']['domains'][parsed_url.netloc] += 1
+                                # Look for metadata in subsequent packets
+                                if hasattr(http_layer, 'Headers') and isinstance(http_layer.Headers, dict):
+                                    content_type = http_layer.Headers.get(b'Content-Type', b'').decode()
+                                    stats['web']['media_types'][content_type] += 1
+                            except Exception as e:
+                                st.error(f"Error processing HTTP request: {e}")
+                    elif packet.haslayer(HTTPResponse):
+                        http_layer = packet[HTTPResponse]
+                        if hasattr(http_layer, 'Headers') and isinstance(http_layer.Headers, dict):
+                            try:
+                                # Extract content type
+                                content_type = http_layer.Headers.get(b'Content-Type', b'').decode()
+                                stats['web']['media_types'][content_type] += 1
+                                # Look for HTML content with metadata
+                                if b'text/html' in http_layer.Headers.get(b'Content-Type', b''):
+                                    payload = bytes(http_layer.payload)
+                                    # Extract title
+                                    title_match = re.search(b'<title[^>]*>([^<]+)</title>', payload, re.I)
+                                    if title_match:
+                                        title = title_match.group(1).decode()
+                                        stats['web']['titles'][url] = title
+                                    # Extract description
+                                    desc_match = re.search(b'<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"\'>]+)', payload, re.I)
+                                    if desc_match:
+                                        desc = desc_match.group(1).decode()
+                                        stats['web']['descriptions'][url] = desc
+                                    # Extract favicon
+                                    favicon_match = re.search(b'<link[^>]+rel=["\'](?:shortcut )?icon["\'][^>]+href=["\']([^"\'>]+)', payload, re.I)
+                                    if favicon_match:
+                                        favicon = favicon_match.group(1).decode()
+                                        if not favicon.startswith('http'):
+                                            favicon = f"http://{host}{favicon}"
+                                        stats['web']['favicons'][url] = favicon
+                            except Exception as e:
+                                st.error(f"Error processing HTTP response: {e}")
+                # HTTPS Analysis
+                elif TCP in packet and packet[TCP].dport == 443:
+                    app_proto = "HTTPS"
+                    if HAS_TLS_LAYER and packet.haslayer(TLS):
+                        try:
+                            tls_layer = packet[TLS]
+                            if hasattr(tls_layer, 'type') and tls_layer.type == 22:  # Handshake
+                                if hasattr(tls_layer, 'msg') and hasattr(tls_layer.msg[0], 'servername'):
+                                    hostname = tls_layer.msg[0].servername.decode()
+                                    ip_src = packet[IP].src
+                                    url = f"https://{hostname}/"
+                                    # Store HTTPS connection
+                                    stats['web']['urls'][ip_src].append({
+                                        'url': url,
+                                        'timestamp': timestamp,
+                                        'method': 'CONNECT'
+                                    })
+                                    stats['web']['domains'][hostname] += 1
+                        except Exception as e:
+                            st.error(f"Error processing HTTPS packet: {e}")
                 
                 # DNS Analysis
                 elif packet.haslayer(DNS):

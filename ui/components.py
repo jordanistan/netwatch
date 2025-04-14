@@ -322,6 +322,38 @@ def format_bytes(size):
 
 def show_pcap_analysis(stats):
     """Display PCAP analysis results"""
+    # Check VoIP analysis availability
+    from network.capture import HAS_VOIP_LAYERS
+    if not HAS_VOIP_LAYERS:
+        st.warning("VoIP analysis features are not available. Install scapy[voip] for full functionality.")
+    # Web Traffic Analysis
+    st.header("🌐 Web Traffic Analysis")
+    # URLs by Device
+    if stats['web']['urls']:
+        st.subheader("🌐 URLs by Device")
+        for ip, urls in stats['web']['urls'].items():
+            with st.expander(f"Device {ip} - {len(urls)} URLs visited"):
+                for visit in urls:
+                    url = visit['url']
+                    timestamp = visit['timestamp']
+                    method = visit.get('method', 'GET')
+                    # Create a card-like display for each URL
+                    col1, col2 = st.columns([1, 3])
+                    with col1:
+                        # Show favicon if available
+                        favicon = stats['web']['favicons'].get(url)
+                        if favicon:
+                            st.image(favicon, width=32)
+                        else:
+                            st.markdown("🌐")
+                    with col2:
+                        # Show URL with title and description
+                        title = stats['web']['titles'].get(url, url)
+                        description = stats['web']['descriptions'].get(url, '')
+                        st.markdown(f"**[{title}]({url})**")
+                        if description:
+                            st.markdown(f"_{description}_")
+                        st.text(f"{method} - {timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
     # Summary statistics
     st.header("📊 Traffic Analysis")
     
