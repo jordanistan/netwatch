@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iputils-ping \
     iproute2 \
     libcap2-bin \
+    libpcap-dev \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Create directories
