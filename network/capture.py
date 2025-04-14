@@ -11,8 +11,15 @@ import streamlit as st
 # Import additional Scapy layers
 from scapy.layers.inet import UDP, IP
 from scapy.layers.dns import DNS
-from scapy.layers.rtp import RTP
-from scapy.layers.sip import SIP
+
+# Try to import optional layers
+try:
+    from scapy.layers.rtp import RTP
+    from scapy.layers.sip import SIP
+    HAS_VOIP_LAYERS = True
+except ImportError:
+    HAS_VOIP_LAYERS = False
+    st.warning("VoIP analysis features are not available. Install scapy[voip] for full functionality.")
 
 class TrafficCapture:
     def __init__(self, captures_dir):
@@ -248,31 +255,32 @@ class TrafficCapture:
                 # Update port stats
                 stats['ports']['src'][sport] = stats['ports']['src'].get(sport, 0) + 1
                 stats['ports']['dst'][dport] = stats['ports']['dst'].get(dport, 0) + 1
-                # SIP/RTP Analysis
-                if packet.haslayer(SIP):
-                    app_proto = "SIP"
-                    sip = packet[SIP]
-                    if hasattr(sip, 'Method') and sip.Method in [b'INVITE', b'BYE']:
+                # SIP/RTP Analysis (if available)
+                if HAS_VOIP_LAYERS:
+                    if packet.haslayer(SIP):
+                        app_proto = "SIP"
+                        sip = packet[SIP]
+                        if hasattr(sip, 'Method') and sip.Method in [b'INVITE', b'BYE']:
+                            if IP in packet:
+                                ip = packet[IP]
+                                stats['media']['streams'].append({
+                                    'type': 'SIP',
+                                    'method': sip.Method.decode(),
+                                    'timestamp': timestamp,
+                                    'source': ip.src,
+                                    'destination': ip.dst
+                                })
+                    elif packet.haslayer(RTP):
+                        app_proto = "RTP"
                         if IP in packet:
                             ip = packet[IP]
                             stats['media']['streams'].append({
-                                'type': 'SIP',
-                                'method': sip.Method.decode(),
+                                'type': 'RTP',
                                 'timestamp': timestamp,
                                 'source': ip.src,
-                                'destination': ip.dst
+                                'destination': ip.dst,
+                                'size': size
                             })
-                elif packet.haslayer(RTP):
-                    app_proto = "RTP"
-                    if IP in packet:
-                        ip = packet[IP]
-                        stats['media']['streams'].append({
-                            'type': 'RTP',
-                            'timestamp': timestamp,
-                            'source': ip.src,
-                            'destination': ip.dst,
-                            'size': size
-                        })
                 
                 # DNS Analysis
                 elif packet.haslayer(DNS):
