@@ -39,7 +39,8 @@ def is_suspicious_ip(ip: str) -> bool:
         ip_obj = ipaddress.ip_address(ip)
 
         # Check if IP is in private ranges (RFC 1918)
-        is_private = ip_obj.is_private
+        # Use is_private in future implementation
+        suspicious = not ip_obj.is_private
 
         # TODO: Implement actual suspicious behavior detection based on:
         # 1. Traffic patterns (high bandwidth, unusual ports)
@@ -289,10 +290,10 @@ class NetWatch:
             # Check if this is our simulated file
             if '192-168-86-42' in str(pcap_file):
                 return generate_simulated_stats()['http_traffic']
-                
-            packets = rdpcap(str(pcap_file))
+
+            packets = scapy.rdpcap(str(pcap_file))
             http_traffic = []
-            
+
             for packet in packets:
                 if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
                     try:
@@ -330,14 +331,14 @@ class NetWatch:
             # Check if this is our simulated file
             if '192-168-86-42' in str(pcap_file):
                 return generate_simulated_stats()['media_files']
-                
-            packets = rdpcap(str(pcap_file))
+
+            packets = scapy.rdpcap(str(pcap_file))
             media_files = []
-            
+
             # Create directory for extracted files
             media_dir = self.captures_dir / 'media'
             media_dir.mkdir(exist_ok=True)
-            
+
             return media_files
         except Exception as e:
             st.error(f"Error extracting media content: {str(e)}")
@@ -386,7 +387,8 @@ class NetWatch:
 
                 if result == 0:
                     return device_type
-            except:
+            except Exception as e:
+                st.error(f"Error processing packet: {str(e)}")
                 continue
         
         return "Unknown"
@@ -472,7 +474,7 @@ class NetWatch:
                         mac = received.hwsrc.upper()
                         oui = mac.replace(':', '')[:6]
                         vendor = variables.MAC_VENDORS.get(oui, "Unknown Vendor")
-                    except:
+                    except (KeyError, ValueError) as e:
                         vendor = "Unknown Vendor"
 
                     # Check if device is on local network
@@ -491,7 +493,7 @@ class NetWatch:
                     # Add device type based on common ports
                     try:
                         device_info['type'] = self._detect_device_type(received.psrc)
-                    except:
+                    except (socket.error, TimeoutError) as e:
                         device_info['type'] = "Unknown"
 
                     devices.append(device_info)
@@ -1049,9 +1051,9 @@ def main():
                 scenario_files,
                 format_func=lambda x: x.name.split('_')[0].title()
             )
-            
+
             if selected_scenario:
-                analyze_scenario(selected_scenario)
+                netwatch.analyze_scenario(selected_scenario)
         else:
             st.info("No security scenarios found. Generate some using generate_scenarios.py")
 
