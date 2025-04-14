@@ -1,0 +1,27 @@
+{
+    "devices": [
+        {
+            "name": "My Laptop",
+            "ip": "192.168.1.100",
+            "mac": "00:11:22:33:44:55",
+            "description": "Personal MacBook Pro"
+        },
+        {
+            "name": "Smartphone",
+            "ip": "192.168.1.101",
+            "mac": "AA:BB:CC:DD:EE:FF",
+            "description": "iPhone"
+        },
+        {
+            "name": "Smart TV",
+            "ip": "192.168.1.102",
+            "mac": "11:22:33:44:55:66",
+            "description": "Living Room TV"
+        },
+        {
+            "mac": "b8:27:eb:13:19:3b",
+            "last_known_ip": "192.168.86.42",
+            "hostname": "birdy.lan"
+        }
+    ]
+}

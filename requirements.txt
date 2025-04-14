@@ -3,13 +3,4 @@ scapy==2.5.0
 pandas==2.1.0
 plotly==5.17.0
 python-dotenv==1.0.0
-aiohttp==3.11.0b0
-requests==2.32.2
-slack-sdk==3.26.0
-pyshark==0.6.0
-psutil==5.9.6
-dnspython==2.6.1
-pypcap==1.3.0
 netifaces==0.11.0
-cryptography==44.0.1
-pyOpenSSL==23.3.0
