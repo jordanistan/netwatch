@@ -6,19 +6,30 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import scapy.all as scapy
 import netifaces
-import streamlit as st
 
 class NetworkScanner:
     def __init__(self):
         self.cached_devices = []
-        self.device_history_file = Path("data/device_history.json")
-        self.device_history_file.parent.mkdir(parents=True, exist_ok=True)
+
+        # Set up data directory
+        self.data_dir = Path("data")
+        self.data_dir.mkdir(parents=True, exist_ok=True)
         
         # Load device history
+        self.device_history_file = self.data_dir / "device_history.json"
         if self.device_history_file.exists():
             self.device_history = json.loads(self.device_history_file.read_text())
         else:
             self.device_history = {"devices": {}}
+            self.device_history_file.write_text(json.dumps(self.device_history, indent=4))
+
+        # Initialize tracked devices
+        self.tracked_devices_file = self.data_dir / "tracked_devices.json"
+        if self.tracked_devices_file.exists():
+            self.tracked_devices = json.loads(self.tracked_devices_file.read_text())
+        else:
+            self.tracked_devices = {"devices": []}
+            self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
     
     def get_default_interface(self):
         """Get the default network interface that's connected to LAN"""
@@ -35,13 +46,13 @@ class NetworkScanner:
                 if netifaces.AF_INET in addrs:
                     ip = addrs[netifaces.AF_INET][0]['addr']
                     if not ip.startswith('169.254'):  # Exclude self-assigned IPs
-                        st.write(f"Found active interface {iface} with IP {ip}")
+                        print(f"[Scanner] Found active interface {iface} with IP {ip}")
                         return iface, ip
             
-            st.error("No suitable network interface found")
+            print("[Scanner] No suitable network interface found")
             return None, None
         except Exception as e:
-            st.error(f"Error finding network interface: {str(e)}")
+            print(f"[Scanner] Error finding network interface: {str(e)}")
             return None, None
 
     def get_network_range(self, interface, ip):
@@ -66,11 +77,11 @@ class NetworkScanner:
             elif first_octet == 192 and ip_parts[1] == '168':  # Class C private network
                 return f"192.168.{ip_parts[2]}.0/24"
             else:
-                st.warning(f"IP {ip} is not in a private network range")
+                print(f"[Scanner] IP {ip} is not in a private network range")
                 return f"{'.'.join(ip_parts[:3])}.0/24"
                 
         except Exception as e:
-            st.error(f"Error determining network range: {str(e)}")
+            print(f"[Scanner] Error determining network range: {str(e)}")
             return None
 
     def scan_devices(self, interface, network_range):
@@ -126,7 +137,7 @@ class NetworkScanner:
                             # Save device history
                             self.device_history_file.write_text(json.dumps(self.device_history, indent=4))
                     except Exception as e:
-                        st.warning(f"Could not process device {received.psrc}: {str(e)}")
+                        print(f"[Scanner] Could not process device {received.psrc}: {str(e)}")
                         continue
                 
                 # Small delay between attempts
@@ -137,7 +148,7 @@ class NetworkScanner:
             self.cached_devices = devices
             return devices
         except Exception as e:
-            st.error(f"Error scanning network: {str(e)}")
+            print(f"[Scanner] Error scanning network: {str(e)}")
             return []
     
     def _get_activity_status(self, device_info):
@@ -208,11 +219,13 @@ class NetworkScanner:
             List of tracked devices with their current status
         """
         tracked = []
-        for mac in self.tracked_devices["devices"]:
-            if mac in self.device_history["devices"]:
-                info = self.device_history["devices"][mac]
+        # Get tracked devices that are in device history
+        for device in self.tracked_devices["devices"]:
+            mac_addr = device.get("mac")
+            if mac_addr and mac_addr in self.device_history["devices"]:
+                info = self.device_history["devices"][mac_addr]
                 tracked.append({
-                    "mac": mac,
+                    "mac": mac_addr,
                     "ip": info["ip_history"][-1],
                     "hostname": info["hostname"],
                     "first_seen": info["first_seen"],

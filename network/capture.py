@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
-import streamlit as st
 
 # Import additional Scapy layers
 from scapy.layers.inet import UDP, IP, TCP
@@ -59,13 +58,13 @@ class TrafficCapture:
                         break
             
             if not default_iface:
-                st.error("No suitable network interface found")
+                print("[Capture] No suitable network interface found")
                 return None
             
             self.interface = default_iface
-            st.info(f"📶 Capturing on interface: {self.interface}")
+            print(f"[Capture] 📶 Capturing on interface: {self.interface}")
         except Exception as e:
-            st.error(f"Error finding network interface: {str(e)}")
+            print(f"[Capture] Error finding network interface: {str(e)}")
             return None
         # Reset stop flag
         self.stop_capture = False
@@ -135,14 +134,14 @@ class TrafficCapture:
                 if progress_callback:
                     progress_callback(1.0)  # Show complete
                 wrpcap(str(pcap_file), packets)
-                st.success(f"Captured {packet_count} packets!")
+                print(f"[Capture] Captured {packet_count} packets!")
                 return pcap_file
             else:
-                st.warning("No packets were captured")
+                print("[Capture] No packets were captured")
                 return None
             
         except Exception as e:
-            st.error(f"Error during capture: {str(e)}")
+            print(f"[Capture] Error during capture: {str(e)}")
             return None
         finally:
             if progress_callback:
@@ -321,7 +320,7 @@ class TrafficCapture:
                                     content_type = http_layer.Headers.get(b'Content-Type', b'').decode()
                                     stats['web']['media_types'][content_type] += 1
                             except Exception as e:
-                                st.error(f"Error processing HTTP request: {e}")
+                                print(f"[Capture] Error processing HTTP request: {e}")
                     elif packet.haslayer(HTTPResponse):
                         http_layer = packet[HTTPResponse]
                         if hasattr(http_layer, 'Headers') and isinstance(http_layer.Headers, dict):
@@ -350,7 +349,7 @@ class TrafficCapture:
                                             favicon = f"http://{host}{favicon}"
                                         stats['web']['favicons'][url] = favicon
                             except Exception as e:
-                                st.error(f"Error processing HTTP response: {e}")
+                                print(f"[Capture] Error processing HTTP response: {e}")
                 # HTTPS Analysis
                 elif TCP in packet and packet[TCP].dport == 443:
                     app_proto = "HTTPS"
@@ -370,7 +369,7 @@ class TrafficCapture:
                                     })
                                     stats['web']['domains'][hostname] += 1
                         except Exception as e:
-                            st.error(f"Error processing HTTPS packet: {e}")
+                            print(f"[Capture] Error processing HTTPS packet: {e}")
                 
                 # DNS Analysis
                 elif packet.haslayer(DNS):
@@ -382,7 +381,7 @@ class TrafficCapture:
                                 domain = dns.qd.qname.decode()
                                 stats['web']['domains'][domain] += 1
                             except Exception as e:
-                                st.error(f"Error processing DNS packet: {e}")
+                                print(f"[Capture] Error processing DNS packet: {e}")
                 
                 elif dport == 67 or dport == 68:
                     app_proto = "DHCP"

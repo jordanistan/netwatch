@@ -1,7 +1,6 @@
 """Device monitoring functionality for NetWatch"""
 import time
 from pathlib import Path
-from datetime import datetime
 import threading
 import json
 
@@ -25,7 +24,7 @@ class DeviceMonitor:
         self.monitor_thread.daemon = True
         self.monitor_thread.start()
 
-    def stop_monitoring(self):
+    def halt_monitoring(self):
         """Stop monitoring tracked devices"""
         self.stop_monitoring = True
         if self.monitor_thread:
@@ -36,32 +35,28 @@ class DeviceMonitor:
         while not self.stop_monitoring:
             try:
                 # Load tracked devices
-                with open('data/tracked_devices.json', 'r') as f:
+                with open('data/tracked_devices.json', 'r', encoding='utf-8') as f:
                     tracked_devices = json.load(f)['devices']
                 
                 # Get list of IPs to monitor
                 target_ips = []
                 for device in tracked_devices:
-                    # Use last_known_ip if ip is not present
-                    ip = device.get('ip', device.get('last_known_ip'))
+                    # Use current IP from device info
+                    ip = device.get('ip')
                     if ip:
                         target_ips.append(ip)
                 
                 if target_ips:
                     # Start a new capture for each device
                     for device in tracked_devices:
-                        ip = device.get('ip', device.get('last_known_ip'))
+                        ip = device.get('ip')
                         if ip:
                             device_id = device.get('mac', '').replace(':', '')
                             if device_id:
-                                # Generate timestamp for this device's capture
-                                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                                capture_file = self.captures_dir / f"device_{device_id}_{timestamp}.pcap"
                                 # Create device-specific capture
                                 self.traffic_capture.capture_traffic(
                                     target_ips=[ip],
-                                    duration=60,  # 1 minute capture
-                                    output_file=capture_file
+                                    duration=60  # 1 minute capture
                                 )
                 
                 # Wait for 5 minutes before next check
@@ -70,6 +65,9 @@ class DeviceMonitor:
                         break
                     time.sleep(10)
                     
+            except (FileNotFoundError, json.JSONDecodeError) as e:
+                print(f"[Monitor] Error loading tracked devices: {e}")
+                time.sleep(60)  # Wait a minute before retrying on error
             except Exception as e:
-                print(f"Error in monitor loop: {e}")
+                print(f"[Monitor] Unexpected error: {e}")
                 time.sleep(60)  # Wait a minute before retrying on error
