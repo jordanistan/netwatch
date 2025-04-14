@@ -1,40 +1,30 @@
 #!/usr/bin/env python3
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Any, Tuple
+from typing import Dict, List, Optional, Union, Any
 
 # Network and packet analysis
 import scapy.all as scapy
-from scapy.utils import wrpcap, rdpcap
+from scapy.utils import wrpcap
 from scapy.layers.inet import IP, TCP, UDP
-from scapy.layers.http import HTTP
 from scapy.layers.l2 import Ether, ARP
 import pyshark
 
 # System and network interfaces
 import socket
 import psutil
-import netifaces
-
-# Security and encryption
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-from OpenSSL import SSL
 
 # Data analysis and visualization
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# DNS resolution
-import dns.resolver
-
 # Utility imports
-import json
 import logging
 from slack_sdk import WebClient
 from dotenv import load_dotenv
 import os
+import json
 
 # Local imports
 import variables
@@ -60,7 +50,7 @@ class NetWatch:
         # Create necessary directories
         for dir_path in [self.captures_dir, self.reports_dir, self.logs_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
-            
+        
         # Initialize logger
         self.logger = logging.getLogger('NetWatch')
         file_handler = logging.FileHandler(self.logs_dir / 'app.log')
@@ -70,7 +60,7 @@ class NetWatch:
         self.slack_client = None
         if os.getenv('SLACK_TOKEN'):
             self.slack_client = WebClient(token=os.getenv('SLACK_TOKEN'))
-            
+        
         # Traffic thresholds
         self.thresholds = {
             'bandwidth': 1000000,  # 1 Mbps
@@ -142,10 +132,13 @@ class NetWatch:
             
             return output_file
             
-        except Exception as e:
+        except (OSError, PermissionError) as e:
             self.logger.error(f"Capture error: {str(e)}")
             if 'permission' in str(e).lower():
                 self.logger.error("Insufficient permissions for packet capture")
+            return None
+        except Exception as e:
+            self.logger.error(f"Unexpected error during capture: {str(e)}")
             return None
             
     def _check_thresholds(self, packet):
@@ -163,8 +156,10 @@ class NetWatch:
                 if active_connections > self.thresholds['connection_limit']:
                     self._send_alert(f"Connection limit exceeded: {active_connections} connections")
                     
+        except (AttributeError, ValueError) as e:
+            self.logger.error(f"Error checking packet attributes: {str(e)}")
         except Exception as e:
-            self.logger.error(f"Error checking thresholds: {str(e)}")
+            self.logger.error(f"Unexpected error checking thresholds: {str(e)}")
             
     def _is_suspicious_packet(self, packet):
         """Detect suspicious packet patterns"""
