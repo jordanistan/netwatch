@@ -3,12 +3,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Any
 import re
+import ipaddress
 
 # Network and packet analysis
 import scapy.all as scapy
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.l2 import Ether, ARP
 import pyshark
+import netifaces
 
 # System and network interfaces
 import socket
@@ -31,8 +33,22 @@ from simulated_data import generate_simulated_stats, get_risk_assessment
 
 # Helper functions
 def is_suspicious_ip(ip: str) -> bool:
-    """Check if an IP address is suspicious."""
-    return any(pattern in ip for pattern in ['10.0.0.100'])
+    """Check if an IP address is suspicious based on traffic patterns and behavior."""
+    try:
+        # Convert IP string to IP address object for proper comparison
+        ip_obj = ipaddress.ip_address(ip)
+
+        # Check if IP is in private ranges (RFC 1918)
+        is_private = ip_obj.is_private
+
+        # TODO: Implement actual suspicious behavior detection based on:
+        # 1. Traffic patterns (high bandwidth, unusual ports)
+        # 2. Known malicious IP lists
+        # 3. Anomaly detection
+        # 4. Connection frequency
+        return False
+    except ValueError:
+        return False
 
 def get_ip_from_filename(filename: str) -> str:
     """Extract IP address from filename."""
@@ -413,38 +429,62 @@ class NetWatch:
     def get_default_interface(self) -> Optional[str]:
         """Get the default network interface that's connected to LAN"""
         try:
-            interfaces = scapy.get_if_list()
+            # Get all network interfaces
+            interfaces = netifaces.interfaces()
             st.markdown("### Available Network Interfaces")
             active_interfaces = []
             
             for iface in interfaces:
                 # Skip loopback and virtual interfaces
-                if iface == 'lo':
+                if iface == 'lo' or 'virtual' in iface.lower():
                     continue
-                try:
-                    ip = scapy.get_if_addr(iface)
-                    if ip and not ip.startswith('127.'):
-                        active_interfaces.append((iface, ip))
-                except:
-                    continue
+                
+                # Get interface addresses
+                addrs = netifaces.ifaddresses(iface)
+                if netifaces.AF_INET in addrs:
+                    for addr in addrs[netifaces.AF_INET]:
+                        ip = addr['addr']
+                        netmask = addr['netmask']
+
+                        # Skip localhost and link-local addresses
+                        if not ip.startswith('127.') and not ip.startswith('169.254.'):
+                            # Calculate network address
+                            ip_interface = ipaddress.IPv4Interface(f"{ip}/{netmask}")
+                            network = ip_interface.network
+
+                            active_interfaces.append({
+                                'name': iface,
+                                'ip': ip,
+                                'netmask': netmask,
+                                'network': str(network)
+                            })
+                            break
             
             if active_interfaces:
                 # Sort by interface name
-                active_interfaces.sort()
+                active_interfaces.sort(key=lambda x: x['name'])
                 
                 # Create a DataFrame for display
-                df = pd.DataFrame(active_interfaces, columns=['Interface', 'IP'])
+                df = pd.DataFrame([
+                    {
+                        'Interface': iface['name'],
+                        'IP': iface['ip'],
+                        'Network': iface['network']
+                    } for iface in active_interfaces
+                ])
+                
                 st.dataframe(
                     df,
                     column_config={
                         "Interface": "Network Interface",
-                        "IP": "IP Address"
+                        "IP": "IP Address",
+                        "Network": "Network Range"
                     },
                     use_container_width=True
                 )
                 
                 # Return first active interface
-                return active_interfaces[0][0]
+                return active_interfaces[0]['name']
             
             st.error("No active network interfaces found")
             st.info("""
@@ -455,7 +495,7 @@ class NetWatch:
             """)
             return None
             
-        except (OSError, PermissionError) as e:
+        except Exception as e:
             st.error(f"Error accessing network interfaces: {str(e)}")
             if 'permission' in str(e).lower():
                 st.info("💡 This feature requires admin privileges")
