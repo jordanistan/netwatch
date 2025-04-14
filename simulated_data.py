@@ -13,7 +13,7 @@ def generate_simulated_stats() -> Dict[str, Any]:
         'packet_sizes': [64]*1000 + [1500]*500,  # Simulated packet sizes
         'timestamps': [datetime.now().timestamp() - i*60 for i in range(1000)],  # Last 1000 minutes
         'ips': {
-            'src': {'192.168.86.42': 15783},
+            'src': {'10.0.0.100': 15783},
             'dst': {
                 'adult-site.example.com': 4521,
                 'torrent.example.net': 8945,
@@ -34,7 +34,7 @@ def generate_simulated_stats() -> Dict[str, Any]:
                 'filename': 'video1.mp4',
                 'mime_type': 'video/mp4',
                 'size': 1500000,
-                'src': '192.168.86.42',
+                'src': '10.0.0.100',
                 'dst': 'adult-site.example.com',
                 'playable': True,
                 'media_url': 'https://www.w3schools.com/html/mov_bbb.mp4'
@@ -44,7 +44,7 @@ def generate_simulated_stats() -> Dict[str, Any]:
                 'filename': 'movie.mkv',
                 'mime_type': 'video/x-matroska',
                 'size': 2500000,
-                'src': '192.168.86.42',
+                'src': '10.0.0.100',
                 'dst': 'torrent.example.net',
                 'playable': True,
                 'media_url': 'https://www.w3schools.com/html/mov_bbb.mp4'
@@ -54,7 +54,7 @@ def generate_simulated_stats() -> Dict[str, Any]:
                 'filename': 'voip_call.wav',
                 'mime_type': 'audio/wav',
                 'size': 245678,
-                'src': '192.168.86.42',
+                'src': '10.0.0.100',
                 'dst': '192.168.86.100',
                 'playable': True,
                 'media_url': 'https://www.w3schools.com/html/horse.mp3',
