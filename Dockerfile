@@ -23,23 +23,7 @@ RUN mkdir -p /app/captures /app/logs /app/reports && \
 
 # Install Python dependencies
 COPY requirements.txt .
-# Install all Python dependencies in one layer to reduce image size
-RUN pip install --no-cache-dir --timeout 100 \
-    streamlit==1.27.0 \
-    scapy==2.5.0 \
-    pandas==2.1.0 \
-    plotly==5.17.0 \
-    python-dotenv==1.0.0 \
-    aiohttp==3.9.1 \
-    requests==2.31.0 \
-    slack-sdk==3.26.0 \
-    pyshark==0.6.0 \
-    psutil==5.9.6 \
-    dnspython==2.4.2 \
-    pypcap==1.3.0 \
-    netifaces==0.11.0 \
-    cryptography==41.0.7 \
-    pyOpenSSL==23.3.0
+RUN pip install --no-cache-dir --timeout 100 -r requirements.txt
 
 # Copy application files
 COPY . .
