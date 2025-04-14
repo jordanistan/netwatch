@@ -11,6 +11,7 @@ from scapy.utils import wrpcap, rdpcap
 
 # Import additional Scapy layers
 from scapy.layers.inet import UDP, IP, TCP
+from scapy.packet import Raw
 from scapy.layers.dns import DNS
 from scapy.layers.http import HTTPRequest, HTTPResponse
 
@@ -166,6 +167,28 @@ class TrafficCapture:
                 'packets_per_second': 0,
                 'bandwidth_mbps': 0
             },
+            'security': {
+                'port_scans': defaultdict(list),  # Potential port scanning activity
+                'ssl_issues': defaultdict(list),  # SSL/TLS security issues
+                'weak_ciphers': defaultdict(list),  # Weak cipher usage
+                'plain_auth': defaultdict(list),  # Plain text authentication
+                'malware_signatures': defaultdict(list)  # Known malware patterns
+            },
+            'performance': {
+                'tcp_metrics': defaultdict(lambda: {
+                    'retransmissions': 0,
+                    'window_sizes': [],
+                    'rtt': [],
+                    'zero_windows': 0
+                }),
+                'latency': defaultdict(list),  # Per-connection latency
+                'bandwidth': defaultdict(lambda: {
+                    'in_bytes': 0,
+                    'out_bytes': 0,
+                    'time_series': defaultdict(int)
+                }),
+                'qos': defaultdict(lambda: defaultdict(int))  # QoS tags distribution
+            },
             'protocols': {
                 'transport': {},  # TCP, UDP, etc.
                 'application': {}  # HTTP, DNS, etc.
@@ -190,14 +213,42 @@ class TrafficCapture:
                 'urls': defaultdict(lambda: []),  # URLs visited by each IP
                 'domains': defaultdict(int),  # Domain visit counts
                 'media_types': defaultdict(int),  # Content-Type counts
-                'thumbnails': defaultdict(str),  # URL thumbnails
-                'titles': defaultdict(str),  # Page titles
-                'descriptions': defaultdict(str),  # Meta descriptions
-                'favicons': defaultdict(str)  # Favicon URLs
+                'requests': defaultdict(list),  # Full HTTP request details by IP
+                'responses': defaultdict(list),  # Full HTTP response details by IP
+                'content': defaultdict(list)  # Decoded content by IP
             },
             'media': {
-                'streams': [],  # List of media streams (SIP, RTP, etc.)
-                'files': []  # List of media file transfers
+                'voip': defaultdict(list),  # VoIP calls by IP (SIP/RTP)
+                'audio': defaultdict(list),  # Audio streams by IP
+                'video': defaultdict(list),  # Video streams by IP
+                'images': defaultdict(list),  # Image transfers by IP
+                'files': defaultdict(list),  # File transfers by IP
+                'streaming': defaultdict(lambda: {  # Streaming quality metrics
+                    'buffering_events': 0,
+                    'quality_changes': [],
+                    'bitrate_changes': [],
+                    'segment_downloads': []
+                })
+            },
+            'applications': {
+                'email': defaultdict(list),  # SMTP/IMAP/POP3 traffic
+                'file_transfers': defaultdict(list),  # FTP/SFTP transfers
+                'databases': defaultdict(lambda: {  # Database traffic
+                    'queries': [],
+                    'response_times': [],
+                    'error_rates': defaultdict(int)
+                }),
+                'websockets': defaultdict(lambda: {  # WebSocket connections
+                    'messages': [],
+                    'frame_types': defaultdict(int),
+                    'protocols': set()
+                }),
+                'api_calls': defaultdict(lambda: {  # REST API analytics
+                    'endpoints': defaultdict(list),
+                    'methods': defaultdict(int),
+                    'status_codes': defaultdict(int),
+                    'response_times': []
+                })
             },
             'torrents': {
                 'peers': defaultdict(set),  # Peers per IP
@@ -226,8 +277,54 @@ class TrafficCapture:
             # Analyze protocols
             if packet.haslayer(scapy.TCP):
                 proto = "TCP"
+                tcp = packet[scapy.TCP]
+                ip = packet[IP]
+                conn_key = f"{ip.src}:{tcp.sport}-{ip.dst}:{tcp.dport}"
+                # TCP Metrics
+                metrics = stats['performance']['tcp_metrics'][conn_key]
+                metrics['window_sizes'].append(tcp.window)
+                if tcp.window == 0:
+                    metrics['zero_windows'] += 1
+                # Detect retransmissions
+                if hasattr(tcp, 'seq') and hasattr(tcp, 'ack'):
+                    seq_key = (ip.src, ip.dst, tcp.sport, tcp.dport, tcp.seq)
+                    if seq_key in self._seen_segments:
+                        metrics['retransmissions'] += 1
+                    self._seen_segments.add(seq_key)
+                # Calculate RTT if possible
+                if tcp.flags & 0x10:  # ACK flag
+                    if conn_key in self._pending_acks:
+                        send_time = self._pending_acks[conn_key]
+                        rtt = timestamp - send_time
+                        metrics['rtt'].append(rtt)
+                        stats['performance']['latency'][conn_key].append(rtt)
+                        del self._pending_acks[conn_key]
+                else:
+                    self._pending_acks[conn_key] = timestamp
+                # Update bandwidth metrics
+                bw_stats = stats['performance']['bandwidth'][conn_key]
+                pkt_size = len(packet)
+                if ip.src < ip.dst:  # Consistent direction tracking
+                    bw_stats['out_bytes'] += pkt_size
+                else:
+                    bw_stats['in_bytes'] += pkt_size
+                bw_stats['time_series'][int(timestamp)] += pkt_size
+                # Security Analysis
+                # Port scanning detection
+                if tcp.flags & 0x02:  # SYN
+                    self._syn_counts[(ip.src, ip.dst, tcp.dport)] = \
+                        self._syn_counts.get((ip.src, ip.dst, tcp.dport), 0) + 1
+                    # Check for potential port scan
+                    if len([k for k in self._syn_counts.keys()
+                           if k[0] == ip.src and k[1] == ip.dst]) > 10:
+                        stats['security']['port_scans'][ip.src].append({
+                            'timestamp': timestamp,
+                            'target': ip.dst,
+                            'ports': [k[2] for k in self._syn_counts.keys()
+                                     if k[0] == ip.src and k[1] == ip.dst]
+                        })
                 # Analyze TCP flags
-                flags = packet[scapy.TCP].flags
+                flags = tcp.flags
                 if flags & 0x02:  # SYN
                     stats['tcp_flags']['SYN'] += 1
                 if flags & 0x10:  # ACK
@@ -240,6 +337,16 @@ class TrafficCapture:
                     stats['tcp_flags']['PSH'] += 1
                 if flags & 0x20:  # URG
                     stats['tcp_flags']['URG'] += 1
+                # Check for plain text authentication
+                if packet.haslayer(Raw):
+                    payload = packet[Raw].load
+                    auth_patterns = [b'password=', b'pwd=', b'pass=', b'auth=', b'login=']
+                    if any(pattern in payload.lower() for pattern in auth_patterns):
+                        stats['security']['plain_auth'][ip.src].append({
+                            'timestamp': timestamp,
+                            'dst_port': tcp.dport,
+                            'protocol': 'TCP'
+                        })
                 
                 # Get port numbers
                 sport = packet[scapy.TCP].sport
@@ -250,10 +357,265 @@ class TrafficCapture:
                 # Identify application protocols
                 if dport == 80 or sport == 80:
                     app_proto = "HTTP"
+                    if packet.haslayer(HTTPRequest):
+                        http = packet[HTTPRequest]
+                        src_ip = packet[IP].src
+                        # Extract HTTP request details
+                        request = {
+                            'timestamp': timestamp,
+                            'method': http.Method.decode() if hasattr(http, 'Method') else 'Unknown',
+                            'path': http.Path.decode() if hasattr(http, 'Path') else '',
+                            'host': http.Host.decode() if hasattr(http, 'Host') else '',
+                            'headers': {}
+                        }
+                        # Add headers if present
+                        for field in http.fields:
+                            if hasattr(http, field):
+                                value = getattr(http, field)
+                                if isinstance(value, bytes):
+                                    request['headers'][field] = value.decode(errors='ignore')
+                        stats['web']['requests'][src_ip].append(request)
+                    elif packet.haslayer(HTTPResponse):
+                        http = packet[HTTPResponse]
+                        dst_ip = packet[IP].dst
+                        # Extract HTTP response details
+                        response = {
+                            'timestamp': timestamp,
+                            'status_code': http.Status_Code if hasattr(http, 'Status_Code') else 0,
+                            'reason': http.Reason_Phrase.decode() if hasattr(http, 'Reason_Phrase') else '',
+                            'headers': {},
+                            'content_type': None
+                        }
+                        # Add headers and detect content type
+                        for field in http.fields:
+                            if hasattr(http, field):
+                                value = getattr(http, field)
+                                if isinstance(value, bytes):
+                                    decoded = value.decode(errors='ignore')
+                                    response['headers'][field] = decoded
+                                    if field.lower() == 'content-type':
+                                        response['content_type'] = decoded
+                        
+                        # Try to extract and decode content
+                        if hasattr(http, 'load'):
+                            content = http.load
+                            content_type = response['content_type']
+                            if content_type:
+                                if 'text/html' in content_type or 'text/plain' in content_type:
+                                    try:
+                                        decoded = content.decode(errors='ignore')
+                                        stats['web']['content'][dst_ip].append({
+                                            'timestamp': timestamp,
+                                            'type': 'text',
+                                            'content': decoded
+                                        })
+                                    except UnicodeDecodeError:
+                                        pass  # Skip content that can't be decoded as text
+                                elif 'image/' in content_type:
+                                    stats['media']['images'][dst_ip].append({
+                                        'timestamp': timestamp,
+                                        'type': content_type,
+                                        'size': len(content),
+                                        'data': content  # Raw image data
+                                    })
+                                elif 'audio/' in content_type:
+                                    stats['media']['audio'][dst_ip].append({
+                                        'timestamp': timestamp,
+                                        'type': content_type,
+                                        'size': len(content),
+                                        'data': content  # Raw audio data
+                                    })
+                                elif 'video/' in content_type:
+                                    stats['media']['video'][dst_ip].append({
+                                        'timestamp': timestamp,
+                                        'type': content_type,
+                                        'size': len(content),
+                                        'data': content  # Raw video data
+                                    })
+                        stats['web']['responses'][dst_ip].append(response)
                 elif dport == 443 or sport == 443:
                     app_proto = "HTTPS"
+                    if HAS_TLS_LAYER and packet.haslayer(TLS):
+                        # Record TLS handshake info
+                        tls = packet[TLS]
+                        if hasattr(tls, 'type') and tls.type == 22:  # Handshake
+                            src_ip = packet[IP].src
+                            stats['web']['requests'][src_ip].append({
+                                'timestamp': timestamp,
+                                'type': 'tls_handshake',
+                                'version': tls.version if hasattr(tls, 'version') else 'Unknown'
+                            })
                 elif dport == 53 or sport == 53:
                     app_proto = "DNS"
+                    if packet.haslayer(DNS):
+                        dns = packet[DNS]
+                        if dns.qr == 0:  # DNS query
+                            src_ip = packet[IP].src
+                            stats['web']['requests'][src_ip].append({
+                                'timestamp': timestamp,
+                                'type': 'dns_query',
+                                'query': dns.qd.qname.decode() if dns.qd else 'Unknown'
+                            })
+                # Email protocols
+                elif dport in [25, 587, 465] or sport in [25, 587, 465]:  # SMTP
+                    app_proto = "SMTP"
+                    if packet.haslayer(Raw):
+                        payload = packet[Raw].load.decode(errors='ignore')
+                        # Extract email metadata
+                        if 'MAIL FROM:' in payload:
+                            match = re.search(r'MAIL FROM:\s*<(.+?)>', payload)
+                            if match:
+                                stats['applications']['email'][ip.src].append({
+                                    'timestamp': timestamp,
+                                    'type': 'smtp_from',
+                                    'address': match.group(1)
+                                })
+                        elif 'RCPT TO:' in payload:
+                            match = re.search(r'RCPT TO:\s*<(.+?)>', payload)
+                            if match:
+                                stats['applications']['email'][ip.src].append({
+                                    'timestamp': timestamp,
+                                    'type': 'smtp_to',
+                                    'address': match.group(1)
+                                })
+                        elif 'Subject:' in payload:
+                            match = re.search(r'Subject:\s*(.+?)\r\n', payload)
+                            if match:
+                                stats['applications']['email'][ip.src].append({
+                                    'timestamp': timestamp,
+                                    'type': 'smtp_subject',
+                                    'subject': match.group(1)
+                                })
+                elif dport in [143, 993] or sport in [143, 993]:  # IMAP
+                    app_proto = "IMAP"
+                    if packet.haslayer(Raw):
+                        payload = packet[Raw].load.decode(errors='ignore')
+                        if 'FETCH' in payload:
+                            stats['applications']['email'][ip.src].append({
+                                'timestamp': timestamp,
+                                'type': 'imap_fetch',
+                                'command': payload.split('\r\n')[0]
+                            })
+                elif dport in [110, 995] or sport in [110, 995]:  # POP3
+                    app_proto = "POP3"
+                    if packet.haslayer(Raw):
+                        payload = packet[Raw].load.decode(errors='ignore')
+                        if 'RETR' in payload:
+                            stats['applications']['email'][ip.src].append({
+                                'timestamp': timestamp,
+                                'type': 'pop3_retr',
+                                'command': payload.split('\r\n')[0]
+                            })
+                # Database protocols
+                elif dport == 3306 or sport == 3306:  # MySQL
+                    app_proto = "MySQL"
+                    if packet.haslayer(Raw):
+                        payload = packet[Raw].load
+                        # MySQL protocol analysis
+                        if len(payload) > 4:  # Minimum MySQL packet length
+                            pkt_len = int.from_bytes(payload[0:3], byteorder='little')
+                            if pkt_len > 0:
+                                stats['applications']['databases'][ip.src]['queries'].append({
+                                    'timestamp': timestamp,
+                                    'type': 'mysql',
+                                    'size': pkt_len
+                                })
+                elif dport == 5432 or sport == 5432:  # PostgreSQL
+                    app_proto = "PostgreSQL"
+                    if packet.haslayer(Raw):
+                        payload = packet[Raw].load
+                        if len(payload) > 1:
+                            msg_type = chr(payload[0])  # PostgreSQL message type
+                            stats['applications']['databases'][ip.src]['queries'].append({
+                                'timestamp': timestamp,
+                                'type': 'postgresql',
+                                'message_type': msg_type
+                            })
+                elif dport == 27017 or sport == 27017:  # MongoDB
+                    app_proto = "MongoDB"
+                    if packet.haslayer(Raw):
+                        payload = packet[Raw].load
+                        if len(payload) >= 16:  # Minimum MongoDB message length
+                            msg_len = int.from_bytes(payload[0:4], byteorder='little')
+                            stats['applications']['databases'][ip.src]['queries'].append({
+                                'timestamp': timestamp,
+                                'type': 'mongodb',
+                                'size': msg_len
+                            })
+                # WebSocket Analysis
+                elif (dport == 80 or sport == 80) and packet.haslayer(Raw):
+                    payload = packet[Raw].load
+                    if b'Upgrade: websocket' in payload:
+                        app_proto = "WebSocket-Handshake"
+                        stats['applications']['websockets'][ip.src]['protocols'].add('ws')
+                    elif b'\x81' in payload[:2]:  # WebSocket text frame
+                        app_proto = "WebSocket"
+                        frame_type = 'text'
+                        stats['applications']['websockets'][ip.src]['frame_types']['text'] += 1
+                        stats['applications']['websockets'][ip.src]['messages'].append({
+                            'timestamp': timestamp,
+                            'type': frame_type,
+                            'size': len(payload)
+                        })
+                    elif b'\x82' in payload[:2]:  # WebSocket binary frame
+                        app_proto = "WebSocket"
+                        frame_type = 'binary'
+                        stats['applications']['websockets'][ip.src]['frame_types']['binary'] += 1
+                        stats['applications']['websockets'][ip.src]['messages'].append({
+                            'timestamp': timestamp,
+                            'type': frame_type,
+                            'size': len(payload)
+                        })
+                # Streaming Media Analysis
+                elif packet.haslayer(Raw):
+                    payload = packet[Raw].load
+                    # HLS (HTTP Live Streaming)
+                    if b'.m3u8' in payload or b'.ts' in payload:
+                        app_proto = "HLS"
+                        if b'.m3u8' in payload:
+                            stats['media']['streaming'][ip.src]['segment_downloads'].append({
+                                'timestamp': timestamp,
+                                'type': 'manifest',
+                                'size': len(payload)
+                            })
+                        else:
+                            stats['media']['streaming'][ip.src]['segment_downloads'].append({
+                                'timestamp': timestamp,
+                                'type': 'segment',
+                                'size': len(payload)
+                            })
+                    # DASH (Dynamic Adaptive Streaming over HTTP)
+                    elif b'.mpd' in payload or b'.m4s' in payload:
+                        app_proto = "DASH"
+                        if b'.mpd' in payload:
+                            stats['media']['streaming'][ip.src]['segment_downloads'].append({
+                                'timestamp': timestamp,
+                                'type': 'manifest',
+                                'size': len(payload)
+                            })
+                        else:
+                            stats['media']['streaming'][ip.src]['segment_downloads'].append({
+                                'timestamp': timestamp,
+                                'type': 'segment',
+                                'size': len(payload)
+                            })
+                    # Detect quality changes
+                    if any(x in payload for x in [b'RESOLUTION=', b'BANDWIDTH=']):
+                        match = re.search(b'BANDWIDTH=(\d+)', payload)
+                        if match:
+                            bitrate = int(match.group(1))
+                            stats['media']['streaming'][ip.src]['bitrate_changes'].append({
+                                'timestamp': timestamp,
+                                'bitrate': bitrate
+                            })
+                        match = re.search(b'RESOLUTION=(\d+x\d+)', payload)
+                        if match:
+                            resolution = match.group(1).decode()
+                            stats['media']['streaming'][ip.src]['quality_changes'].append({
+                                'timestamp': timestamp,
+                                'resolution': resolution
+                            })
+                
                 elif dport == 22 or sport == 22:
                     app_proto = "SSH"
                 else:
@@ -273,28 +635,40 @@ class TrafficCapture:
                     if packet.haslayer(SIP):
                         app_proto = "SIP"
                         sip = packet[SIP]
-                        if hasattr(sip, 'Method') and sip.Method in [b'INVITE', b'BYE']:
-                            if IP in packet:
-                                ip = packet[IP]
-                                stats['media']['streams'].append({
-                                    'type': 'SIP',
-                                    'method': sip.Method.decode(),
-                                    'timestamp': timestamp,
-                                    'source': ip.src,
-                                    'destination': ip.dst
-                                })
+                        if hasattr(sip, 'Method'):
+                            src_ip = packet[IP].src
+                            method = sip.Method.decode() if isinstance(sip.Method, bytes) else str(sip.Method)
+                            # Extract call details
+                            call_info = {
+                                'timestamp': timestamp,
+                                'method': method,
+                                'from': sip.From.decode() if hasattr(sip, 'From') and isinstance(sip.From, bytes) else str(getattr(sip, 'From', 'Unknown')),
+                                'to': sip.To.decode() if hasattr(sip, 'To') and isinstance(sip.To, bytes) else str(getattr(sip, 'To', 'Unknown')),
+                                'call_id': sip.Call_ID.decode() if hasattr(sip, 'Call_ID') and isinstance(sip.Call_ID, bytes) else str(getattr(sip, 'Call_ID', 'Unknown'))
+                            }
+                            # Add SDP information if present
+                            if hasattr(sip, 'sdp'):
+                                sdp = sip.sdp
+                                call_info['media'] = {
+                                    'type': sdp.media if hasattr(sdp, 'media') else 'Unknown',
+                                    'port': sdp.port if hasattr(sdp, 'port') else 0,
+                                    'protocol': sdp.proto if hasattr(sdp, 'proto') else 'Unknown'
+                                }
+                            stats['media']['voip'][src_ip].append(call_info)
                     elif packet.haslayer(RTP):
                         app_proto = "RTP"
-                        if IP in packet:
-                            ip = packet[IP]
-                            stats['media']['streams'].append({
-                                'type': 'RTP',
-                                'timestamp': timestamp,
-                                'source': ip.src,
-                                'destination': ip.dst,
-                                'size': size
-                            })
-                
+                        # Extract RTP stream data
+                        rtp = packet[RTP]
+                        src_ip = packet[IP].src
+                        stream_info = {
+                            'timestamp': timestamp,
+                            'ssrc': rtp.sourcesync if hasattr(rtp, 'sourcesync') else 0,
+                            'payload_type': rtp.payload_type if hasattr(rtp, 'payload_type') else 0,
+                            'sequence': rtp.sequence if hasattr(rtp, 'sequence') else 0,
+                            'rtp_timestamp': rtp.timestamp if hasattr(rtp, 'timestamp') else 0,
+                            'payload': bytes(rtp.payload) if hasattr(rtp, 'payload') else b''
+                        }
+                        stats['media']['voip'][src_ip].append(stream_info)
                 # HTTP Analysis
                 elif TCP in packet and packet[TCP].dport == 80:
                     app_proto = "HTTP"

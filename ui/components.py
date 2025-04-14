@@ -6,6 +6,7 @@ import netifaces
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from visualizations.analyzer import TrafficVisualizer
 # Import scapy modules as needed
 
 def setup_page():
@@ -192,38 +193,44 @@ def show_traffic_capture_ui(netwatch, devices):
         help="Choose to capture all network traffic or select specific devices"
     )
 
-    # Auto-scan when switching to device selection mode
-    if capture_mode != st.session_state.previous_mode and capture_mode == "Select Devices 🏳":
-        if not st.session_state.devices:
-            with st.spinner("Scanning network for devices..."):
-                interface, ip = netwatch.scanner.get_default_interface()
-                if interface and ip:
-                    network_range = netwatch.scanner.get_network_range(interface, ip)
-                    if network_range:
-                        st.session_state.devices = netwatch.scanner.scan_devices(interface, network_range)
-                        if st.session_state.devices:
-                            st.success(f"✨ Found {len(st.session_state.devices)} devices")
-                            st.balloons()
-
     st.session_state.previous_mode = capture_mode
 
     # Device selection (only shown for device selection mode)
     selected_devices = []
     if capture_mode == "Select Devices 🏳":
         if st.session_state.devices:
-            # Create a list of device options
-            device_options = [f"{d['ip']} ({d.get('hostname', 'N/A')})" for d in st.session_state.devices]
-            selected_options = st.multiselect(
-                "Select Target Devices",
-                options=device_options,
-                help="Choose one or more devices to monitor"
-            )
-            # Get the full device info for each selected option
-            for option in selected_options:
-                for device in st.session_state.devices:
-                    if f"{device['ip']} ({device.get('hostname', 'N/A')})" == option:
-                        selected_devices.append(device)
-                        break
+            # Create columns for devices and tracked info
+            col1, col2 = st.columns([3, 2])
+
+            with col1:
+                st.subheader("🔍 Available Devices")
+                # Create a list of all device options
+                device_options = [f"{d['ip']} ({d.get('hostname', 'N/A')})" for d in st.session_state.devices]
+                selected_options = st.multiselect(
+                    "Select Devices to Monitor",
+                    options=device_options,
+                    help="Choose devices to capture traffic from"
+                )
+                # Get the full device info for each selected device
+                for option in selected_options:
+                    for device in st.session_state.devices:
+                        if f"{device['ip']} ({device.get('hostname', 'N/A')})" == option:
+                            selected_devices.append(device)
+                            break
+
+            with col2:
+                st.subheader("📌 Tracked Devices Info")
+                # Get and display tracked devices
+                tracked_devices = netwatch.scanner.get_tracked_devices()
+                if tracked_devices:
+                    for device in tracked_devices:
+                        with st.expander(f"{device['hostname'] or 'Unknown Device'} ({device['ip']})"):
+                            st.text(f"MAC: {device['mac']}")
+                            st.text(f"First Seen: {datetime.fromisoformat(device['first_seen']).strftime('%Y-%m-%d %H:%M')}")
+                            st.text(f"Last Seen: {datetime.fromisoformat(device['last_seen']).strftime('%Y-%m-%d %H:%M')}")
+                            st.text(f"Status: {device['activity']}")
+                else:
+                    st.info("No devices are currently being tracked")
         else:
             st.warning("🛡️ No devices available. Use the scan button above to discover devices.")
 
@@ -355,8 +362,56 @@ def format_bytes(size):
     return f"{size:.1f} TB"
 
 def show_pcap_analysis(stats):
-    """Display PCAP analysis results"""
-    # Create two columns - main analysis and device captures
+    """Display PCAP analysis results with interactive visualizations"""
+    if not stats:
+        st.warning("No PCAP analysis results available")
+        return
+    # Display basic stats
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Total Packets", stats['total_packets'])
+    with col2:
+        st.metric("Total Bytes", format_bytes(stats['total_bytes']))
+    with col3:
+        duration = stats['end_time'] - stats['start_time']
+        st.metric("Duration", f"{duration:.2f}s")
+    # Display interactive visualizations
+    viz = TrafficVisualizer()
+    # Add visualization tabs
+    tab1, tab2, tab3, tab4 = st.tabs(["Traffic Overview", "Network Analysis", "Performance", "Security"])
+    with tab1:
+        st.subheader("Protocol Distribution")
+        st.plotly_chart(viz.create_protocol_distribution(stats))
+        st.subheader("Bandwidth Usage")
+        st.plotly_chart(viz.create_bandwidth_timeline(stats))
+        st.subheader("Protocol Activity")
+        st.plotly_chart(viz.create_protocol_activity(stats))
+    with tab2:
+        st.subheader("Network Flow Diagram")
+        st.plotly_chart(viz.create_network_flow(stats))
+        st.subheader("Connection Matrix")
+        st.plotly_chart(viz.create_connection_matrix(stats))
+        if stats.get('media', {}).get('streaming'):
+            st.subheader("Streaming Media Quality")
+            st.plotly_chart(viz.create_media_quality(stats))
+        if stats.get('voip', {}).get('calls'):
+            st.subheader("VoIP Call Quality")
+            st.plotly_chart(viz.create_voip_quality(stats))
+    with tab3:
+        st.subheader("Performance Metrics")
+        st.plotly_chart(viz.create_performance_metrics(stats))
+        st.subheader("TCP Metrics")
+        st.plotly_chart(viz.create_tcp_metrics(stats))
+    with tab4:
+        st.subheader("Security Overview")
+        st.plotly_chart(viz.create_security_overview(stats))
+        if stats.get('security', {}).get('port_scans'):
+            st.subheader("Port Scan Attempts")
+            st.plotly_chart(viz.create_port_scan_viz(stats))
+        if stats.get('security', {}).get('ssl_issues'):
+            st.subheader("SSL/TLS Issues")
+            st.plotly_chart(viz.create_ssl_issues_viz(stats))
+    # Create two columns - device captures and conversations
     col1, col2 = st.columns([7, 3])
     with col2:
         st.header("📱 Device Captures")
