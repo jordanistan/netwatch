@@ -6,6 +6,7 @@ import streamlit as st
 
 from network.scanner import NetworkScanner
 from network.capture import TrafficCapture
+from network.monitor import DeviceMonitor
 from ui.components import setup_page, show_network_info, show_scan_results, show_pcap_analysis, show_traffic_capture_ui
 
 class NetWatch:
@@ -20,6 +21,9 @@ class NetWatch:
         # Initialize components
         self.scanner = NetworkScanner()
         self.capture = TrafficCapture(self.captures_dir)
+        self.monitor = DeviceMonitor(self.captures_dir)
+        # Start device monitoring
+        self.monitor.start_monitoring()
 
 def main():
     # Initialize NetWatch

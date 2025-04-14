@@ -322,10 +322,51 @@ def format_bytes(size):
 
 def show_pcap_analysis(stats):
     """Display PCAP analysis results"""
-    # Check VoIP analysis availability
-    from network.capture import HAS_VOIP_LAYERS
-    if not HAS_VOIP_LAYERS:
-        st.warning("VoIP analysis features are not available. Install scapy[voip] for full functionality.")
+    # Create two columns - main analysis and device captures
+    col1, col2 = st.columns([7, 3])
+    with col2:
+        st.header("📱 Device Captures")
+        # Load tracked devices
+        with open('data/tracked_devices.json', 'r') as f:
+            tracked_devices = json.load(f)['devices']
+        # List PCAP files for each device
+        for device in tracked_devices:
+            device_id = device.get('mac', '').replace(':', '')
+            if device_id:
+                device_name = device.get('name', device.get('hostname', device_id))
+                with st.expander(f"📱 {device_name}"):
+                    # Find device's PCAP files
+                    device_pcaps = sorted(
+                        Path('captures').glob(f'*{device_id}*.pcap'),
+                        key=lambda x: x.stat().st_mtime,
+                        reverse=True
+                    )
+                    if device_pcaps:
+                        for pcap in device_pcaps:
+                            # Get file info
+                            mtime = datetime.fromtimestamp(pcap.stat().st_mtime)
+                            size = pcap.stat().st_size
+                            size_str = f"{size/1024/1024:.1f}MB" if size > 1024*1024 else f"{size/1024:.1f}KB"
+                            # Show file with download button
+                            col_a, col_b = st.columns([3, 1])
+                            with col_a:
+                                st.text(f"{mtime.strftime('%Y-%m-%d %H:%M')} ({size_str})")
+                            with col_b:
+                                with open(pcap, 'rb') as f:
+                                    st.download_button(
+                                        "📥",
+                                        f,
+                                        file_name=pcap.name,
+                                        mime="application/vnd.tcpdump.pcap"
+                                    )
+                    else:
+                        st.info("No captures yet")
+    
+    with col1:
+        # Check VoIP analysis availability
+        from network.capture import HAS_VOIP_LAYERS
+        if not HAS_VOIP_LAYERS:
+            st.warning("VoIP analysis features are not available. Install scapy[voip] for full functionality.")
     # Web Traffic Analysis
     st.header("🌐 Web Traffic Analysis")
     # URLs by Device
