@@ -171,9 +171,34 @@ class TrafficVisualizer:
             x=node_x, y=node_y,
             mode='markers+text',
             hoverinfo='text',
-            text=list(nodes),
-            textposition="top center",
+            text=node_text,
+            textposition="bottom center",
             marker=dict(
+                showscale=True,
+                colorscale='YlOrRd',
+                size=node_sizes,
+                color=node_sizes,
+                colorbar=dict(
+                    thickness=15,
+                    title='Packet Count',
+                    xanchor='left',
+                    titleside='right'
+                )
+            ))
+
+        # Create the figure
+        fig = go.Figure(data=[edge_trace, node_trace],
+                       layout=go.Layout(
+                           title="Network Flow Diagram",
+                           showlegend=False,
+                           hovermode='closest',
+                           margin=dict(b=20, l=5, r=5, t=40),
+                           xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                           yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                           width=800,
+                           height=800
+                       ))
+        return fig
                 showscale=True,
                 colorscale='YlGnBu',
                 size=20,
