@@ -99,10 +99,6 @@ class NetWatch:
     def analyze_pcap(self, pcap_file: Union[str, Path]) -> Optional[Dict[str, Any]]:
         """Analyze a PCAP file and return statistics"""
         try:
-            # Check if this is our simulated file
-            if '192-168-86-42' in str(pcap_file):
-                return generate_simulated_stats()
-                
             packets = rdpcap(str(pcap_file))
             stats = {
                 'total_packets': len(packets),
@@ -221,16 +217,6 @@ class NetWatch:
             # Scan for devices
             devices = self.scan_network(network_range)
             
-            # Add simulated device
-            simulated_device = {
-                'ip': '192.168.86.42',
-                'mac': '00:11:22:33:44:55',
-                'hostname': 'suspicious-device',
-                'vendor': 'Unknown'
-            }
-            if not any(d.get('ip') == '192.168.86.42' for d in devices):
-                devices.append(simulated_device)
-            
             return devices
             
         except (OSError, PermissionError) as e:
@@ -250,6 +236,9 @@ class NetWatch:
                     return []
             
             st.info(f"📡 Scanning on interface: {interface}")
+            ip = scapy.get_if_addr(interface)
+            st.info(f"🔍 Interface IP: {ip}")
+            st.info(f"🌐 Network range to scan: {network_range}")
             
             with st.spinner("🔍 Sending ARP requests..."):
                 # Create ARP request packet
@@ -299,18 +288,19 @@ class NetWatch:
         """Get the default network interface that's connected to LAN"""
         try:
             interfaces = scapy.get_if_list()
-            
             st.markdown("### Available Network Interfaces")
             active_interfaces = []
             
             for iface in interfaces:
-                if iface.startswith('en'):
-                    try:
-                        ip = scapy.get_if_addr(iface)
-                        if ip and not ip.startswith('127.'):
-                            active_interfaces.append((iface, ip))
-                    except:
-                        continue
+                # Skip loopback and virtual interfaces
+                if iface == 'lo':
+                    continue
+                try:
+                    ip = scapy.get_if_addr(iface)
+                    if ip and not ip.startswith('127.'):
+                        active_interfaces.append((iface, ip))
+                except:
+                    continue
             
             if active_interfaces:
                 # Sort by interface name
@@ -358,6 +348,11 @@ class NetWatch:
             
             if ip.startswith('127.'):
                 raise ValueError(f"Interface {interface} is bound to loopback")
+            
+            # Parse IP components
+            ip_parts = ip.split('.')
+            if len(ip_parts) != 4:
+                raise ValueError(f"Invalid IP format: {ip}")
             
             # Parse IP components
             ip_parts = ip.split('.')
@@ -464,9 +459,11 @@ def main():
         
         col1, col2 = st.columns([3, 1])
         with col1:
+            network_range = st.text_input("🌐 Network Range", value="192.168.1.0/24", help="Enter the network range to scan (e.g., 192.168.1.0/24)")
+            
             if st.button("🔍 Scan for Devices", type="secondary", use_container_width=True):
                 with st.spinner("🔍 Scanning network for devices..."):
-                    devices = netwatch.get_network_devices()
+                    devices = netwatch.scan_network(network_range)
                     if devices:
                         st.session_state['network_devices'] = devices
                         st.success(f"✅ Found {len(devices)} devices")
@@ -486,18 +483,13 @@ def main():
                             use_container_width=True
                         )
                         
-                        # Display suspicious activity for simulated device
+                        # Add traffic capture option for each device
                         for device in devices:
-                            if device['ip'] == '192.168.86.42':
-                                display_suspicious_activity('192.168.86.42')
-                                
-                                # Capture traffic for suspicious device
-                                st.markdown("### 📦 Traffic Capture")
-                                st.warning("⚠️ Suspicious activity detected! Capturing traffic...")
-                                pcap_file = netwatch.capture_traffic(
-                                    target_ips='192.168.86.42',
-                                    duration=10,
-                                    is_suspicious=True
+                            with st.expander(f"📦 Capture Traffic for {device['ip']}"):
+                                if st.button("📡 Start Capture", key=f"capture_{device['ip']}"):
+                                    pcap_file = netwatch.capture_traffic(
+                                        target_ips=device['ip'],
+                                        duration=10
                                 )
                                 if pcap_file:
                                     st.success(f"✅ Traffic captured and saved as: {pcap_file.name}")
