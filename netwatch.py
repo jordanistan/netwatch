@@ -39,8 +39,8 @@ def is_suspicious_ip(ip: str) -> bool:
         ip_obj = ipaddress.ip_address(ip)
 
         # Check if IP is in private ranges (RFC 1918)
-        # Use is_private in future implementation
-        suspicious = not ip_obj.is_private
+        # Return whether IP is suspicious (non-private IPs are considered suspicious)
+        return not ip_obj.is_private
 
         # TODO: Implement actual suspicious behavior detection based on:
         # 1. Traffic patterns (high bandwidth, unusual ports)
@@ -317,7 +317,8 @@ class NetWatch:
                                 'size': len(packet),
                                 'content_type': content_type
                             })
-                    except:
+                    except (AttributeError, IndexError, KeyError) as e:
+                        st.debug(f"Error processing HTTP packet: {e}")
                         continue
             
             return http_traffic
@@ -332,7 +333,8 @@ class NetWatch:
             if '192-168-86-42' in str(pcap_file):
                 return generate_simulated_stats()['media_files']
 
-            packets = scapy.rdpcap(str(pcap_file))
+            # Read packets and process them for media files
+            scapy.rdpcap(str(pcap_file))  # Validate file can be read
             media_files = []
 
             # Create directory for extracted files
@@ -474,7 +476,7 @@ class NetWatch:
                         mac = received.hwsrc.upper()
                         oui = mac.replace(':', '')[:6]
                         vendor = variables.MAC_VENDORS.get(oui, "Unknown Vendor")
-                    except (KeyError, ValueError) as e:
+                    except (KeyError, ValueError):
                         vendor = "Unknown Vendor"
 
                     # Check if device is on local network
@@ -493,7 +495,7 @@ class NetWatch:
                     # Add device type based on common ports
                     try:
                         device_info['type'] = self._detect_device_type(received.psrc)
-                    except (socket.error, TimeoutError) as e:
+                    except (socket.error, TimeoutError):
                         device_info['type'] = "Unknown"
 
                     devices.append(device_info)
