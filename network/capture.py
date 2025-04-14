@@ -243,17 +243,53 @@ class TrafficCapture:
                 else:
                     app_proto = f"TCP/{dport}"
                 
-            elif packet.haslayer(scapy.UDP):
+            elif packet.haslayer(UDP):
                 proto = "UDP"
-                # Get port numbers
-                sport = packet[scapy.UDP].sport
-                dport = packet[scapy.UDP].dport
+                udp = packet[UDP]
+                sport = udp.sport
+                dport = udp.dport
+                
+                # Update port stats
                 stats['ports']['src'][sport] = stats['ports']['src'].get(sport, 0) + 1
                 stats['ports']['dst'][dport] = stats['ports']['dst'].get(dport, 0) + 1
                 
-                # Identify application protocols
-                if dport == 53 or sport == 53:
+                # SIP/RTP Analysis
+                if packet.haslayer(SIP):
+                    app_proto = "SIP"
+                    sip = packet[SIP]
+                    if hasattr(sip, 'Method') and sip.Method in [b'INVITE', b'BYE']:
+                        if IP in packet:
+                            stats['media']['streams'].append({
+                                'type': 'SIP',
+                                'method': sip.Method.decode(),
+                                'timestamp': timestamp,
+                                'source': ip_src,
+                                'destination': ip_dst
+                            })
+                
+                elif packet.haslayer(RTP):
+                    app_proto = "RTP"
+                    if IP in packet:
+                        stats['media']['streams'].append({
+                            'type': 'RTP',
+                            'timestamp': timestamp,
+                            'source': ip_src,
+                            'destination': ip_dst,
+                            'size': size
+                        })
+                
+                # DNS Analysis
+                elif packet.haslayer(DNS):
                     app_proto = "DNS"
+                    dns = packet[DNS]
+                    if dns.qr == 0:  # DNS Query
+                        if dns.qd and dns.qd.qname:
+                            try:
+                                domain = dns.qd.qname.decode()
+                                stats['web']['domains'][domain] += 1
+                            except:
+                                pass
+                
                 elif dport == 67 or dport == 68:
                     app_proto = "DHCP"
                 else:
@@ -286,5 +322,9 @@ class TrafficCapture:
             stats['summary']['avg_packet_size'] = stats['summary']['total_bytes'] / stats['summary']['total_packets']
             stats['summary']['packets_per_second'] = stats['summary']['total_packets'] / stats['summary']['duration'] if stats['summary']['duration'] > 0 else 0
             stats['summary']['bandwidth_mbps'] = (stats['summary']['total_bytes'] * 8 / 1_000_000) / stats['summary']['duration'] if stats['summary']['duration'] > 0 else 0
+            
+            # Convert sets to lists for JSON serialization
+            for ip in stats['torrents']['peers']:
+                stats['torrents']['peers'][ip] = list(stats['torrents']['peers'][ip])
         
         return stats
