@@ -1,11 +1,12 @@
 """UI components for NetWatch"""
-import sys
 from datetime import datetime
 from pathlib import Path
+import json
+import netifaces
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from scapy.all import rdpcap
+# Import scapy modules as needed
 
 def setup_page():
     """Setup the main page configuration"""
@@ -726,10 +727,10 @@ def show_pcap_analysis(stats):
         ).sort_values('Count', ascending=False).head(10)
 
         fig = px.bar(src_ports,
-                     x='Port', y='Count',
-                     title="Top Source Ports",
-                     color='Count',
-                     color_continuous_scale='Viridis')
+                    x='Port', y='Count',
+                    title="Top Source Ports",
+                    color='Count',
+                    color_continuous_scale='Viridis')
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
@@ -740,8 +741,8 @@ def show_pcap_analysis(stats):
         ).sort_values('Count', ascending=False).head(10)
 
         fig = px.bar(dst_ports,
-                     x='Port', y='Count',
-                     title="Top Destination Ports",
-                     color='Count',
-                     color_continuous_scale='Viridis')
+                    x='Port', y='Count',
+                    title="Top Destination Ports",
+                    color='Count',
+                    color_continuous_scale='Viridis')
         st.plotly_chart(fig, use_container_width=True)
