@@ -1,21 +1,16 @@
 """Traffic capture functionality for NetWatch"""
 import time
-import re
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import urlparse
 from collections import defaultdict
 
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
-from scapy.layers import http
 import streamlit as st
 
 # Import additional Scapy layers
-from scapy.layers.http import HTTP, HTTPRequest, HTTPResponse
-from scapy.layers.inet import TCP, UDP, IP
+from scapy.layers.inet import UDP, IP
 from scapy.layers.dns import DNS
-from scapy.layers.tls import TLS
 from scapy.layers.rtp import RTP
 from scapy.layers.sip import SIP
 
@@ -259,21 +254,23 @@ class TrafficCapture:
                     sip = packet[SIP]
                     if hasattr(sip, 'Method') and sip.Method in [b'INVITE', b'BYE']:
                         if IP in packet:
+                            ip = packet[IP]
                             stats['media']['streams'].append({
                                 'type': 'SIP',
                                 'method': sip.Method.decode(),
                                 'timestamp': timestamp,
-                                'source': ip_src,
-                                'destination': ip_dst
+                                'source': ip.src,
+                                'destination': ip.dst
                             })
                 elif packet.haslayer(RTP):
                     app_proto = "RTP"
                     if IP in packet:
+                        ip = packet[IP]
                         stats['media']['streams'].append({
                             'type': 'RTP',
                             'timestamp': timestamp,
-                            'source': ip_src,
-                            'destination': ip_dst,
+                            'source': ip.src,
+                            'destination': ip.dst,
                             'size': size
                         })
                 
