@@ -6,7 +6,7 @@ import netifaces
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from visualizations.analyzer import TrafficVisualizer
+from network.visualizations.analyzer import TrafficVisualizer
 # Import scapy modules as needed
 
 def setup_page():
@@ -369,11 +369,11 @@ def show_pcap_analysis(stats):
     # Display basic stats
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Total Packets", stats['total_packets'])
+        st.metric("Total Packets", stats['summary']['total_packets'])
     with col2:
-        st.metric("Total Bytes", format_bytes(stats['total_bytes']))
+        st.metric("Total Bytes", format_bytes(stats['summary']['total_bytes']))
     with col3:
-        duration = stats['end_time'] - stats['start_time']
+        duration = stats['summary']['end_time'] - stats['summary']['start_time']
         st.metric("Duration", f"{duration:.2f}s")
     # Display interactive visualizations
     viz = TrafficVisualizer()
@@ -388,7 +388,7 @@ def show_pcap_analysis(stats):
         st.plotly_chart(viz.create_protocol_activity(stats))
     with tab2:
         st.subheader("Network Flow Diagram")
-        st.plotly_chart(viz.create_network_flow(stats))
+        st.plotly_chart(viz.create_network_flow_diagram(stats))
         st.subheader("Connection Matrix")
         st.plotly_chart(viz.create_connection_matrix(stats))
         if stats.get('media', {}).get('streaming'):

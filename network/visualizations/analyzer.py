@@ -50,54 +50,122 @@ class TrafficVisualizer:
             title="Bandwidth Usage Over Time",
             xaxis_title="Time",
             yaxis_title="Bandwidth (Mbps)",
+            showlegend=True
+        )
+        return fig
+    def create_protocol_activity(self, stats):
+        """Create an interactive timeline of protocol activity"""
+        # Initialize data structures
+        protocol_counts = defaultdict(list)
+        window_size = 5  # 5 second window
+        # Convert timestamps to datetime and count protocols in windows
+        timestamps = [datetime.fromtimestamp(ts) for ts in stats['timestamps']]
+        start_time = min(timestamps)
+        end_time = max(timestamps)
+        # Create time windows
+        time_windows = []
+        current_time = start_time
+        while current_time <= end_time:
+            time_windows.append(current_time)
+            current_time = datetime.fromtimestamp(current_time.timestamp() + window_size)
+        # Initialize protocol counts for each window
+        protocols = list(stats['protocols']['application'].keys())
+        for protocol in protocols:
+            for _ in time_windows:
+                protocol_counts[protocol].append(0)
+        # Count protocols in each window
+        for ts in timestamps:
+            window_index = int((ts - start_time).total_seconds() / window_size)
+            if window_index < len(time_windows):
+                for protocol in protocols:
+                    if protocol in stats['protocols']['application']:
+                        protocol_counts[protocol][window_index] += 1
+        # Create stacked area chart
+        fig = go.Figure()
+        for protocol in protocols:
+            fig.add_trace(go.Scatter(
+                x=time_windows,
+                y=protocol_counts[protocol],
+                name=protocol,
+                mode='none',
+                fill='tonexty',
+                stackgroup='one'
+            ))
+        fig.update_layout(
+            title="Protocol Activity Over Time",
+            xaxis_title="Time",
+            yaxis_title="Packet Count",
+            showlegend=True,
             hovermode='x unified'
         )
         return fig
+
     
     def create_network_flow_diagram(self, stats):
         """Create an interactive network flow diagram"""
         # Extract unique IPs and their connections
         nodes = set()
         edges = []
-        for src_ip, dst_ips in stats['ips']['conversations'].items():
+        connections = stats['ips']['conversations']
+        
+        if not connections:
+            fig = go.Figure()
+            fig.update_layout(
+                title="No Network Flow Data Available",
+                showlegend=False
+            )
+            return fig
+
+        # Process connections
+        for connection, weight in connections.items():
+            src_ip, dst_ip = connection.split('-')
             nodes.add(src_ip)
-            for dst_ip, count in dst_ips.items():
-                nodes.add(dst_ip)
-                edges.append((src_ip, dst_ip, count))
+            nodes.add(dst_ip)
+            edges.append((src_ip, dst_ip, weight))
         
         # Create node positions using a circular layout
         pos = {}
+        nodes = list(nodes)  # Convert set to list for consistent ordering
         n = len(nodes)
         for i, node in enumerate(nodes):
             angle = 2 * np.pi * i / n
             pos[node] = (np.cos(angle), np.sin(angle))
         
-        # Create the network diagram
+        # Create edge traces
         edge_x = []
         edge_y = []
-        edge_weights = []
+        edge_text = []
         
         for src, dst, weight in edges:
             x0, y0 = pos[src]
             x1, y1 = pos[dst]
             edge_x.extend([x0, x1, None])
             edge_y.extend([y0, y1, None])
-            edge_weights.append(weight)
+            edge_text.append(f"{src} → {dst}: {weight} packets")
             
         # Create edges
         edge_trace = go.Scatter(
             x=edge_x, y=edge_y,
             line=dict(width=1, color='#888'),
-            hoverinfo='none',
+            hoverinfo='text',
+            hovertext=edge_text,
             mode='lines')
 
         # Create nodes
         node_x = []
         node_y = []
+        node_text = []
+        node_sizes = []
+        
         for node in nodes:
             x, y = pos[node]
             node_x.append(x)
             node_y.append(y)
+            # Calculate total packets for this node
+            total_packets = sum(weight for src, dst, weight in edges 
+                              if src == node or dst == node)
+            node_text.append(f"{node}\nTotal Packets: {total_packets}")
+            node_sizes.append(np.sqrt(total_packets) * 10)  # Scale node size by sqrt of packet count
             
         node_trace = go.Scatter(
             x=node_x, y=node_y,
@@ -176,6 +244,184 @@ class TrafficVisualizer:
         return fig
     
     def create_connection_matrix(self, stats):
+        """Create an interactive connection matrix showing IP interactions"""
+        # Get unique IPs and their connections
+        connections = stats['ips']['conversations']
+        if not connections:
+            fig = go.Figure()
+            fig.update_layout(
+                title="No Connection Data Available",
+                showlegend=False
+            )
+            return fig
+
+        # Create matrix of connections
+        ips = set()
+        for connection in connections:
+            src, dst = connection.split('-')
+            ips.add(src)
+            ips.add(dst)
+        ips = sorted(list(ips))
+
+        matrix = np.zeros((len(ips), len(ips)))
+        for connection, weight in connections.items():
+            src, dst = connection.split('-')
+            i = ips.index(src)
+            j = ips.index(dst)
+            matrix[i][j] = weight
+
+        # Create heatmap
+        fig = go.Figure(data=go.Heatmap(
+            z=matrix,
+            x=ips,
+            y=ips,
+            colorscale='Viridis',
+            showscale=True
+        ))
+
+        fig.update_layout(
+            title="Connection Matrix",
+            xaxis_title="Destination IP",
+            yaxis_title="Source IP",
+            width=800,
+            height=800
+        )
+        return fig
+
+    def create_media_quality(self, stats):
+        """Create an interactive chart showing streaming media quality metrics"""
+        if not stats.get('media', {}).get('streaming'):
+            fig = go.Figure()
+            fig.update_layout(
+                title="No Streaming Data Available",
+                showlegend=False
+            )
+            return fig
+
+        # Extract streaming quality data
+        quality_data = []
+        for stream_id, metrics in stats['media']['streaming'].items():
+            for event in metrics['quality_changes']:
+                quality_data.append({
+                    'Stream': stream_id,
+                    'Time': datetime.fromtimestamp(event['timestamp']),
+                    'Quality': event['quality'],
+                    'Bitrate': event['bitrate']
+                })
+
+        if not quality_data:
+            fig = go.Figure()
+            fig.update_layout(
+                title="No Quality Change Events Found",
+                showlegend=False
+            )
+            return fig
+
+        # Create figure with secondary y-axis
+        fig = go.Figure()
+
+        # Add traces for quality and bitrate
+        for stream_id in set(d['Stream'] for d in quality_data):
+            stream_data = [d for d in quality_data if d['Stream'] == stream_id]
+            fig.add_trace(go.Scatter(
+                x=[d['Time'] for d in stream_data],
+                y=[d['Quality'] for d in stream_data],
+                name=f"{stream_id} Quality",
+                mode='lines+markers'
+            ))
+            fig.add_trace(go.Scatter(
+                x=[d['Time'] for d in stream_data],
+                y=[d['Bitrate'] for d in stream_data],
+                name=f"{stream_id} Bitrate",
+                mode='lines+markers',
+                yaxis='y2'
+            ))
+
+        fig.update_layout(
+            title="Streaming Media Quality",
+            xaxis_title="Time",
+            yaxis_title="Quality Level",
+            yaxis2=dict(
+                title="Bitrate (bps)",
+                overlaying='y',
+                side='right'
+            ),
+            showlegend=True
+        )
+        return fig
+
+    def create_voip_quality(self, stats):
+        """Create an interactive chart showing VoIP call quality metrics"""
+        if not stats.get('media', {}).get('voip'):
+            fig = go.Figure()
+            fig.update_layout(
+                title="No VoIP Data Available",
+                showlegend=False
+            )
+            return fig
+
+        # Extract VoIP call data
+        call_data = []
+        for call_id, metrics in stats['media']['voip'].items():
+            for sample in metrics['quality_samples']:
+                call_data.append({
+                    'Call': call_id,
+                    'Time': datetime.fromtimestamp(sample['timestamp']),
+                    'MOS': sample['mos'],
+                    'Jitter': sample['jitter'],
+                    'Packet Loss': sample['packet_loss']
+                })
+
+        if not call_data:
+            fig = go.Figure()
+            fig.update_layout(
+                title="No VoIP Quality Data Found",
+                showlegend=False
+            )
+            return fig
+
+        # Create subplots for different metrics
+        fig = sp.make_subplots(rows=3, cols=1,
+                              subplot_titles=("MOS Score", "Jitter", "Packet Loss"),
+                              shared_xaxes=True)
+
+        # Add traces for each call
+        for call_id in set(d['Call'] for d in call_data):
+            call_samples = [d for d in call_data if d['Call'] == call_id]
+            fig.add_trace(
+                go.Scatter(
+                    x=[d['Time'] for d in call_samples],
+                    y=[d['MOS'] for d in call_samples],
+                    name=f"{call_id} MOS",
+                    mode='lines+markers'
+                ),
+                row=1, col=1
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=[d['Time'] for d in call_samples],
+                    y=[d['Jitter'] for d in call_samples],
+                    name=f"{call_id} Jitter",
+                    mode='lines+markers'
+                ),
+                row=2, col=1
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=[d['Time'] for d in call_samples],
+                    y=[d['Packet Loss'] for d in call_samples],
+                    name=f"{call_id} Loss",
+                    mode='lines+markers'
+                ),
+                row=3, col=1
+            )
+
+        fig.update_layout(
+            height=900,
+            title_text="VoIP Call Quality Metrics",
+            showlegend=True
+        )
+        return fig
         """Create an interactive connection matrix"""
         # Get unique IPs
         ips = set()

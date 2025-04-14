@@ -35,6 +35,10 @@ class TrafficCapture:
         self.captures_dir = Path(captures_dir)
         self.captures_dir.mkdir(parents=True, exist_ok=True)
         self.interface = None  # Will be set during capture
+        # Initialize tracking sets and dictionaries
+        self._seen_segments = set()  # For TCP retransmission detection
+        self._pending_acks = {}  # For RTT calculation
+        self._syn_counts = {}  # For port scan detection
 
     def capture_traffic(self, target_ips=None, duration=60, progress_callback=None):
         """Capture network traffic for specific IPs or all traffic
@@ -353,7 +357,8 @@ class TrafficCapture:
                 dport = packet[scapy.TCP].dport
                 stats['ports']['src'][sport] = stats['ports']['src'].get(sport, 0) + 1
                 stats['ports']['dst'][dport] = stats['ports']['dst'].get(dport, 0) + 1
-                
+                # Initialize application protocol
+                app_proto = f"TCP/{dport}"
                 # Identify application protocols
                 if dport == 80 or sport == 80:
                     app_proto = "HTTP"
