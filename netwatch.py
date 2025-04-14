@@ -2,6 +2,7 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Any
+import re
 
 # Network and packet analysis
 import scapy.all as scapy
@@ -27,6 +28,21 @@ import os
 # Local imports
 import variables
 from simulated_data import generate_simulated_stats, get_risk_assessment
+
+# Helper functions
+def is_suspicious_ip(ip: str) -> bool:
+    """Check if an IP address is suspicious."""
+    return any(pattern in ip for pattern in ['10.0.0.100'])
+
+def get_ip_from_filename(filename: str) -> str:
+    """Extract IP address from filename."""
+    match = re.search(r'\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}', str(filename))
+    return match.group(0).replace('-', '.') if match else ''
+
+def is_suspicious_file(filename: str) -> bool:
+    """Check if a file contains suspicious IP patterns."""
+    ip = get_ip_from_filename(filename)
+    return is_suspicious_ip(ip)
 
 # Load environment variables
 load_dotenv()
