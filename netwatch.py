@@ -3,22 +3,55 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Any, Tuple
 
+# Network and packet analysis
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.http import HTTP
 from scapy.layers.l2 import Ether, ARP
+import pyshark
+
+# System and network interfaces
+import socket
+import psutil
+import netifaces
+
+# Security and encryption
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from OpenSSL import SSL
+
+# Data analysis and visualization
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-import socket
+# DNS resolution
+import dns.resolver
+
+# Utility imports
 import json
+import logging
+from slack_sdk import WebClient
+from dotenv import load_dotenv
+import os
+
+# Local imports
 import variables
 from simulated_data import generate_simulated_stats, get_risk_assessment
 
+# Load environment variables
+load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
 class NetWatch:
     def __init__(self):
+        # Initialize directories
         self.base_dir = Path(__file__).parent
         self.captures_dir = self.base_dir / "captures"
         self.reports_dir = self.base_dir / "reports"
@@ -27,6 +60,27 @@ class NetWatch:
         # Create necessary directories
         for dir_path in [self.captures_dir, self.reports_dir, self.logs_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
+            
+        # Initialize logger
+        self.logger = logging.getLogger('NetWatch')
+        file_handler = logging.FileHandler(self.logs_dir / 'app.log')
+        self.logger.addHandler(file_handler)
+        
+        # Initialize alert system
+        self.slack_client = None
+        if os.getenv('SLACK_TOKEN'):
+            self.slack_client = WebClient(token=os.getenv('SLACK_TOKEN'))
+            
+        # Traffic thresholds
+        self.thresholds = {
+            'bandwidth': 1000000,  # 1 Mbps
+            'packet_rate': 1000,   # packets per second
+            'connection_limit': 100 # concurrent connections
+        }
+        
+        # Active monitoring state
+        self.monitoring_active = False
+        self.capture_session = None
 
     def capture_traffic(self, target_ips=None, duration=60, is_suspicious=False, callback=None):
         """Capture network traffic for specific IPs or all traffic"""
@@ -37,7 +91,6 @@ class NetWatch:
             if target_ips:
                 if isinstance(target_ips, str):
                     target_ips = [target_ips]
-                # Add ALERT tag for suspicious traffic
                 alert_tag = "_ALERT" if is_suspicious else ""
                 filename = f"traffic{'_suspicious' if is_suspicious else ''}_{'_'.join(ip.replace('.', '-') for ip in target_ips)}_{timestamp}{alert_tag}.pcap"
             else:
@@ -46,55 +99,114 @@ class NetWatch:
             output_file = self.captures_dir / filename
             
             # Build capture filter
-            if target_ips:
-                filter_expr = " or ".join(f"host {ip}" for ip in target_ips)
-            else:
-                filter_expr = ""
+            filter_expr = " or ".join(f"host {ip}" for ip in target_ips) if target_ips else ""
             
-            # Start packet capture
-            if duration:
-                st.info(f"📦 Starting packet capture for {duration} seconds...")
-                packets = scapy.sniff(filter=filter_expr, timeout=duration)
-            else:
-                st.info("📦 Starting unlimited packet capture (press Stop to end)...")
-                st.session_state.capture_status['active'] = True
-                st.session_state.capture_status['start_time'] = datetime.now()
-                
-                # Create a stop button
-                if st.button("⏹️ Stop Capture", type="primary"):
-                    st.session_state.capture_status['active'] = False
-                
-                packets = scapy.sniff(filter=filter_expr, timeout=None)
+            # Initialize capture session with pyshark for real-time analysis
+            self.capture_session = pyshark.LiveCapture(
+                interface=self.get_default_interface(),
+                display_filter=filter_expr
+            )
             
-            # Save captured packets
-            if packets:
-                wrpcap(str(output_file), packets)
-                st.success(f"""
-                ✅ Capture complete!
-                - Captured {len(packets)} packets
-                - Saved to: {output_file}
+            # Start packet capture with real-time monitoring
+            self.monitoring_active = True
+            packet_count = 0
+            start_time = datetime.now()
+            
+            def packet_callback(packet):
+                nonlocal packet_count
+                packet_count += 1
                 
-                Contains:
-                - HTTP/HTTPS traffic
-                - DNS queries
-                - ICMP (ping) packets
-                """)
-            else:
-                st.warning("⚠️ No packets captured in the given duration")
+                # Check traffic thresholds
+                self._check_thresholds(packet)
+                
+                # Log suspicious activities
+                if self._is_suspicious_packet(packet):
+                    self._log_suspicious_activity(packet)
+                
+                if callback:
+                    callback(packet)
+            
+            try:
+                self.logger.info(f"Starting capture on {output_file}")
+                if duration:
+                    self.capture_session.sniff(timeout=duration, packet_count=None)
+                else:
+                    self.capture_session.apply_on_packets(packet_callback)
+            finally:
+                self.monitoring_active = False
+                self.capture_session.close()
+            
+            # Save capture and generate report
+            self.capture_session.save(str(output_file))
+            self._generate_capture_report(output_file, packet_count, start_time)
             
             return output_file
             
         except Exception as e:
-            st.error(f"Error during capture: {str(e)}")
+            self.logger.error(f"Capture error: {str(e)}")
             if 'permission' in str(e).lower():
-                st.info("""
-                💡 **Traffic capture requires admin privileges**
-                Try running the application with:
-                ```bash
-                sudo python3 netwatch.py
-                ```
-                """)
+                self.logger.error("Insufficient permissions for packet capture")
             return None
+            
+    def _check_thresholds(self, packet):
+        """Monitor traffic thresholds and trigger alerts"""
+        try:
+            # Calculate bandwidth usage
+            if hasattr(packet, 'length'):
+                current_bandwidth = int(packet.length) * 8  # bits
+                if current_bandwidth > self.thresholds['bandwidth']:
+                    self._send_alert(f"High bandwidth usage detected: {current_bandwidth/1000000:.2f} Mbps")
+            
+            # Check connection limits
+            if hasattr(packet, 'ip'):
+                active_connections = len(self._get_active_connections())
+                if active_connections > self.thresholds['connection_limit']:
+                    self._send_alert(f"Connection limit exceeded: {active_connections} connections")
+                    
+        except Exception as e:
+            self.logger.error(f"Error checking thresholds: {str(e)}")
+            
+    def _is_suspicious_packet(self, packet):
+        """Detect suspicious packet patterns"""
+        try:
+            # Check for potential port scans
+            if hasattr(packet, 'tcp'):
+                if packet.tcp.flags == '0x002':  # SYN packet
+                    return True
+                    
+            # Check for unusual protocols
+            if hasattr(packet, 'highest_layer') and packet.highest_layer in ['TELNET', 'FTP']:
+                return True
+                
+            # Add more security checks as needed
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error checking packet: {str(e)}")
+            return False
+            
+    def _send_alert(self, message):
+        """Send alerts through configured channels"""
+        self.logger.warning(message)
+        
+        # Send to Slack if configured
+        if self.slack_client:
+            try:
+                self.slack_client.chat_postMessage(
+                    channel="#netwatch-alerts",
+                    text=f"🚨 *ALERT*: {message}"
+                )
+            except Exception as e:
+                self.logger.error(f"Failed to send Slack alert: {str(e)}")
+                
+    def _get_active_connections(self):
+        """Get list of active network connections"""
+        try:
+            connections = psutil.net_connections()
+            return [conn for conn in connections if conn.status == 'ESTABLISHED']
+        except Exception as e:
+            self.logger.error(f"Error getting connections: {str(e)}")
+            return []
 
     def analyze_pcap(self, pcap_file: Union[str, Path]) -> Optional[Dict[str, Any]]:
         """Analyze a PCAP file and return statistics"""
