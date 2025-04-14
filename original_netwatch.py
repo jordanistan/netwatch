@@ -117,7 +117,7 @@ class NetWatch:
                 
                 # Process responses
                 devices = []
-                for sent, received in ans:
+                for _, received in ans:
                     try:
                         # Try to get hostname but don't fail if we can't
                         try:

@@ -1,11 +1,11 @@
 """UI components for NetWatch"""
-import json
+import sys
 from datetime import datetime
 from pathlib import Path
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import netifaces
+from scapy.all import rdpcap
 
 def setup_page():
     """Setup the main page configuration"""
@@ -19,7 +19,7 @@ def setup_page():
 def show_network_info(interface, ip):
     """Display network information in the sidebar"""
     st.sidebar.title("Network Info")
-    
+
     if interface and ip:
         st.sidebar.success(f"🌐 Network Interface: {interface}")
         st.sidebar.info(f"📍 IP Address: {ip}")
@@ -67,7 +67,7 @@ def show_scan_results(devices, netwatch):
                 hide_index=True,
                 use_container_width=True
             )
-        
+
         # Show all devices
         st.subheader("📶 All Network Devices")
         st.success(f"✨ Found {len(devices)} total devices")
@@ -130,11 +130,11 @@ def format_duration(value):
 
 def show_traffic_capture_ui(netwatch, devices):
     st.header("Traffic Capture")
-    
+
     # Container to store the updated devices list
     if 'devices' not in st.session_state:
         st.session_state.devices = devices
-    
+
     # Manual scan button
     if st.button("🔍 Scan for Devices", type="primary", use_container_width=True):
         with st.spinner("Scanning network..."):
@@ -146,18 +146,18 @@ def show_traffic_capture_ui(netwatch, devices):
                     if st.session_state.devices:
                         st.success(f"✨ Found {len(st.session_state.devices)} devices")
                         st.balloons()
-    
+
     # Traffic capture mode selection
     if 'previous_mode' not in st.session_state:
         st.session_state.previous_mode = "All Traffic 🔥"
-    
+
     capture_mode = st.radio(
         "Capture Mode",
         ["All Traffic 🔥", "Select Devices 🏳"],
         horizontal=True,
         help="Choose to capture all network traffic or select specific devices"
     )
-    
+
     # Auto-scan when switching to device selection mode
     if capture_mode != st.session_state.previous_mode and capture_mode == "Select Devices 🏳":
         if not st.session_state.devices:
@@ -170,9 +170,9 @@ def show_traffic_capture_ui(netwatch, devices):
                         if st.session_state.devices:
                             st.success(f"✨ Found {len(st.session_state.devices)} devices")
                             st.balloons()
-    
+
     st.session_state.previous_mode = capture_mode
-    
+
     # Device selection (only shown for device selection mode)
     selected_devices = []
     if capture_mode == "Select Devices 🏳":
@@ -192,14 +192,14 @@ def show_traffic_capture_ui(netwatch, devices):
                         break
         else:
             st.warning("🛡️ No devices available. Use the scan button above to discover devices.")
-    
+
     # Duration settings
     col1, col2 = st.columns([3, 1])
     with col1:
         max_seconds = 3 * 24 * 60 * 60  # 3 days in seconds
         days, hours, minutes, secs = get_duration_parts(max_seconds)
         st.caption(f"Maximum duration: {days} days, {hours} hours, {minutes} minutes, {secs} seconds")
-        
+
         duration = st.slider(
             "Capture Duration",
             min_value=10,
@@ -208,7 +208,7 @@ def show_traffic_capture_ui(netwatch, devices):
             format="%d",
             help="Slide to adjust duration from 10 seconds up to 3 days"
         )
-        
+
         # Show detailed duration breakdown
         days, hours, minutes, secs = get_duration_parts(duration)
         parts = []
@@ -225,7 +225,7 @@ def show_traffic_capture_ui(netwatch, devices):
         unlimited = st.checkbox("Unlimited")
         if unlimited:
             duration = None
-    
+
     # Automated capture settings
     auto_capture = st.checkbox("Enable Automated Capture")
     if auto_capture:
@@ -233,12 +233,12 @@ def show_traffic_capture_ui(netwatch, devices):
         # Save selected devices for tracking
         tracked_devices_file = Path("data/tracked_devices.json")
         tracked_devices_file.parent.mkdir(parents=True, exist_ok=True)
-        
+
         if tracked_devices_file.exists():
             tracked_devices = json.loads(tracked_devices_file.read_text())
         else:
             tracked_devices = {"devices": []}
-        
+
         # Add selected devices if not already tracked
         for device in selected_devices:
             device_info = {
@@ -248,10 +248,10 @@ def show_traffic_capture_ui(netwatch, devices):
             }
             if device_info not in tracked_devices["devices"]:
                 tracked_devices["devices"].append(device_info)
-        
+
         # Save updated tracked devices
         tracked_devices_file.write_text(json.dumps(tracked_devices, indent=4))
-    
+
     # Show capture button with dynamic text and color based on mode
     if capture_mode == "All Traffic 🔥":
         button_label = "🔥 CAPTURE ALL TRAFFIC ☠️"
@@ -269,14 +269,14 @@ def show_traffic_capture_ui(netwatch, devices):
         button_type = "primary"
         can_capture = len(selected_devices) > 0
         target_ips = [d['ip'] for d in selected_devices] if selected_devices else None
-    
+
     if can_capture and st.button(button_label, type=button_type, use_container_width=True):
         if duration or unlimited:
             # Show capture status
             status_container = st.empty()
             progress_container = st.empty()
             info_container = st.empty()
-            
+
             # Show initial status
             if target_ips:
                 status_container.info(f"🌐 Starting capture for {len(target_ips)} device{'s' if len(target_ips) > 1 else ''}...")
@@ -289,13 +289,13 @@ def show_traffic_capture_ui(netwatch, devices):
                     info_container.markdown("\n".join(device_info))
             else:
                 status_container.warning("🔥 Starting capture for ALL network traffic...")
-            
+
             # Show duration info
             if duration:
                 info_container.caption(f"⏱️ Duration: {get_duration_label(duration)}")
             else:
                 info_container.caption("♻️ Unlimited duration (Press Stop when done)")
-            
+
             # Start capture with progress bar
             progress = progress_container.progress(0)
             pcap_file = netwatch.capture.capture_traffic(
@@ -303,7 +303,7 @@ def show_traffic_capture_ui(netwatch, devices):
                 duration=duration,
                 progress_callback=lambda p: progress.progress(p)
             )
-            
+
             if pcap_file:
                 # Update status with success
                 status_container.success("🎉 Capture completed successfully!")
@@ -361,7 +361,7 @@ def show_pcap_analysis(stats):
                                     )
                     else:
                         st.info("No captures yet")
-    
+
     with col1:
         # Check VoIP analysis availability
         from network.capture import HAS_VOIP_LAYERS
@@ -397,7 +397,7 @@ def show_pcap_analysis(stats):
                         st.text(f"{method} - {timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
     # Summary statistics
     st.header("📊 Traffic Analysis")
-    
+
     # Summary metrics
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -408,7 +408,7 @@ def show_pcap_analysis(stats):
         st.metric("Packets/Second", f"{stats['summary']['packets_per_second']:.1f}")
     with col4:
         st.metric("Bandwidth", f"{stats['summary']['bandwidth_mbps']:.2f} Mbps")
-    
+
     # Web Traffic Analysis
     if stats['web']['urls']:
         st.subheader("🌐 Web Traffic")
@@ -514,7 +514,7 @@ def show_pcap_analysis(stats):
                             color='Bytes',
                             color_continuous_scale='Viridis')
                 st.plotly_chart(fig, use_container_width=True)
-    
+
     # TCP Flags Analysis (if TCP traffic exists)
     if any(stats['tcp_flags'].values()):
         st.subheader("🚩 TCP Flags Distribution")
@@ -528,11 +528,11 @@ def show_pcap_analysis(stats):
                      color='Count',
                      color_continuous_scale='Viridis')
         st.plotly_chart(fig, use_container_width=True)
-    
+
     # Traffic Flow Analysis
     st.subheader("🌊 Traffic Flow Analysis")
     col1, col2 = st.columns(2)
-    
+
     with col1:
         # Packet sizes over time
         df = pd.DataFrame({
@@ -544,7 +544,7 @@ def show_pcap_analysis(stats):
                       labels={'timestamp': 'Time', 'size': 'Packet Size (bytes)'})
         fig.update_layout(showlegend=False)
         st.plotly_chart(fig, use_container_width=True)
-    
+
     with col2:
         # Packet size distribution
         fig = px.histogram(df, x='size',
@@ -552,7 +552,7 @@ def show_pcap_analysis(stats):
                           labels={'size': 'Packet Size (bytes)', 'count': 'Frequency'},
                           nbins=50)
         st.plotly_chart(fig, use_container_width=True)
-    
+
     # Data Usage Analysis
     st.subheader("📊 Data Usage Analysis")
     if stats['ips']['data_usage']:
@@ -560,7 +560,7 @@ def show_pcap_analysis(stats):
         usage_df = pd.DataFrame(usage_data, columns=['IP', 'Bytes'])
         usage_df['Data'] = usage_df['Bytes'].apply(format_bytes)
         usage_df = usage_df.sort_values('Bytes', ascending=False)
-        
+
         fig = px.bar(usage_df,
                      x='IP', y='Bytes',
                      title="Data Usage by IP",
@@ -568,18 +568,18 @@ def show_pcap_analysis(stats):
                      color_continuous_scale='Viridis')
         fig.update_layout(yaxis_title="Data Usage")
         st.plotly_chart(fig, use_container_width=True)
-        
+
         # Show detailed table
         st.dataframe(
             usage_df[['IP', 'Data']].rename(columns={'Data': 'Total Usage'}),
             hide_index=True,
             use_container_width=True
         )
-    
+
     # Protocol Analysis
     st.subheader("🔍 Protocol Analysis")
     col1, col2 = st.columns(2)
-    
+
     with col1:
         # Transport protocols
         fig = px.pie(
@@ -590,7 +590,7 @@ def show_pcap_analysis(stats):
         )
         fig.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig, use_container_width=True)
-    
+
     with col2:
         # Application protocols
         fig = px.pie(
@@ -601,7 +601,7 @@ def show_pcap_analysis(stats):
         )
         fig.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig, use_container_width=True)
-    
+
     # IP Analysis
     st.subheader("🌐 IP Analysis")
     # Load tracked devices for reference
@@ -618,7 +618,7 @@ def show_pcap_analysis(stats):
     except Exception:
         tracked_devices = []
         ip_to_device = {}
-    
+
     def get_device_info(ip):
         if ip in ip_to_device:
             device = ip_to_device[ip]
@@ -626,10 +626,10 @@ def show_pcap_analysis(stats):
             description = device.get('description', '')
             return f"{name} ({description})" if description else name
         return ''
-    
+
     # Create three columns for analysis
     col1, col2, col3 = st.columns(3)
-    
+
     with col1:
         st.markdown("**Top Sources**")
         for ip, count in sorted(stats['ips']['src'].items(), key=lambda x: x[1], reverse=True)[:10]:
@@ -653,7 +653,7 @@ def show_pcap_analysis(stats):
                             'packets': conv_count,
                             'protocols': dict(protocols)
                         })
-                
+
                 for dest in sorted(dest_data, key=lambda x: x['packets'], reverse=True)[:5]:
                     st.text(f"→ {dest['destination']}: {dest['packets']:,} packets")
                     if dest['protocols']:
@@ -683,7 +683,7 @@ def show_pcap_analysis(stats):
                             'packets': conv_count,
                             'protocols': dict(protocols)
                         })
-                
+
                 for src in sorted(src_data, key=lambda x: x['packets'], reverse=True)[:5]:
                     st.text(f"← {src['source']}: {src['packets']:,} packets")
                     if src['protocols']:
@@ -706,39 +706,39 @@ def show_pcap_analysis(stats):
                     for proto, proto_count in sorted(protocols.items(), key=lambda x: x[1], reverse=True):
                         percentage = (proto_count / count) * 100
                         st.text(f"{proto}: {proto_count:,} packets ({percentage:.1f}%)")
-                
+
                 # Show data transfer
                 src_data = stats['ips']['data_usage'].get(src, 0)
                 dst_data = stats['ips']['data_usage'].get(dst, 0)
                 st.markdown("**Data Transfer:**")
                 st.text(f"Source → Destination: {format_bytes(src_data)}")
                 st.text(f"Destination → Source: {format_bytes(dst_data)}")
-    
+
     # Port Analysis
     st.subheader("🔌 Port Analysis")
     col1, col2 = st.columns(2)
-    
+
     with col1:
         # Top source ports
         src_ports = pd.DataFrame(
             stats['ports']['src'].items(),
             columns=['Port', 'Count']
         ).sort_values('Count', ascending=False).head(10)
-        
+
         fig = px.bar(src_ports,
                      x='Port', y='Count',
                      title="Top Source Ports",
                      color='Count',
                      color_continuous_scale='Viridis')
         st.plotly_chart(fig, use_container_width=True)
-    
+
     with col2:
         # Top destination ports
         dst_ports = pd.DataFrame(
             stats['ports']['dst'].items(),
             columns=['Port', 'Count']
         ).sort_values('Count', ascending=False).head(10)
-        
+
         fig = px.bar(dst_ports,
                      x='Port', y='Count',
                      title="Top Destination Ports",
