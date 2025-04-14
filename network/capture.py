@@ -283,8 +283,8 @@ class TrafficCapture:
                             try:
                                 domain = dns.qd.qname.decode()
                                 stats['web']['domains'][domain] += 1
-                            except:
-                                pass
+                            except Exception as e:
+                                st.error(f"Error processing DNS packet: {e}")
                 
                 elif dport == 67 or dport == 68:
                     app_proto = "DHCP"
