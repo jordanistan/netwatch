@@ -186,9 +186,9 @@ brew install tcpdump wireshark
 
    - Generate suspicious traffic for testing:
 
-     ```bash
-     python network/generate_suspicious_pcap.py
-     ```
+   ```bash
+   python network/generate_suspicious_pcap.py
+   ```
 
    - Example attack patterns:
 
