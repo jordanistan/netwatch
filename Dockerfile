@@ -28,12 +28,9 @@ RUN pip install --no-cache-dir --timeout 100 -r requirements.txt
 # Copy application files
 COPY . .
 
-# Set permissions for network tools and create non-root user
-RUN setcap cap_net_raw,cap_net_admin=eip /usr/bin/tcpdump && \
-    setcap cap_net_raw,cap_net_admin=eip /usr/bin/tshark && \
-    setcap cap_net_raw,cap_net_admin=eip /usr/local/bin/python3.9 && \
-    useradd -m -s /bin/bash netwatch && \
-    chown -R netwatch:netwatch /app
+# Set up application directory and permissions
+RUN mkdir -p /app/captures /app/logs /app/reports && \
+    chmod 755 /app
 
 # Configure environment
 ENV STREAMLIT_SERVER_PORT=8502 \
@@ -46,13 +43,13 @@ ENV STREAMLIT_SERVER_PORT=8502 \
 # Expose port
 EXPOSE 8502
 
-# Switch to non-root user
-USER netwatch
+# Set working directory
+WORKDIR /app
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8502/_stcore/health || exit 1
 
-# Run the application with network capabilities
-ENTRYPOINT ["python3", "-m", "streamlit", "run", "netwatch.py"]
-CMD ["--server.address=0.0.0.0", "--server.port=8502"]
+# Run the application
+ENTRYPOINT ["python3", "-m", "streamlit", "run", "--server.address", "0.0.0.0", "--server.port", "8502", "netwatch.py"]
+

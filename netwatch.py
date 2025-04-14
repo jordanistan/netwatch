@@ -499,7 +499,7 @@ def main():
     
     # Function to display suspicious activity
     def display_suspicious_activity(ip: str):
-        if '192.168.86.42' in ip:
+        if is_suspicious_ip(ip):
             st.error("🚨 HIGH RISK DEVICE DETECTED")
             stats = generate_simulated_stats()
             risk = get_risk_assessment()
@@ -697,7 +697,7 @@ def main():
                         label_parts.append(f"Host: {hostname}")
                     if vendor:
                         label_parts.append(vendor)
-                    if ip == '192.168.86.42':
+                    if is_suspicious_ip(ip):
                         label_parts.append("🚨 SUSPICIOUS")
                     
                     label = " | ".join(label_parts)
@@ -717,7 +717,7 @@ def main():
                         target_ips = [device_options[device] for device in selected_devices] if selected_devices else None
                         
                         # Check if suspicious device is selected
-                        is_suspicious = target_ips and '192.168.86.42' in target_ips
+                        is_suspicious = target_ips and any(is_suspicious_ip(ip) for ip in target_ips)
                         
                         pcap_file = netwatch.capture_traffic(
                             target_ips=target_ips,
@@ -877,8 +877,9 @@ def main():
                                                 st.video(media.get('media_url', 'https://example.com/sample.mp4'))
                         
                         # If this is the suspicious device's PCAP, show the analysis
-                        if '192-168-86-42' in str(selected_file):
-                            display_suspicious_activity('192.168.86.42')
+                        # Display suspicious activity if detected
+                        if is_suspicious_file(selected_file):
+                            display_suspicious_activity(get_ip_from_filename(selected_file))
                             
                     except Exception as e:
                         st.error(f"Error analyzing PCAP: {str(e)}")
