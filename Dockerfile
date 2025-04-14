@@ -5,16 +5,16 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    tcpdump=4.99.1-3 \
-    tshark=3.4.9-1 \
-    curl=7.74.0-1.3+deb11u11 \
-    net-tools=1.60+git20181103.0eebece-1 \
-    iputils-ping=3:20210202-1 \
-    iproute2=5.10.0-4 \
-    libcap2-bin=1:2.44-1 \
-    libpcap-dev=1.10.0-2 \
-    gcc=4:10.2.1-1 \
-    python3-dev=3.9.2-3 \
+    tcpdump \
+    tshark \
+    curl \
+    net-tools \
+    iputils-ping \
+    iproute2 \
+    libcap2-bin \
+    libpcap-dev \
+    gcc \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Create directories and set up Python environment
