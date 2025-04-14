@@ -252,7 +252,6 @@ class TrafficCapture:
                 # Update port stats
                 stats['ports']['src'][sport] = stats['ports']['src'].get(sport, 0) + 1
                 stats['ports']['dst'][dport] = stats['ports']['dst'].get(dport, 0) + 1
-                
                 # SIP/RTP Analysis
                 if packet.haslayer(SIP):
                     app_proto = "SIP"
@@ -266,7 +265,6 @@ class TrafficCapture:
                                 'source': ip_src,
                                 'destination': ip_dst
                             })
-                
                 elif packet.haslayer(RTP):
                     app_proto = "RTP"
                     if IP in packet:
