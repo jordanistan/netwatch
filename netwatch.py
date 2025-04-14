@@ -360,29 +360,94 @@ class NetWatch:
             devices = self.scan_network(network_range)
             
             return devices
-            
+
         except (OSError, PermissionError) as e:
             st.error(f"Error getting network devices: {str(e)}")
             return []
 
+    def _detect_device_type(self, ip: str) -> str:
+        """Detect device type based on common ports"""
+        common_ports = {
+            22: 'SSH Server',
+            80: 'Web Server',
+            443: 'HTTPS Server',
+            445: 'Windows Share',
+            3389: 'Remote Desktop',
+            8080: 'Web Server',
+            5900: 'VNC Server'
+        }
+
+        for port, device_type in common_ports.items():
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(0.1)
+                result = sock.connect_ex((ip, port))
+                sock.close()
+
+                if result == 0:
+                    return device_type
+            except:
+                continue
+        
+        return "Unknown"
+    
+    def get_network_info(self) -> Optional[Dict[str, str]]:
+        """Get network interface and subnet information"""
+        try:
+            # Get all network interfaces
+            interfaces = netifaces.interfaces()
+
+            # Filter out loopback and virtual interfaces
+            for iface in interfaces:
+                if iface == 'lo' or 'virtual' in iface.lower():
+                    continue
+                
+                # Get interface addresses
+                addrs = netifaces.ifaddresses(iface)
+                if netifaces.AF_INET in addrs:
+                    for addr in addrs[netifaces.AF_INET]:
+                        ip = addr['addr']
+                        netmask = addr['netmask']
+
+                        # Skip localhost and link-local addresses
+                        if not ip.startswith('127.') and not ip.startswith('169.254.'):
+                            # Calculate network address
+                            ip_interface = ipaddress.IPv4Interface(f"{ip}/{netmask}")
+                            network = ip_interface.network
+
+                            return {
+                                'name': iface,
+                                'ip': ip,
+                                'netmask': netmask,
+                                'network': str(network)
+                            }
+            
+            return None
+            
+        except Exception as e:
+            st.error(f"Error getting network info: {str(e)}")
+            return None
+    
     def scan_network(self, network_range: Optional[str] = None) -> List[Dict[str, str]]:
         """Scan network for devices using ARP"""
-        interface = self.get_default_interface()
-        if not interface:
-            return []
-        
         try:
+            # Get network information
             if network_range is None:
-                network_range = self.get_network_range(interface)
-                if not network_range:
+                network_info = self.get_network_info()
+                if not network_info:
+                    st.error("❌ No suitable network interface found")
                     return []
-            
+                network_range = network_info['network']
+                interface = network_info['name']
+            else:
+                interface = self.get_default_interface()
+                if not interface:
+                    return []
+
             st.info(f"📡 Scanning on interface: {interface}")
-            ip = scapy.get_if_addr(interface)
-            st.info(f"🔍 Interface IP: {ip}")
             st.info(f"🌐 Network range to scan: {network_range}")
-            
-            with st.spinner("🔍 Sending ARP requests..."):
+
+            with st.spinner("🔍 Scanning network..."):
                 # Create ARP request packet
                 arp = ARP(pdst=network_range)
                 ether = Ether(dst="ff:ff:ff:ff:ff:ff")
@@ -390,30 +455,64 @@ class NetWatch:
 
                 # Send packet and get responses
                 result = scapy.srp(packet, timeout=3, verbose=0)[0]
-                
+
                 # Process responses
                 devices = []
+                network = ipaddress.ip_network(network_range)
+
                 for _, received in result:
-                    # Get hostname using reverse DNS lookup
                     try:
+                        # Get hostname
                         hostname = socket.gethostbyaddr(received.psrc)[0]
                     except (socket.herror, socket.gaierror):
-                        hostname = ''
+                        hostname = "Unknown"
+
+                    # Try to get vendor from MAC address
+                    try:
+                        mac = received.hwsrc.upper()
+                        oui = mac.replace(':', '')[:6]
+                        vendor = variables.MAC_VENDORS.get(oui, "Unknown Vendor")
+                    except:
+                        vendor = "Unknown Vendor"
+
+                    # Check if device is on local network
+                    ip_addr = ipaddress.ip_address(received.psrc)
+                    is_local = ip_addr in network
                     
-                    devices.append({
+                    device_info = {
                         'ip': received.psrc,
                         'mac': received.hwsrc,
                         'hostname': hostname,
-                        'vendor': ''  # Could add MAC vendor lookup in the future
-                    })
-            
+                        'vendor': vendor,
+                        'is_local': is_local,
+                        'network': str(network)
+                    }
+
+                    # Add device type based on common ports
+                    try:
+                        device_info['type'] = self._detect_device_type(received.psrc)
+                    except:
+                        device_info['type'] = "Unknown"
+
+                    devices.append(device_info)
+
             if devices:
                 st.success(f"✨ Found {len(devices)} devices")
+
+                # Create a DataFrame for better display
+                df = pd.DataFrame(devices)
+                df = df[['hostname', 'ip', 'mac', 'vendor', 'type', 'is_local']]
+                df.columns = ['Hostname', 'IP Address', 'MAC Address', 'Vendor', 'Device Type', 'Local']
+                
+                st.dataframe(
+                    df,
+                    use_container_width=True
+                )
             else:
                 st.warning("⚠️ No devices found on the network")
-            
+
             return devices
-            
+
         except (OSError, PermissionError) as e:
             st.error(f"Error during scan: {str(e)}")
             if 'permission' in str(e).lower():
