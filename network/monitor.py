@@ -48,19 +48,20 @@ class DeviceMonitor:
                         target_ips.append(ip)
                 
                 if target_ips:
-                    # Generate timestamp for filename
-                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    
                     # Start a new capture for each device
                     for device in tracked_devices:
                         ip = device.get('ip', device.get('last_known_ip'))
                         if ip:
                             device_id = device.get('mac', '').replace(':', '')
                             if device_id:
+                                # Generate timestamp for this device's capture
+                                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                                capture_file = self.captures_dir / f"device_{device_id}_{timestamp}.pcap"
                                 # Create device-specific capture
                                 self.traffic_capture.capture_traffic(
                                     target_ips=[ip],
                                     duration=60,  # 1 minute capture
+                                    output_file=capture_file
                                 )
                 
                 # Wait for 5 minutes before next check

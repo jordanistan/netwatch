@@ -604,50 +604,115 @@ def show_pcap_analysis(stats):
     
     # IP Analysis
     st.subheader("🌐 IP Analysis")
-    tab1, tab2, tab3 = st.tabs(["Top Sources", "Top Destinations", "Top Conversations"])
+    # Load tracked devices for reference
+    try:
+        with open('data/tracked_devices.json', 'r') as f:
+            tracked_devices = json.load(f)['devices']
+            # Create lookup maps for device info
+            ip_to_device = {}
+            for device in tracked_devices:
+                if 'ip' in device:
+                    ip_to_device[device['ip']] = device
+                if 'last_known_ip' in device:
+                    ip_to_device[device['last_known_ip']] = device
+    except Exception:
+        tracked_devices = []
+        ip_to_device = {}
     
-    with tab1:
-        # Top source IPs
-        src_ips = pd.DataFrame(
-            stats['ips']['src'].items(),
-            columns=['IP', 'Packets Sent']
-        ).sort_values('Packets Sent', ascending=False).head(10)
-        
-        fig = px.bar(src_ips,
-                     x='IP', y='Packets Sent',
-                     title="Top Source IPs",
-                     color='Packets Sent',
-                     color_continuous_scale='Viridis')
-        st.plotly_chart(fig, use_container_width=True)
+    def get_device_info(ip):
+        if ip in ip_to_device:
+            device = ip_to_device[ip]
+            name = device.get('name', device.get('hostname', ''))
+            description = device.get('description', '')
+            return f"{name} ({description})" if description else name
+        return ''
     
-    with tab2:
-        # Top destination IPs
-        dst_ips = pd.DataFrame(
-            stats['ips']['dst'].items(),
-            columns=['IP', 'Packets Received']
-        ).sort_values('Packets Received', ascending=False).head(10)
-        
-        fig = px.bar(dst_ips,
-                     x='IP', y='Packets Received',
-                     title="Top Destination IPs",
-                     color='Packets Received',
-                     color_continuous_scale='Viridis')
-        st.plotly_chart(fig, use_container_width=True)
+    # Create three columns for analysis
+    col1, col2, col3 = st.columns(3)
     
-    with tab3:
-        # Top conversations
-        conversations = pd.DataFrame(
-            stats['ips']['conversations'].items(),
-            columns=['Flow', 'Packets']
-        ).sort_values('Packets', ascending=False).head(10)
-        
-        fig = px.bar(conversations,
-                     x='Flow', y='Packets',
-                     title="Top IP Conversations",
-                     color='Packets',
-                     color_continuous_scale='Viridis')
-        fig.update_layout(xaxis_tickangle=45)
-        st.plotly_chart(fig, use_container_width=True)
+    with col1:
+        st.markdown("**Top Sources**")
+        for ip, count in sorted(stats['ips']['src'].items(), key=lambda x: x[1], reverse=True)[:10]:
+            device_info = get_device_info(ip)
+            title = f"{device_info} ({ip})" if device_info else ip
+            with st.expander(f"📱 {title} - {count:,} packets"):
+                # Show data usage
+                data_usage = stats['ips']['data_usage'].get(ip, 0)
+                st.text(f"Total Data: {format_bytes(data_usage)}")
+                # Show top destinations for this source
+                st.markdown("**Top Destinations:**")
+                dest_data = []
+                for conv, conv_count in stats['ips']['conversations'].items():
+                    src, dst = conv.split(' → ')
+                    if src == ip:
+                        dest_info = get_device_info(dst)
+                        dest_name = f"{dest_info} ({dst})" if dest_info else dst
+                        protocols = stats['ips']['conversation_protocols'][conv]
+                        dest_data.append({
+                            'destination': dest_name,
+                            'packets': conv_count,
+                            'protocols': dict(protocols)
+                        })
+                
+                for dest in sorted(dest_data, key=lambda x: x['packets'], reverse=True)[:5]:
+                    st.text(f"→ {dest['destination']}: {dest['packets']:,} packets")
+                    if dest['protocols']:
+                        st.text("  Protocols:")
+                        for proto, proto_count in sorted(dest['protocols'].items(), key=lambda x: x[1], reverse=True):
+                            st.text(f"    {proto}: {proto_count:,} packets")
+    with col2:
+        st.markdown("**Top Destinations**")
+        for ip, count in sorted(stats['ips']['dst'].items(), key=lambda x: x[1], reverse=True)[:10]:
+            device_info = get_device_info(ip)
+            title = f"{device_info} ({ip})" if device_info else ip
+            with st.expander(f"📱 {title} - {count:,} packets"):
+                # Show data usage
+                data_usage = stats['ips']['data_usage'].get(ip, 0)
+                st.text(f"Total Data: {format_bytes(data_usage)}")
+                # Show top sources for this destination
+                st.markdown("**Top Sources:**")
+                src_data = []
+                for conv, conv_count in stats['ips']['conversations'].items():
+                    src, dst = conv.split(' → ')
+                    if dst == ip:
+                        src_info = get_device_info(src)
+                        src_name = f"{src_info} ({src})" if src_info else src
+                        protocols = stats['ips']['conversation_protocols'][conv]
+                        src_data.append({
+                            'source': src_name,
+                            'packets': conv_count,
+                            'protocols': dict(protocols)
+                        })
+                
+                for src in sorted(src_data, key=lambda x: x['packets'], reverse=True)[:5]:
+                    st.text(f"← {src['source']}: {src['packets']:,} packets")
+                    if src['protocols']:
+                        st.text("  Protocols:")
+                        for proto, proto_count in sorted(src['protocols'].items(), key=lambda x: x[1], reverse=True):
+                            st.text(f"    {proto}: {proto_count:,} packets")
+    with col3:
+        st.markdown("**Top Conversations**")
+        for conv, count in sorted(stats['ips']['conversations'].items(), key=lambda x: x[1], reverse=True)[:10]:
+            src, dst = conv.split(' → ')
+            src_info = get_device_info(src)
+            dst_info = get_device_info(dst)
+            src_title = f"{src_info} ({src})" if src_info else src
+            dst_title = f"{dst_info} ({dst})" if dst_info else dst
+            with st.expander(f"{src_title} → {dst_title} - {count:,} packets"):
+                # Show protocol breakdown
+                if conv in stats['ips']['conversation_protocols']:
+                    st.markdown("**Protocol Breakdown:**")
+                    protocols = stats['ips']['conversation_protocols'][conv]
+                    for proto, proto_count in sorted(protocols.items(), key=lambda x: x[1], reverse=True):
+                        percentage = (proto_count / count) * 100
+                        st.text(f"{proto}: {proto_count:,} packets ({percentage:.1f}%)")
+                
+                # Show data transfer
+                src_data = stats['ips']['data_usage'].get(src, 0)
+                dst_data = stats['ips']['data_usage'].get(dst, 0)
+                st.markdown("**Data Transfer:**")
+                st.text(f"Source → Destination: {format_bytes(src_data)}")
+                st.text(f"Destination → Source: {format_bytes(dst_data)}")
     
     # Port Analysis
     st.subheader("🔌 Port Analysis")

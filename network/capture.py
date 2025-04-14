@@ -179,6 +179,7 @@ class TrafficCapture:
                 'src': {},
                 'dst': {},
                 'conversations': {},  # src-dst pairs
+                'conversation_protocols': defaultdict(lambda: defaultdict(int)),  # protocols per conversation
                 'data_usage': defaultdict(int)  # bytes per IP
             },
             'packet_sizes': [],
@@ -398,6 +399,12 @@ class TrafficCapture:
             stats['protocols']['transport'][proto] = stats['protocols']['transport'].get(proto, 0) + 1
             stats['protocols']['application'][app_proto] = stats['protocols']['application'].get(app_proto, 0) + 1
             
+            # Track protocols per conversation if IP layer exists
+            if IP in packet:
+                src = packet[IP].src
+                dst = packet[IP].dst
+                conversation = f"{src} → {dst}"
+                stats['ips']['conversation_protocols'][conversation][app_proto] += 1
             # Analyze IP addresses and conversations
             if scapy.IP in packet:
                 src = packet[scapy.IP].src
