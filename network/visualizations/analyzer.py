@@ -123,6 +123,11 @@ class TrafficVisualizer:
             nodes.add(dst_ip)
             edges.append((src_ip, dst_ip, weight))
         
+        # Calculate node adjacencies (number of connections for each node)
+        node_adjacencies = {}
+        for node in nodes:
+            node_adjacencies[node] = sum(1 for src, dst, _ in edges if src == node or dst == node)
+
         # Create node positions using a circular layout
         pos = {}
         nodes = list(nodes)  # Convert set to list for consistent ordering
@@ -164,7 +169,7 @@ class TrafficVisualizer:
             # Calculate total packets for this node
             total_packets = sum(weight for src, dst, weight in edges 
                               if src == node or dst == node)
-            node_text.append(f"{node}\nTotal Packets: {total_packets}")
+            node_text.append(f"{node}\nConnections: {node_adjacencies[node]}\nTotal Packets: {total_packets}")
             node_sizes.append(np.sqrt(total_packets) * 10)  # Scale node size by sqrt of packet count
             
         node_trace = go.Scatter(
@@ -177,10 +182,10 @@ class TrafficVisualizer:
                 showscale=True,
                 colorscale='YlOrRd',
                 size=node_sizes,
-                color=node_sizes,
+                color=[node_adjacencies[node] for node in nodes],  # Color by number of connections
                 colorbar=dict(
                     thickness=15,
-                    title='Packet Count',
+                    title='Connection Count',
                     xanchor='left',
                     titleside='right'
                 )
@@ -198,36 +203,6 @@ class TrafficVisualizer:
                            width=800,
                            height=800
                        ))
-        return fig
-                showscale=True,
-                colorscale='YlGnBu',
-                size=20,
-                colorbar=dict(
-                    thickness=15,
-                    title='Node Connections',
-                    xanchor='left',
-                    titleside='right'
-                )
-            ))
-
-        # Count connections for each node
-        node_adjacencies = []
-        for node in nodes:
-            connected = sum(1 for _, dst, _ in edges if dst == node)
-            node_adjacencies.append(connected)
-            
-        node_trace.marker.color = node_adjacencies
-
-        # Create the figure
-        fig = go.Figure(data=[edge_trace, node_trace],
-                     layout=go.Layout(
-                        title='Network Flow Diagram',
-                        showlegend=False,
-                        hovermode='closest',
-                        margin=dict(b=20,l=5,r=5,t=40),
-                        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-                        )
         return fig
     
     def create_protocol_timeline(self, stats):

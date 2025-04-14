@@ -2,7 +2,6 @@
 from pathlib import Path
 
 import streamlit as st
-import pandas as pd
 
 from network.scanner import NetworkScanner
 from network.capture import TrafficCapture
@@ -58,53 +57,30 @@ def main():
                 st.error("No suitable network interface found")
 
     elif action == "Traffic Capture":
-        # Initialize devices list
-        devices = []
-        # First try to get cached devices
-        devices = netwatch.scanner.get_cached_devices() or []
-        # Always do a fresh scan when navigating to Traffic Capture
-        if interface and ip:
-            network_range = netwatch.scanner.get_network_range(interface, ip)
-            if network_range:
-                with st.spinner("Scanning network for devices..."):
-                    devices = netwatch.scanner.scan_devices(interface, network_range)
-                    if devices:
-                        st.success(f"✨ Found {len(devices)} devices on your network")
-                        # Get activity status for each device
-                        devices_with_status = []
-                        for d in devices:
-                            # Get device history
-                            device_history = netwatch.scanner.device_history['devices'].get(d['mac'], {})
-                            if device_history:
-                                activity = netwatch.scanner._get_activity_status(device_history)
-                            else:
-                                activity = "New Device"
-                            devices_with_status.append({
-                                'IP Address': d['ip'],
-                                'MAC Address': d['mac'],
-                                'Device Name': d.get('hostname', 'N/A'),
-                                'Activity': activity
-                            })
-                        # Create a DataFrame for better visualization
-                        device_df = pd.DataFrame(devices_with_status)
-                        st.dataframe(
-                            device_df,
-                            column_config={
-                                'IP Address': st.column_config.TextColumn(width="medium"),
-                                'MAC Address': st.column_config.TextColumn(width="medium"),
-                                'Device Name': st.column_config.TextColumn(width="medium"),
-                                'Activity': st.column_config.TextColumn(
-                                    width="small",
-                                    help="Device activity status"
-                                )
-                            },
-                            hide_index=True,
-                            use_container_width=True
-                        )
-                    else:
-                        st.info("No devices found on the network")
+        # Initialize session state for devices if not exists
+        if 'traffic_capture_devices' not in st.session_state:
+            st.session_state.traffic_capture_devices = []
+            # First try to get cached devices
+            devices = netwatch.scanner.get_cached_devices() or []
+            # Do a fresh scan when first loading Traffic Capture
+            if interface and ip:
+                network_range = netwatch.scanner.get_network_range(interface, ip)
+                if network_range:
+                    with st.spinner("Scanning network for devices..."):
+                        devices = netwatch.scanner.scan_devices(interface, network_range)
+                        if devices:
+                            # Get activity status for each device
+                            devices_with_status = []
+                            for d in devices:
+                                # Get device history
+                                device_history = netwatch.scanner.device_history['devices'].get(d['mac'], {})
+                                activity = netwatch.scanner._get_activity_status(device_history) if device_history else "New Device"
+                                d['activity'] = activity
+                                devices_with_status.append(d)
+                            st.session_state.traffic_capture_devices = devices_with_status
+
         # Show traffic capture UI with the devices we found
-        show_traffic_capture_ui(netwatch, devices)
+        show_traffic_capture_ui(netwatch, st.session_state.traffic_capture_devices)
 
     elif action == "PCAP Analysis":
         st.header("PCAP Analysis")

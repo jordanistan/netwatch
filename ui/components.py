@@ -166,26 +166,36 @@ def format_duration(value):
 def show_traffic_capture_ui(netwatch, devices):
     st.header("Traffic Capture")
 
-    # Container to store the updated devices list
-    if 'devices' not in st.session_state:
-        st.session_state.devices = devices
+    # Create a DataFrame for device visualization
+    if devices:
+        device_df = pd.DataFrame([
+            {
+                'IP Address': d['ip'],
+                'MAC Address': d['mac'],
+                'Device Name': d.get('hostname', 'N/A'),
+                'Activity': d.get('activity', 'Unknown')
+            } for d in devices
+        ])
+        st.dataframe(
+            device_df,
+            column_config={
+                'IP Address': st.column_config.TextColumn(width="medium"),
+                'MAC Address': st.column_config.TextColumn(width="medium"),
+                'Device Name': st.column_config.TextColumn(width="medium"),
+                'Activity': st.column_config.TextColumn(
+                    width="small",
+                    help="Device activity status"
+                )
+            },
+            hide_index=True,
+            use_container_width=True
+        )
 
-    # Manual scan button
-    if st.button("🔍 Scan for Devices", type="primary", use_container_width=True):
-        with st.spinner("Scanning network..."):
-            interface, ip = netwatch.scanner.get_default_interface()
-            if interface and ip:
-                network_range = netwatch.scanner.get_network_range(interface, ip)
-                if network_range:
-                    st.session_state.devices = netwatch.scanner.scan_devices(interface, network_range)
-                    if st.session_state.devices:
-                        st.success(f"✨ Found {len(st.session_state.devices)} devices")
-                        st.balloons()
+    # Manual scan button for refreshing device list
+    if st.button("🔄 Refresh Device List", type="secondary", use_container_width=True):
+        st.rerun()
 
     # Traffic capture mode selection
-    if 'previous_mode' not in st.session_state:
-        st.session_state.previous_mode = "All Traffic 🔥"
-
     capture_mode = st.radio(
         "Capture Mode",
         ["All Traffic 🔥", "Select Devices 🏳"],
@@ -193,19 +203,17 @@ def show_traffic_capture_ui(netwatch, devices):
         help="Choose to capture all network traffic or select specific devices"
     )
 
-    st.session_state.previous_mode = capture_mode
-
     # Device selection (only shown for device selection mode)
     selected_devices = []
     if capture_mode == "Select Devices 🏳":
-        if st.session_state.devices:
+        if devices:
             # Create columns for devices and tracked info
             col1, col2 = st.columns([3, 2])
 
             with col1:
-                st.subheader("🔍 Available Devices")
+                st.subheader("🔍 Select Target Devices")
                 # Create a list of all device options
-                device_options = [f"{d['ip']} ({d.get('hostname', 'N/A')})" for d in st.session_state.devices]
+                device_options = [f"{d['ip']} ({d.get('hostname', 'N/A')})" for d in devices]
                 selected_options = st.multiselect(
                     "Select Devices to Monitor",
                     options=device_options,
@@ -213,13 +221,13 @@ def show_traffic_capture_ui(netwatch, devices):
                 )
                 # Get the full device info for each selected device
                 for option in selected_options:
-                    for device in st.session_state.devices:
+                    for device in devices:
                         if f"{device['ip']} ({device.get('hostname', 'N/A')})" == option:
                             selected_devices.append(device)
                             break
 
             with col2:
-                st.subheader("📌 Tracked Devices Info")
+                st.subheader("📌 Tracked Devices")
                 # Get and display tracked devices
                 tracked_devices = netwatch.scanner.get_tracked_devices()
                 if tracked_devices:
@@ -232,7 +240,7 @@ def show_traffic_capture_ui(netwatch, devices):
                 else:
                     st.info("No devices are currently being tracked")
         else:
-            st.warning("🛡️ No devices available. Use the scan button above to discover devices.")
+            st.warning("🛡️ No devices available. Please wait for the network scan to complete.")
 
     # Duration settings
     col1, col2 = st.columns([3, 1])
@@ -267,31 +275,34 @@ def show_traffic_capture_ui(netwatch, devices):
         if unlimited:
             duration = None
 
-    # Automated capture settings
-    auto_capture = st.checkbox("Enable Automated Capture")
-    if auto_capture:
-        st.info("⚠️ Automated capture will start when the selected device is detected on the network")
-        # Save selected devices for tracking
-        tracked_devices_file = Path("data/tracked_devices.json")
-        tracked_devices_file.parent.mkdir(parents=True, exist_ok=True)
+    # Start capture button
+    if capture_mode == "All Traffic 🔥" or (capture_mode == "Select Devices 🏳" and selected_devices):
+        if st.button("🎥 Start Capture", type="primary", use_container_width=True):
+            target_ips = None if capture_mode == "All Traffic 🔥" else [d['ip'] for d in selected_devices]
 
-        if tracked_devices_file.exists():
-            tracked_devices = json.loads(tracked_devices_file.read_text())
-        else:
-            tracked_devices = {"devices": []}
+            # Create a unique filename for this capture
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            if target_ips:
+                if len(target_ips) == 1:
+                    filename = f"capture_{timestamp}_{target_ips[0]}.pcap"
+                else:
+                    filename = f"capture_{timestamp}_{len(target_ips)}_devices.pcap"
+            else:
+                filename = f"capture_{timestamp}_all_traffic.pcap"
 
-        # Add selected devices if not already tracked
-        for device in selected_devices:
-            device_info = {
-                "mac": device["mac"],
-                "last_known_ip": device["ip"],
-                "hostname": device.get("hostname", "N/A")
-            }
-            if device_info not in tracked_devices["devices"]:
-                tracked_devices["devices"].append(device_info)
-
-        # Save updated tracked devices
-        tracked_devices_file.write_text(json.dumps(tracked_devices, indent=4))
+            # Start the capture
+            with st.spinner(f"📦 Capturing traffic for {format_duration(duration) if duration else 'unlimited time'}..."):
+                try:
+                    netwatch.capture.capture_traffic(
+                        target_ips=target_ips,
+                        duration=duration
+                    )
+                    st.success("✅ Capture completed successfully!")
+                    st.info(f"💾 Saved as: {filename}")
+                except Exception as e:
+                    st.error(f"❌ Capture failed: {str(e)}")
+    elif capture_mode == "Select Devices 🏳":
+        st.info("👆 Please select at least one device to start capturing")
 
     # Show capture button with dynamic text and color based on mode
     if capture_mode == "All Traffic 🔥":
