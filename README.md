@@ -139,6 +139,9 @@ brew install tcpdump wireshark
    sudo streamlit run netwatch.py -- --scan
    ```
 
+   ![Network Scanner](data/screenshots/Screenshot%202025-04-14%20at%209.14.05%20AM.png)
+   *Network Scanner Interface: Discover and monitor devices on your network*
+
    - Click 'Scan Network' to discover devices
    - View device details in real-time:
 
@@ -159,6 +162,12 @@ brew install tcpdump wireshark
    # Start capture for specific device
    sudo streamlit run netwatch.py -- --capture --target 192.168.1.100
    ```
+
+   ![Traffic Capture](data/screenshots/Screenshot%202025-04-14%20at%209.15.17%20AM.png)
+   *Traffic Capture Interface: Monitor and analyze network traffic in real-time*
+
+   ![Traffic Analysis](data/screenshots/Screenshot%202025-04-14%20at%209.17.19%20AM.png)
+   *Traffic Analysis Dashboard: View detailed traffic patterns and statistics*
 
    - Configure capture settings in `config.json`:
 
@@ -183,6 +192,15 @@ brew install tcpdump wireshark
    # Analyze existing PCAP file
    streamlit run ui/pcap_analyzer.py -- --pcap captures/traffic.pcap
    ```
+
+   ![PCAP Analysis](data/screenshots/Screenshot%202025-04-14%20at%209.19.22%20AM.png)
+   *PCAP Analysis View: Deep dive into captured network traffic*
+
+   ![Protocol Analysis](data/screenshots/Screenshot%202025-04-14%20at%209.20.35%20AM.png)
+   *Protocol Distribution: Understand your network's protocol usage*
+
+   ![Traffic Patterns](data/screenshots/Screenshot%202025-04-14%20at%209.21.51%20AM.png)
+   *Traffic Pattern Analysis: Identify unusual network behavior*
 
    - Generate suspicious traffic for testing:
 
@@ -361,6 +379,21 @@ netwatch/
 ```
 
 ### Data Analysis
+
+![Security Alerts](data/screenshots/Screenshot%202025-04-14%20at%209.23.24%20AM.png)
+*Security Alert Dashboard: Stay informed about potential threats*
+
+![Network Map](data/screenshots/Screenshot%202025-04-14%20at%209.23.41%20AM.png)
+*Network Topology View: Visualize your network structure*
+
+![Detailed Analysis](data/screenshots/Screenshot%202025-04-14%20at%209.23.57%20AM.png)
+*Detailed Traffic Analysis: Examine traffic patterns in depth*
+
+![Performance Metrics](data/screenshots/Screenshot%202025-04-14%20at%209.24.22%20AM.png)
+*Performance Dashboard: Monitor network performance metrics*
+
+![Alert History](data/screenshots/Screenshot%202025-04-14%20at%209.24.50%20AM.png)
+*Alert History: Track and investigate security events*
 
 The analysis reports include:
 
