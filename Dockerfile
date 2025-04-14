@@ -51,17 +51,26 @@ COPY . .
 
 # Set permissions for network tools
 RUN setcap cap_net_raw,cap_net_admin=eip /usr/bin/tcpdump && \
-    setcap cap_net_raw,cap_net_admin=eip /usr/bin/tshark
+    setcap cap_net_raw,cap_net_admin=eip /usr/bin/tshark && \
+    setcap cap_net_raw,cap_net_admin=eip /usr/local/bin/python3.9
 
 # Configure environment
 ENV STREAMLIT_SERVER_PORT=8502 \
     STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
     STREAMLIT_SERVER_HEADLESS=true \
     STREAMLIT_SERVER_FILE_WATCHER_TYPE=none \
-    NETWATCH_ALLOW_ROOT=1
+    NETWATCH_ALLOW_ROOT=1 \
+    PYTHONUNBUFFERED=1
 
 # Expose port
 EXPOSE 8502
+
+# Create non-root user
+RUN useradd -m -s /bin/bash netwatch && \
+    chown -R netwatch:netwatch /app
+
+# Switch to non-root user
+USER netwatch
 
 # Run the application with network capabilities
 ENTRYPOINT ["python3", "-m", "streamlit", "run", "netwatch.py"]
