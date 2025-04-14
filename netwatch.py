@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, Union, Any
 
 # Network and packet analysis
 import scapy.all as scapy
-from scapy.utils import wrpcap
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.l2 import Ether, ARP
 import pyshark
@@ -24,7 +23,6 @@ import logging
 from slack_sdk import WebClient
 from dotenv import load_dotenv
 import os
-import json
 
 # Local imports
 import variables
