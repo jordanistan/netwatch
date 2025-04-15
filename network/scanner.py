@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import scapy.all as scapy
 import netifaces
+from network.models import NetworkDevice
 
 class NetworkScanner:
     def __init__(self):
@@ -17,26 +18,36 @@ class NetworkScanner:
         self.data_dir = Path("data")
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
-        # Load device history
-        self.device_history_file = self.data_dir / "device_history.json"
-        if self.device_history_file.exists():
-            history_data = json.loads(self.device_history_file.read_text())
-            self.device_history = {
-                "devices": {mac: NetworkDevice.from_dict(data) 
-                          for mac, data in history_data.get("devices", {}).items()}
-            }
-        else:
-            self.device_history = {"devices": {}}
-            self.device_history_file.write_text(json.dumps({"devices": {}}, indent=4))
-
-        # Initialize tracked devices
+        # Initialize tracked devices first
         self.tracked_devices_file = self.data_dir / "tracked_devices.json"
         if self.tracked_devices_file.exists():
             tracked_data = json.loads(self.tracked_devices_file.read_text())
             self.tracked_devices = {"devices": [mac for mac in tracked_data.get("devices", [])]}
         else:
+            tracked_data = {"devices": []}
             self.tracked_devices = {"devices": []}
             self.tracked_devices_file.write_text(json.dumps({"devices": []}, indent=4))
+
+        # Load device history
+        self.device_history_file = self.data_dir / "device_history.json"
+        if self.device_history_file.exists():
+            history_data = json.loads(self.device_history_file.read_text())
+            self.device_history = {"devices": {}}
+            for mac, data in history_data.get("devices", {}).items():
+                device_data = {
+                    "mac": mac,
+                    "ip": data.get("ip_history", ["N/A"])[-1],
+                    "hostname": data.get("hostname", "Unknown"),
+                    "tracked": mac in tracked_data["devices"],
+                    "first_seen": data.get("first_seen"),
+                    "last_seen": data.get("last_seen"),
+                    "activity": data.get("activity", "Unknown"),
+                    "ip_history": data.get("ip_history", [])
+                }
+                self.device_history["devices"][mac] = NetworkDevice.from_dict(device_data)
+        else:
+            self.device_history = {"devices": {}}
+            self.device_history_file.write_text(json.dumps({"devices": {}}, indent=4))
     def get_default_interface(self):
         """Get the default network interface that's connected to LAN"""
         try:
@@ -246,10 +257,12 @@ class NetworkScanner:
                 device.update_activity()  # Update activity status
                 tracked.append(device)
         return tracked
+
     def get_new_devices(self, limit=10, include_tracked=False):
         """Get recently active devices (new or rejoining)
         Args:
             limit: Maximum number of devices to return
+            include_tracked: Whether to include tracked devices in results
         Returns:
             List of NetworkDevice objects sorted by most recent activity (newest first)
         """
@@ -257,10 +270,18 @@ class NetworkScanner:
             return []
 
         # Get devices sorted by most recent activity
-        devices = [
-            device for device in self.device_history["devices"].values()
-            if include_tracked or not device.tracked
-        ]
+        devices = []
+        for mac, device_data in self.device_history["devices"].items():
+            device = NetworkDevice(
+                ip_address=device_data.get('ip_history', ['N/A'])[-1],
+                mac_address=mac,
+                hostname=device_data.get('hostname', 'N/A'),
+                first_seen=datetime.fromisoformat(device_data.get('first_seen', datetime.now().isoformat())),
+                last_seen=datetime.fromisoformat(device_data.get('last_seen', datetime.now().isoformat())),
+                tracked=mac in self.tracked_devices["devices"]
+            )
+            if include_tracked or not device.tracked:
+                devices.append(device)
 
         # Sort by last_seen
         sorted_devices = sorted(

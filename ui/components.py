@@ -79,18 +79,18 @@ def show_scan_results(devices, netwatch):
         # Show other devices
         st.subheader("🌞 Other Network Devices")
         new_devices = netwatch.scanner.get_new_devices(limit=50, include_tracked=True)
-        untracked_devices = [d for d in new_devices if not d['tracked']]
+        untracked_devices = [d for d in new_devices if not d.tracked]
         if untracked_devices:
             st.info(f"✨ {len(untracked_devices)} untracked devices")
             # Create a DataFrame for untracked devices
             new_df = pd.DataFrame([
                 {
-                    'IP Address': d['ip'],
-                    'MAC Address': d['mac'],
-                    'Device Name': d['hostname'],
-                    'Activity': d['activity'],
-                    'First Seen': datetime.fromisoformat(d['first_seen']).strftime('%Y-%m-%d %H:%M:%S'),
-                    'Last Seen': datetime.fromisoformat(d['last_seen']).strftime('%Y-%m-%d %H:%M:%S'),
+                    'IP Address': d.ip_address,
+                    'MAC Address': d.mac_address,
+                    'Device Name': d.hostname or 'Unknown',
+                    'Activity': d.activity,
+                    'First Seen': d.first_seen.strftime('%Y-%m-%d %H:%M:%S') if d.first_seen else 'N/A',
+                    'Last Seen': d.last_seen.strftime('%Y-%m-%d %H:%M:%S') if d.last_seen else 'N/A',
                     'Track': False
                 }
                 for d in untracked_devices
@@ -491,13 +491,29 @@ def show_pcap_analysis(stats):
         from network.capture import HAS_VOIP_LAYERS
         if not HAS_VOIP_LAYERS:
             st.warning("VoIP analysis features are not available. Install scapy[voip] for full functionality.")
+
+    def get_device_info(ip, scanner=None):
+        """Get device info from IP address
+        Args:
+            ip: IP address to lookup
+            scanner: Optional NetworkScanner instance
+        Returns:
+            str: Device hostname if found, None otherwise
+        """
+        if not scanner:
+            return None
+        for device in scanner.device_history["devices"].values():
+            if device.ip_address == ip:
+                return device.hostname or None
+        return None
+
     with web_tab:
         if stats['web'].get('urls'):
             # Group URLs by device with better organization
             for ip, urls in stats['web']['urls'].items():
-                device_info = get_device_info(ip)
+                device_info = get_device_info(ip, netwatch.scanner if netwatch else None)
                 title = f"{device_info} ({ip})" if device_info else ip
-                
+
                 with st.expander(f"📱 {title} - {len(urls)} URLs visited"):
                     # Create a DataFrame for better visualization
                     url_df = pd.DataFrame([

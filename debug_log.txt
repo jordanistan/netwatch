@@ -97,3 +97,33 @@ Technical Context:
 - Language: Python 3.8+
 - Key Libraries: pandas, scapy, plotly
 - Platform: Cross-platform (primary focus on macOS)
+
+2025-04-15 12:11:41 - Error: IndentationError in scanner.py
+    Context: Duplicate code in get_new_devices method
+    Impact: Application failed to start
+    Resolution: Fixed indentation and removed duplicate code
+
+2025-04-15 12:11:45 - Warning: Scapy IPv4 address warnings
+    Context: Network interface scanning
+    Impact: Non-critical, some interfaces may not be scanned
+    Resolution: Expected behavior for inactive interfaces
+
+2025-04-15 12:11:45 - Warning: Scapy CryptographyDeprecationWarning
+    Context: IPSec module initialization
+    Impact: Non-critical, future compatibility issue
+    Resolution: Will need to update Scapy or dependencies in future
+
+2025-04-15 12:17:15 - Error: Device data model inconsistency
+    Context: Trying to access device attributes as dictionary keys
+    Impact: Network scan page fails to display untracked devices
+    Resolution: Updated code to use NetworkDevice object attributes instead of dictionary access
+
+2025-04-15 12:19:45 - Fix: Data model conversion
+    Context: Converting device history data to NetworkDevice objects
+    Impact: Ensures consistent device data model across application
+    Resolution: Added proper NetworkDevice object creation in get_new_devices method
+
+2025-04-15 12:22:30 - Fix: Device history loading
+    Context: Incorrect device history data format when loading from JSON
+    Impact: Application fails to start with 'mac' key error
+    Resolution: Properly initialize tracked devices before loading device history and fix data format conversion
