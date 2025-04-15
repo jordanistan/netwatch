@@ -372,15 +372,20 @@ def show_pcap_analysis(stats):
     if not stats:
         st.warning("No PCAP analysis results available")
         return
-    # Display basic stats
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Total Packets", stats['summary']['total_packets'])
-    with col2:
-        st.metric("Total Bytes", format_bytes(stats['summary']['total_bytes']))
-    with col3:
-        duration = stats['summary']['end_time'] - stats['summary']['start_time']
-        st.metric("Duration", f"{duration:.2f}s")
+
+    # Display basic stats in an expander for cleaner UI
+    with st.expander("📊 Basic Statistics", expanded=True):
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Packets", f"{stats['summary']['total_packets']:,}")
+        with col2:
+            st.metric("Total Bytes", format_bytes(stats['summary']['total_bytes']))
+        with col3:
+            duration = stats['summary']['end_time'] - stats['summary']['start_time']
+            st.metric("Duration", f"{duration:.2f}s")
+
+    # Create tabs for different analysis views
+    traffic_tab, protocol_tab, web_tab = st.tabs(["🌐 Traffic Analysis", "📡 Protocol Analysis", "🔍 Web Traffic"])
     # Display interactive visualizations
     viz = TrafficVisualizer()
     # Add visualization tabs
@@ -462,15 +467,27 @@ def show_pcap_analysis(stats):
         from network.capture import HAS_VOIP_LAYERS
         if not HAS_VOIP_LAYERS:
             st.warning("VoIP analysis features are not available. Install scapy[voip] for full functionality.")
-    # Web Traffic Analysis
-    st.header("🌐 Web Traffic Analysis")
-    # URLs by Device
-    if stats['web']['urls']:
-        st.subheader("🌐 URLs by Device")
-        for ip, urls in stats['web']['urls'].items():
-            with st.expander(f"Device {ip} - {len(urls)} URLs visited"):
-                for visit in urls:
-                    url = visit['url']
+    with web_tab:
+        if stats['web'].get('urls'):
+            # Group URLs by device with better organization
+            for ip, urls in stats['web']['urls'].items():
+                device_info = get_device_info(ip)
+                title = f"{device_info} ({ip})" if device_info else ip
+                
+                with st.expander(f"📱 {title} - {len(urls)} URLs visited"):
+                    # Create a DataFrame for better visualization
+                    url_df = pd.DataFrame([
+                        {
+                            'URL': url['url'],
+                            'Timestamp': datetime.fromtimestamp(url.get('timestamp', 0)).strftime('%Y-%m-%d %H:%M:%S'),
+                            'Method': url.get('method', 'GET'),
+                            'Status': url.get('status', 'Unknown')
+                        }
+                        for url in urls
+                    ])
+                    st.dataframe(url_df, hide_index=True, use_container_width=True)
+        else:
+            st.info("No web traffic data available")
                     timestamp = visit['timestamp']
                     method = visit.get('method', 'GET')
                     # Create a card-like display for each URL
@@ -809,34 +826,65 @@ def show_pcap_analysis(stats):
                 st.text(f"Source → Destination: {format_bytes(src_data)}")
                 st.text(f"Destination → Source: {format_bytes(dst_data)}")
 
-    # Port Analysis
-    st.subheader("🔌 Port Analysis")
-    col1, col2 = st.columns(2)
+    with protocol_tab:
+        # Protocol Analysis with better organization
+        if stats['protocols']:
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Create DataFrame for protocols
+                proto_df = pd.DataFrame([
+                    {'Protocol': proto, 'Count': count}
+                    for proto, count in stats['protocols'].items()
+                ]).sort_values('Count', ascending=False)
 
-    with col1:
-        # Top source ports
-        src_ports = pd.DataFrame(
-            stats['ports']['src'].items(),
-            columns=['Port', 'Count']
-        ).sort_values('Count', ascending=False).head(10)
+                st.dataframe(proto_df, hide_index=True, use_container_width=True)
+            
+            with col2:
+                fig = px.pie(proto_df, values='Count', names='Protocol',
+                            title='Protocol Distribution')
+                st.plotly_chart(fig, use_container_width=True)
 
-        fig = px.bar(src_ports,
-                    x='Port', y='Count',
-                    title="Top Source Ports",
-                    color='Count',
-                    color_continuous_scale='Viridis')
-        st.plotly_chart(fig, use_container_width=True)
+        # Port Analysis
+        st.markdown("### 🔌 Port Analysis")
+        port_source_tab, port_dest_tab = st.tabs(["Source Ports", "Destination Ports"])
 
-    with col2:
-        # Top destination ports
-        dst_ports = pd.DataFrame(
-            stats['ports']['dst'].items(),
-            columns=['Port', 'Count']
-        ).sort_values('Count', ascending=False).head(10)
+        with port_source_tab:
+            if stats['ports']['src']:
+                # Create DataFrame for source ports
+                src_ports = pd.DataFrame([
+                    {'Port': f"{port}", 'Count': count}
+                    for port, count in stats['ports']['src'].items()
+                ]).sort_values('Count', ascending=False).head(10)
 
-        fig = px.bar(dst_ports,
-                    x='Port', y='Count',
-                    title="Top Destination Ports",
-                    color='Count',
-                    color_continuous_scale='Viridis')
-        st.plotly_chart(fig, use_container_width=True)
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.dataframe(src_ports, hide_index=True, use_container_width=True)
+                with col2:
+                    fig = px.bar(src_ports, x='Port', y='Count',
+                                title='Top Source Ports',
+                                color='Count',
+                                color_continuous_scale='Viridis')
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No source port data available")
+
+        with port_dest_tab:
+            if stats['ports']['dst']:
+                # Create DataFrame for destination ports
+                dst_ports = pd.DataFrame([
+                    {'Port': f"{port}", 'Count': count}
+                    for port, count in stats['ports']['dst'].items()
+                ]).sort_values('Count', ascending=False).head(10)
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.dataframe(dst_ports, hide_index=True, use_container_width=True)
+                with col2:
+                    fig = px.bar(dst_ports, x='Port', y='Count',
+                                title='Top Destination Ports',
+                                color='Count',
+                                color_continuous_scale='Viridis')
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No destination port data available")
