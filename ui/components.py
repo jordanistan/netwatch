@@ -11,11 +11,6 @@ from network.visualizations.analyzer import TrafficVisualizer
 
 def setup_page():
     """Setup the main page configuration"""
-    st.set_page_config(
-        page_title="NetWatch",
-        page_icon="📶",
-        layout="wide"
-    )
     st.title("📶 NetWatch")
 
 def show_network_info(interface, ip):
