@@ -7,7 +7,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from network.visualizations.analyzer import TrafficVisualizer
-# Import scapy modules as needed
 
 def setup_page():
     """Setup the main page configuration"""
@@ -38,15 +37,15 @@ def show_scan_results(devices, netwatch):
             st.success(f"🎯 {len(tracked_devices)} tracked devices found")
             tracked_df = pd.DataFrame([
                 {
-                    'IP Address': d['ip'],
-                    'MAC Address': d['mac'],
-                    'Device Name': d['hostname'],
-                    'Activity': d['activity'],
-                    'First Seen': datetime.fromisoformat(d['first_seen']).strftime('%Y-%m-%d %H:%M:%S'),
-                    'Last Seen': datetime.fromisoformat(d['last_seen']).strftime('%Y-%m-%d %H:%M:%S'),
+                    'IP Address': device.ip_address,
+                    'MAC Address': device.mac_address,
+                    'Device Name': device.hostname or 'Unknown',
+                    'Activity': device.activity,
+                    'First Seen': device.first_seen.strftime('%Y-%m-%d %H:%M:%S') if device.first_seen else 'N/A',
+                    'Last Seen': device.last_seen.strftime('%Y-%m-%d %H:%M:%S') if device.last_seen else 'N/A',
                     'Actions': False
                 }
-                for d in tracked_devices
+                for device in tracked_devices
             ])
             # Display tracked devices with untrack button
             edited_tracked_df = st.data_editor(
@@ -159,19 +158,24 @@ def format_duration(value):
     return get_duration_label(value)
 
 def show_traffic_capture_ui(netwatch, devices):
+    # Initialize session state
+    if 'tracking_changed' in st.session_state:
+        del st.session_state.tracking_changed
+
     st.header("Traffic Capture")
 
     # Create a DataFrame for device visualization
     if devices:
         device_df = pd.DataFrame([
             {
-                'IP Address': d['ip'],
-                'MAC Address': d['mac'],
-                'Device Name': d.get('hostname', 'N/A'),
-                'Activity': d.get('activity', 'Unknown')
-            } for d in devices
+                'IP Address': device.ip_address,
+                'MAC Address': device.mac_address,
+                'Device Name': device.hostname or 'N/A',
+                'Activity': device.activity,
+                'Track': device.tracked
+            } for device in devices
         ])
-        st.dataframe(
+        edited_df = st.data_editor(
             device_df,
             column_config={
                 'IP Address': st.column_config.TextColumn(width="medium"),
@@ -180,11 +184,31 @@ def show_traffic_capture_ui(netwatch, devices):
                 'Activity': st.column_config.TextColumn(
                     width="small",
                     help="Device activity status"
+                ),
+                'Track': st.column_config.CheckboxColumn(
+                    "Track Device",
+                    help="Check to track this device",
+                    default=False,
+                    width="small"
                 )
             },
             hide_index=True,
             use_container_width=True
         )
+
+        # Handle device tracking
+        for _, row in edited_df.iterrows():
+            device_mac = row['MAC Address']
+            is_tracked = netwatch.scanner.is_device_tracked(device_mac)
+            if row['Track'] != is_tracked:  # Only update if tracking status changed
+                if row['Track']:
+                    netwatch.scanner.track_device(device_mac)
+                else:
+                    netwatch.scanner.untrack_device(device_mac)
+                # Use session state to trigger rerun only once after all changes
+                if 'tracking_changed' not in st.session_state:
+                    st.session_state.tracking_changed = True
+                    st.rerun()
 
     # Manual scan button for refreshing device list
     if st.button("🔄 Refresh Device List", type="secondary", use_container_width=True):
@@ -488,6 +512,9 @@ def show_pcap_analysis(stats):
                     st.dataframe(url_df, hide_index=True, use_container_width=True)
         else:
             st.info("No web traffic data available")
+        if stats['web'].get('urls'):
+            for url, visits in stats['web']['urls'].items():
+                for visit in visits:
                     timestamp = visit['timestamp']
                     method = visit.get('method', 'GET')
                     # Create a card-like display for each URL
@@ -830,7 +857,6 @@ def show_pcap_analysis(stats):
         # Protocol Analysis with better organization
         if stats['protocols']:
             col1, col2 = st.columns(2)
-            
             with col1:
                 # Create DataFrame for protocols
                 proto_df = pd.DataFrame([

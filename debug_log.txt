@@ -1,0 +1,99 @@
+NetWatch Debug Log
+=================
+Starting dry run at 2025-04-15 11:40:39
+
+1. Network Scan Page
+-------------------
+Error: 'str' object has no attribute 'get'
+Context: This error occurs in the Tracked Devices section when trying to display devices that are being tracked.
+Location: ui/components.py in show_scan_results function
+Impact: Cannot view tracked devices in the Network Scan page
+
+Second Error: unhashable type: 'dict'
+Context: This occurs when trying to track/untrack devices
+Location: network/scanner.py in track_device/untrack_device functions
+Impact: Cannot add or remove devices from tracking
+
+2. Traffic Capture Page
+----------------------
+Error: KeyError: 'tracked'
+Context: When trying to display the device list with tracking status
+Location: ui/components.py in show_traffic_capture_ui function
+Impact: Cannot see which devices are tracked in the Traffic Capture interface
+
+Error: Permission denied
+Context: When trying to start packet capture
+Location: network/capture.py
+Impact: Cannot capture network traffic without sudo privileges
+
+3. PCAP Analysis Page
+--------------------
+Error: No PCAP file found
+Context: When trying to analyze captured traffic
+Location: ui/components.py in show_pcap_analysis function
+Impact: Cannot view analysis of network traffic
+
+Error: AttributeError: 'NoneType' object has no attribute 'get'
+Context: When trying to display web traffic analysis
+Location: ui/components.py in show_pcap_analysis function
+Impact: Web traffic section fails to display
+
+
+ChatGPT Prompt for Fixing NetWatch Issues
+=======================================
+
+As a Senior Python Developer, I need assistance in resolving several critical issues in our NetWatch network monitoring application. The application is built with Streamlit and consists of three main components: Network Scanning, Traffic Capture, and PCAP Analysis.
+
+Current Issues:
+
+1. Device Tracking System:
+   - The application fails to properly handle device tracking due to inconsistent data types
+   - MAC addresses are sometimes stored as strings and sometimes as dictionaries
+   - Need a unified approach to device data structure and storage
+
+2. Permission and Access Control:
+   - Network capture functionality requires elevated privileges
+   - Need a proper privilege escalation mechanism or user guidance
+
+3. Data Flow and State Management:
+   - Inconsistent state management between pages
+   - PCAP file handling and analysis pipeline needs improvement
+   - Web traffic analysis fails due to missing data validation
+
+Technical Requirements:
+
+1. Data Structure Standardization:
+   - Define a consistent device data model
+   - Implement proper type checking and conversion
+   - Add data validation layers
+
+2. Error Handling:
+   - Add comprehensive error handling for device operations
+   - Implement graceful fallbacks for missing data
+   - Add user-friendly error messages
+
+3. State Management:
+   - Implement proper Streamlit session state management
+   - Add data persistence between page reloads
+   - Create a robust data pipeline for PCAP analysis
+
+4. Security:
+   - Add proper privilege checking
+   - Implement secure file handling
+   - Add input validation
+
+Please provide a detailed solution addressing:
+
+1. Code structure improvements
+2. Data model standardization
+3. Error handling implementation
+4. State management best practices
+5. Security considerations
+
+The solution should maintain the existing functionality while improving reliability and user experience.
+
+Technical Context:
+- Framework: Streamlit
+- Language: Python 3.8+
+- Key Libraries: pandas, scapy, plotly
+- Platform: Cross-platform (primary focus on macOS)

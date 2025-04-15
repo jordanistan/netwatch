@@ -9,28 +9,34 @@ import netifaces
 
 class NetworkScanner:
     def __init__(self):
+        from .models import NetworkDevice
+        self.NetworkDevice = NetworkDevice  # Store for use in other methods
         self.cached_devices = []
 
         # Set up data directory
         self.data_dir = Path("data")
         self.data_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Load device history
         self.device_history_file = self.data_dir / "device_history.json"
         if self.device_history_file.exists():
-            self.device_history = json.loads(self.device_history_file.read_text())
+            history_data = json.loads(self.device_history_file.read_text())
+            self.device_history = {
+                "devices": {mac: NetworkDevice.from_dict(data) 
+                          for mac, data in history_data.get("devices", {}).items()}
+            }
         else:
             self.device_history = {"devices": {}}
-            self.device_history_file.write_text(json.dumps(self.device_history, indent=4))
+            self.device_history_file.write_text(json.dumps({"devices": {}}, indent=4))
 
         # Initialize tracked devices
         self.tracked_devices_file = self.data_dir / "tracked_devices.json"
         if self.tracked_devices_file.exists():
-            self.tracked_devices = json.loads(self.tracked_devices_file.read_text())
+            tracked_data = json.loads(self.tracked_devices_file.read_text())
+            self.tracked_devices = {"devices": [mac for mac in tracked_data.get("devices", [])]}
         else:
             self.tracked_devices = {"devices": []}
-            self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
-    
+            self.tracked_devices_file.write_text(json.dumps({"devices": []}, indent=4))
     def get_default_interface(self):
         """Get the default network interface that's connected to LAN"""
         try:
@@ -193,15 +199,23 @@ class NetworkScanner:
         Returns:
             bool: True if device is tracked, False otherwise
         """
-        return mac in self.tracked_devices["devices"]
+        # Ensure we're comparing string MAC addresses
+        mac_str = str(mac)
+        return mac_str in self.tracked_devices["devices"]
 
     def track_device(self, mac):
         """Add a device to tracked devices
         Args:
             mac: MAC address of the device to track
         """
-        if mac not in self.tracked_devices["devices"]:
-            self.tracked_devices["devices"].append(mac)
+        mac_str = str(mac).lower()
+        if mac_str not in self.tracked_devices["devices"]:
+            # Update device history to mark as tracked
+            if mac_str in self.device_history["devices"]:
+                self.device_history["devices"][mac_str].tracked = True
+                self._save_device_history()
+            
+            self.tracked_devices["devices"].append(mac_str)
             self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
 
     def untrack_device(self, mac):
@@ -209,56 +223,54 @@ class NetworkScanner:
         Args:
             mac: MAC address of the device to untrack
         """
-        if mac in self.tracked_devices["devices"]:
-            self.tracked_devices["devices"].remove(mac)
+        mac_str = str(mac).lower()
+        if mac_str in self.tracked_devices["devices"]:
+            # Update device history to mark as untracked
+            if mac_str in self.device_history["devices"]:
+                self.device_history["devices"][mac_str].tracked = False
+                self._save_device_history()
+                
+            self.tracked_devices["devices"].remove(mac_str)
             self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
     
     def get_tracked_devices(self):
         """Get all tracked devices that are currently active
         Returns:
-            List of tracked devices with their current status
+            List of NetworkDevice objects that are being tracked
         """
         tracked = []
-        # Get tracked devices that are in device history
-        for device in self.tracked_devices["devices"]:
-            mac_addr = device.get("mac")
-            if mac_addr and mac_addr in self.device_history["devices"]:
-                info = self.device_history["devices"][mac_addr]
-                tracked.append({
-                    "mac": mac_addr,
-                    "ip": info["ip_history"][-1],
-                    "hostname": info["hostname"],
-                    "first_seen": info["first_seen"],
-                    "last_seen": info["last_seen"],
-                    "activity": self._get_activity_status(info)
-                })
+        for mac_addr in self.tracked_devices["devices"]:
+            if mac_addr in self.device_history["devices"]:
+                device = self.device_history["devices"][mac_addr]
+                device.tracked = True  # Ensure tracked status is set
+                device.update_activity()  # Update activity status
+                tracked.append(device)
         return tracked
-
     def get_new_devices(self, limit=10, include_tracked=False):
         """Get recently active devices (new or rejoining)
         Args:
             limit: Maximum number of devices to return
         Returns:
-            List of devices sorted by most recent activity (newest first)
+            List of NetworkDevice objects sorted by most recent activity (newest first)
         """
         if not self.device_history["devices"]:
             return []
+
         # Get devices sorted by most recent activity
+        devices = [
+            device for device in self.device_history["devices"].values()
+            if include_tracked or not device.tracked
+        ]
+
+        # Sort by last_seen
         sorted_devices = sorted(
-            [
-                {
-                    "mac": mac,
-                    "ip": info["ip_history"][-1],  # Most recent IP
-                    "hostname": info["hostname"],
-                    "first_seen": info["first_seen"],
-                    "last_seen": info["last_seen"],
-                    "activity": self._get_activity_status(info),
-                    "tracked": self.is_device_tracked(mac)
-                }
-                for mac, info in self.device_history["devices"].items()
-                if include_tracked or not self.is_device_tracked(mac)
-            ],
-            key=lambda d: d["last_seen"],  # Sort by last_seen instead of first_seen
+            devices,
+            key=lambda d: d.last_seen if d.last_seen else datetime.min,
             reverse=True  # Newest first
         )
+
+        # Update activity status for each device
+        for device in sorted_devices[:limit]:
+            device.update_activity()
+
         return sorted_devices[:limit]
