@@ -299,7 +299,7 @@ def show_traffic_capture_ui(netwatch, devices):
                     )
                     st.success("✅ Capture completed successfully!")
                     st.info(f"💾 Saved as: {filename}")
-                except Exception as e:
+                except (OSError, IOError) as e:
                     st.error(f"❌ Capture failed: {str(e)}")
     elif capture_mode == "Select Devices 🏳":
         st.info("👆 Please select at least one device to start capturing")
@@ -353,7 +353,7 @@ def show_traffic_capture_ui(netwatch, devices):
             pcap_file = netwatch.capture.capture_traffic(
                 target_ips=target_ips,
                 duration=duration,
-                progress_callback=lambda p: progress.progress(p)
+                progress_callback=progress.progress
             )
 
             if pcap_file:
@@ -427,7 +427,7 @@ def show_pcap_analysis(stats):
     with col2:
         st.header("📱 Device Captures")
         # Load tracked devices
-        with open('data/tracked_devices.json', 'r') as f:
+        with open('data/tracked_devices.json', 'r', encoding='utf-8') as f:
             tracked_devices = json.load(f)['devices']
         # List PCAP files for each device
         for device in tracked_devices:
@@ -452,7 +452,7 @@ def show_pcap_analysis(stats):
                             with col_a:
                                 st.text(f"{mtime.strftime('%Y-%m-%d %H:%M')} ({size_str})")
                             with col_b:
-                                with open(pcap, 'rb') as f:
+                                with open(pcap, 'rb', encoding=None) as f:
                                     st.download_button(
                                         "📥",
                                         f,
@@ -549,12 +549,12 @@ def show_pcap_analysis(stats):
                             title="Content Types Distribution")
                 st.plotly_chart(fig, use_container_width=True)
     # Media Analysis
-    if stats['media']['streams'] or stats['media']['files']:
+    if stats.get('media', {}).get('streams') or stats.get('media', {}).get('files'):
         st.subheader("🎥 Media Analysis")
         # Voice/Video Calls (SIP/RTP)
-        if stats['media']['streams']:
+        if stats.get('media', {}).get('streams'):
             st.write("📞 Voice/Video Streams")
-            for stream in sorted(stats['media']['streams'], key=lambda x: x['timestamp']):
+            for stream in sorted(stats.get('media', {}).get('streams', []), key=lambda x: x.get('timestamp', 0)):
                 with st.expander(f"{stream['type']} Stream: {stream['source']} → {stream['destination']}"):
                     st.write(f"Started at: {datetime.fromtimestamp(stream['timestamp']).strftime('%H:%M:%S')}")
                     if 'size' in stream:
@@ -706,7 +706,7 @@ def show_pcap_analysis(stats):
     st.subheader("🌐 IP Analysis")
     # Load tracked devices for reference
     try:
-        with open('data/tracked_devices.json', 'r') as f:
+        with open('data/tracked_devices.json', 'r', encoding='utf-8') as f:
             tracked_devices = json.load(f)['devices']
             # Create lookup maps for device info
             ip_to_device = {}
@@ -715,7 +715,7 @@ def show_pcap_analysis(stats):
                     ip_to_device[device['ip']] = device
                 if 'last_known_ip' in device:
                     ip_to_device[device['last_known_ip']] = device
-    except Exception:
+    except (OSError, IOError, json.JSONDecodeError):
         tracked_devices = []
         ip_to_device = {}
 

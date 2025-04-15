@@ -24,16 +24,30 @@ except ImportError:
 
 # Try to import optional layers
 try:
+    # Import RTP layer
     from scapy.layers.rtp import RTP
-    from scapy.layers.sip import SIP
+    scapy.load_layer('rtp')
+    # Import SIP layer from contrib
+    from scapy.contrib.sip import SIP
+    scapy.load_contrib('sip')
+    # Import VOIP module
+    from scapy.modules import voip
+    voip.load_module()
     HAS_VOIP_LAYERS = True
-except ImportError:
+    print("[Init] Successfully loaded VoIP analysis layers")
+except ImportError as e:
     HAS_VOIP_LAYERS = False
+    print(f"[Init] VoIP analysis features not available: {e}")
 
 class TrafficCapture:
     def __init__(self, captures_dir):
         self.captures_dir = Path(captures_dir)
-        self.captures_dir.mkdir(parents=True, exist_ok=True)
+        # Ensure captures directory exists
+        try:
+            self.captures_dir.mkdir(parents=True, exist_ok=True)
+            print(f"[Capture] Created captures directory at {self.captures_dir}")
+        except Exception as e:
+            print(f"[Capture] Error creating captures directory: {e}")
         self.interface = None  # Will be set during capture
         # Initialize tracking sets and dictionaries
         self._seen_segments = set()  # For TCP retransmission detection
@@ -78,14 +92,15 @@ class TrafficCapture:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         if target_ips:
             if len(target_ips) == 1:
-                pcap_file = self.captures_dir / f"Alert-Traffic-Capture-{timestamp}-{target_ips[0]}.pcap"
+                pcap_file = self.captures_dir / f"Traffic-Capture-{timestamp}-{target_ips[0]}.pcap"
             else:
-                pcap_file = self.captures_dir / f"Alert-Traffic-Capture-{timestamp}-{len(target_ips)}-devices.pcap"
+                pcap_file = self.captures_dir / f"Traffic-Capture-{timestamp}-{len(target_ips)}-devices.pcap"
             # Create BPF filter combining all target IPs with 'or'
             capture_filter = " or ".join(f"host {ip}" for ip in target_ips)
         else:
-            pcap_file = self.captures_dir / f"Alert-Traffic-Capture-{timestamp}-all-traffic.pcap"
+            pcap_file = self.captures_dir / f"Traffic-Capture-{timestamp}-all-traffic.pcap"
             capture_filter = ""
+        print(f"[Capture] Will save to: {pcap_file}")
         
         # Initialize packet storage and counters
         packets = []
@@ -158,7 +173,20 @@ class TrafficCapture:
 
     def analyze_pcap(self, pcap_file):
         """Analyze a PCAP file and return statistics"""
-        packets = rdpcap(str(pcap_file))
+        try:
+            print(f"[Analysis] Reading PCAP file: {pcap_file}")
+            # Ensure the file exists
+            pcap_path = Path(pcap_file)
+            if not pcap_path.exists():
+                print(f"[Analysis] Error: PCAP file not found at {pcap_file}")
+                return None
+
+            # Read the PCAP file
+            packets = rdpcap(str(pcap_file))
+            print(f"[Analysis] Successfully read {len(packets)} packets")
+        except Exception as e:
+            print(f"[Analysis] Error reading PCAP file: {e}")
+            return None
         
         stats = {
             'summary': {
@@ -227,6 +255,7 @@ class TrafficCapture:
                 'video': defaultdict(list),  # Video streams by IP
                 'images': defaultdict(list),  # Image transfers by IP
                 'files': defaultdict(list),  # File transfers by IP
+                'streams': defaultdict(list),  # Generic media streams
                 'streaming': defaultdict(lambda: {  # Streaming quality metrics
                     'buffering_events': 0,
                     'quality_changes': [],

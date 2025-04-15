@@ -538,11 +538,13 @@ class TrafficVisualizer:
     
     def create_security_dashboard(self, stats):
         """Create a security-focused dashboard"""
-        # Create subplots
+        # Create subplots with mixed types
         fig = sp.make_subplots(
             rows=2, cols=2,
             subplot_titles=("Port Scan Attempts", "Plain Text Auth", 
-                          "SSL/TLS Issues", "TCP Flags Distribution")
+                          "SSL/TLS Issues", "TCP Flags Distribution"),
+            specs=[[{'type': 'xy'}, {'type': 'xy'}],
+                  [{'type': 'xy'}, {'type': 'domain'}]]
         )
         
         # Port scan attempts
@@ -642,4 +644,107 @@ class TrafficVisualizer:
         )
         
         fig.update_layout(height=800, title_text="Performance Analysis Dashboard")
+        return fig
+
+    def create_performance_metrics(self, stats):
+        """Create performance metrics visualization"""
+        return self.create_performance_dashboard(stats)
+
+    def create_tcp_metrics(self, stats):
+        """Create TCP metrics visualization"""
+        # Create a figure with secondary y-axis
+        fig = go.Figure()
+
+        # Add traces for different TCP metrics
+        for conn, metrics in stats['performance']['tcp_metrics'].items():
+            # RTT over time
+            if metrics['rtt']:
+                fig.add_trace(go.Scatter(
+                    y=metrics['rtt'],
+                    name=f"{conn} RTT",
+                    mode='lines',
+                    line=dict(dash='dot')
+                ))
+
+            # Window sizes over time
+            if metrics['window_sizes']:
+                fig.add_trace(go.Scatter(
+                    y=metrics['window_sizes'],
+                    name=f"{conn} Window",
+                    mode='lines'
+                ))
+
+        fig.update_layout(
+            title="TCP Performance Metrics",
+            xaxis_title="Sample",
+            yaxis_title="Value",
+            height=400,
+            showlegend=True
+        )
+        return fig
+
+    def create_security_overview(self, stats):
+        """Create security overview visualization"""
+        return self.create_security_dashboard(stats)
+
+    def create_port_scan_viz(self, stats):
+        """Create port scan visualization"""
+        # Extract port scan data
+        port_scan_data = defaultdict(int)
+        for ip, scans in stats['security']['port_scans'].items():
+            port_scan_data[ip] = len(scans)
+
+        # Create bar chart
+        fig = go.Figure(data=[
+            go.Bar(
+                x=list(port_scan_data.keys()),
+                y=list(port_scan_data.values()),
+                text=list(port_scan_data.values()),
+                textposition='auto',
+            )
+        ])
+
+        fig.update_layout(
+            title="Port Scan Attempts by IP",
+            xaxis_title="IP Address",
+            yaxis_title="Number of Scans",
+            height=400
+        )
+        return fig
+
+    def create_ssl_issues_viz(self, stats):
+        """Create SSL/TLS issues visualization"""
+        # Extract SSL issues data
+        ssl_data = defaultdict(lambda: defaultdict(int))
+        for ip, issues in stats['security']['ssl_issues'].items():
+            for issue in issues:
+                ssl_data[ip][issue['type']] += 1
+
+        # Create stacked bar chart
+        fig = go.Figure()
+
+        # Get all unique issue types
+        issue_types = set()
+        for ip_data in ssl_data.values():
+            issue_types.update(ip_data.keys())
+
+        # Add traces for each issue type
+        for issue_type in sorted(issue_types):
+            values = [ip_data.get(issue_type, 0) for ip_data in ssl_data.values()]
+            fig.add_trace(go.Bar(
+                name=issue_type,
+                x=list(ssl_data.keys()),
+                y=values,
+                text=values,
+                textposition='auto'
+            ))
+
+        fig.update_layout(
+            title="SSL/TLS Issues by IP",
+            xaxis_title="IP Address",
+            yaxis_title="Number of Issues",
+            barmode='stack',
+            height=400,
+            showlegend=True
+        )
         return fig
