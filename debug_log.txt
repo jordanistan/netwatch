@@ -127,3 +127,13 @@ Technical Context:
     Context: Incorrect device history data format when loading from JSON
     Impact: Application fails to start with 'mac' key error
     Resolution: Properly initialize tracked devices before loading device history and fix data format conversion
+
+2025-04-15 12:26:30 - Fix: Device tracking system
+    Context: Unhashable type error when using list for tracked devices
+    Impact: Cannot track or untrack devices
+    Resolution: Changed tracked_devices to use a set for MAC addresses and properly handle JSON serialization
+
+2025-04-15 12:52:00 - Fix: Mixed device data format
+    Context: Tracked devices file contains mix of strings and objects
+    Impact: Error when trying to call lower() on dictionary objects
+    Resolution: Added proper handling for both string MAC addresses and device objects

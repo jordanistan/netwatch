@@ -22,10 +22,16 @@ class NetworkScanner:
         self.tracked_devices_file = self.data_dir / "tracked_devices.json"
         if self.tracked_devices_file.exists():
             tracked_data = json.loads(self.tracked_devices_file.read_text())
-            self.tracked_devices = {"devices": [mac for mac in tracked_data.get("devices", [])]}
+            self.tracked_devices = {"devices": set()}
+            for device in tracked_data.get("devices", []):
+                if isinstance(device, str):
+                    # If it's just a MAC address string
+                    self.tracked_devices["devices"].add(device.lower())
+                elif isinstance(device, dict) and "mac" in device:
+                    # If it's a device object with a MAC address
+                    self.tracked_devices["devices"].add(device["mac"].lower())
         else:
-            tracked_data = {"devices": []}
-            self.tracked_devices = {"devices": []}
+            self.tracked_devices = {"devices": set()}
             self.tracked_devices_file.write_text(json.dumps({"devices": []}, indent=4))
 
         # Load device history
@@ -34,11 +40,12 @@ class NetworkScanner:
             history_data = json.loads(self.device_history_file.read_text())
             self.device_history = {"devices": {}}
             for mac, data in history_data.get("devices", {}).items():
+                mac = mac.lower()  # Normalize MAC address
                 device_data = {
                     "mac": mac,
                     "ip": data.get("ip_history", ["N/A"])[-1],
                     "hostname": data.get("hostname", "Unknown"),
-                    "tracked": mac in tracked_data["devices"],
+                    "tracked": mac in self.tracked_devices["devices"],
                     "first_seen": data.get("first_seen"),
                     "last_seen": data.get("last_seen"),
                     "activity": data.get("activity", "Unknown"),
@@ -226,8 +233,10 @@ class NetworkScanner:
                 self.device_history["devices"][mac_str].tracked = True
                 self._save_device_history()
             
-            self.tracked_devices["devices"].append(mac_str)
-            self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
+            self.tracked_devices["devices"].add(mac_str)
+            # Convert set to list for JSON serialization
+            tracked_json = {"devices": list(self.tracked_devices["devices"])}
+            self.tracked_devices_file.write_text(json.dumps(tracked_json, indent=4))
 
     def untrack_device(self, mac):
         """Remove a device from tracked devices
@@ -242,7 +251,9 @@ class NetworkScanner:
                 self._save_device_history()
                 
             self.tracked_devices["devices"].remove(mac_str)
-            self.tracked_devices_file.write_text(json.dumps(self.tracked_devices, indent=4))
+            # Convert set to list for JSON serialization
+            tracked_json = {"devices": list(self.tracked_devices["devices"])}
+            self.tracked_devices_file.write_text(json.dumps(tracked_json, indent=4))
     
     def get_tracked_devices(self):
         """Get all tracked devices that are currently active
