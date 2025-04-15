@@ -137,3 +137,8 @@ Technical Context:
     Context: Tracked devices file contains mix of strings and objects
     Impact: Error when trying to call lower() on dictionary objects
     Resolution: Added proper handling for both string MAC addresses and device objects
+
+2025-04-15 13:48:00 - Fix: Device data handling
+    Context: Trying to use .get() on NetworkDevice objects
+    Impact: Error when trying to access device data
+    Resolution: Updated get_new_devices to use NetworkDevice objects directly from device_history

@@ -6,12 +6,10 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import scapy.all as scapy
 import netifaces
-from network.models import NetworkDevice
+from .models import NetworkDevice
 
 class NetworkScanner:
     def __init__(self):
-        from .models import NetworkDevice
-        self.NetworkDevice = NetworkDevice  # Store for use in other methods
         self.cached_devices = []
 
         # Set up data directory
@@ -282,15 +280,7 @@ class NetworkScanner:
 
         # Get devices sorted by most recent activity
         devices = []
-        for mac, device_data in self.device_history["devices"].items():
-            device = NetworkDevice(
-                ip_address=device_data.get('ip_history', ['N/A'])[-1],
-                mac_address=mac,
-                hostname=device_data.get('hostname', 'N/A'),
-                first_seen=datetime.fromisoformat(device_data.get('first_seen', datetime.now().isoformat())),
-                last_seen=datetime.fromisoformat(device_data.get('last_seen', datetime.now().isoformat())),
-                tracked=mac in self.tracked_devices["devices"]
-            )
+        for _, device in self.device_history["devices"].items():
             if include_tracked or not device.tracked:
                 devices.append(device)
 
