@@ -110,24 +110,30 @@ def show_scan_results(devices, netwatch):
                     'Last Seen': st.column_config.TextColumn(width="medium"),
                     'Track': st.column_config.CheckboxColumn(
                         "Track Device",
-                        help="Check to start tracking this device",
+                        help="Check to track this device",
                         default=False
                     )
                 },
                 hide_index=True,
                 use_container_width=True
             )
-            # Handle tracking new devices
+            # Handle device tracking
             for _, row in edited_df.iterrows():
-                if row['Track']:
-                    netwatch.scanner.track_device(row['MAC Address'])
-                    st.rerun()
+                device_mac = row['MAC Address']
+                is_tracked = netwatch.scanner.is_device_tracked(device_mac)
+                if row['Track'] != is_tracked:  # Only update if tracking status changed
+                    if row['Track']:
+                        netwatch.scanner.track_device(device_mac)
+                    else:
+                        netwatch.scanner.untrack_device(device_mac)
+                    # Use session state to trigger rerun only once after all changes
+                    if 'tracking_changed' not in st.session_state:
+                        st.session_state.tracking_changed = True
+                        st.rerun()
         else:
-            st.warning("No other devices found")
-        if tracked_devices or untracked_devices:
-            st.balloons()
+            st.info("No new devices found")
     else:
-        st.warning("😕 No devices found")
+        st.warning("🛡️ No devices found. Please refresh the device list.")
 
 def get_duration_parts(seconds):
     """Convert seconds into days, hours, minutes, seconds"""
@@ -158,62 +164,50 @@ def format_duration(value):
     return get_duration_label(value)
 
 def show_traffic_capture_ui(netwatch, devices):
-    # Initialize session state
-    if 'tracking_changed' in st.session_state:
-        del st.session_state.tracking_changed
+    """Display traffic capture UI"""
+    # Show scanning status
+    if not devices:
+        st.warning("🛡️ No devices found. Use the 'Refresh Device List' button to scan for devices.")
+        return
 
-    st.header("Traffic Capture")
-
-    # Create a DataFrame for device visualization
-    if devices:
-        device_df = pd.DataFrame([
-            {
-                'IP Address': device.ip_address,
-                'MAC Address': device.mac_address,
-                'Device Name': device.hostname or 'N/A',
-                'Activity': device.activity,
-                'Track': device.tracked
-            } for device in devices
-        ])
-        edited_df = st.data_editor(
-            device_df,
-            column_config={
-                'IP Address': st.column_config.TextColumn(width="medium"),
-                'MAC Address': st.column_config.TextColumn(width="medium"),
-                'Device Name': st.column_config.TextColumn(width="medium"),
-                'Activity': st.column_config.TextColumn(
-                    width="small",
-                    help="Device activity status"
-                ),
-                'Track': st.column_config.CheckboxColumn(
-                    "Track Device",
-                    help="Check to track this device",
-                    default=False,
-                    width="small"
-                )
-            },
-            hide_index=True,
-            use_container_width=True
+    # Quick actions at the top
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.subheader("Quick Actions")
+        capture_all = st.button("🔥 Capture All Traffic", type="primary", use_container_width=True)
+    with col2:
+        st.subheader("Duration")
+        duration_option = st.selectbox(
+            "Duration",  # Changed from empty string to label
+            ["1 minute", "10 minutes", "30 minutes", "Custom"],
+            index=0
         )
 
-        # Handle device tracking
-        for _, row in edited_df.iterrows():
-            device_mac = row['MAC Address']
-            is_tracked = netwatch.scanner.is_device_tracked(device_mac)
-            if row['Track'] != is_tracked:  # Only update if tracking status changed
-                if row['Track']:
-                    netwatch.scanner.track_device(device_mac)
-                else:
-                    netwatch.scanner.untrack_device(device_mac)
-                # Use session state to trigger rerun only once after all changes
-                if 'tracking_changed' not in st.session_state:
-                    st.session_state.tracking_changed = True
-                    st.rerun()
+    # Duration settings
+    if duration_option == "Custom":
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            minutes = st.number_input("Minutes", min_value=0, max_value=60, value=1)
+            seconds = st.number_input("Seconds", min_value=0, max_value=59, value=0)
+            duration = minutes * 60 + seconds
+        with col2:
+            unlimited = st.checkbox("Unlimited")
+            if unlimited:
+                duration = None
+    else:
+        duration = {
+            "1 minute": 60,
+            "10 minutes": 600,
+            "30 minutes": 1800
+        }[duration_option]
 
-    # Manual scan button for refreshing device list
-    if st.button("🔄 Refresh Device List", type="secondary", use_container_width=True):
-        st.rerun()
-
+    # Device selection
+    st.subheader("🔍 Select Devices")
+    device_options = [f"{d.ip_address} ({d.hostname or 'N/A'})" for d in devices]
+    selected_options = st.multiselect(
+        "Select devices to monitor (optional)",
+        options=device_options,
+        help="Choose specific devices to capture traffic from, or capture all traffic"
     )
 
     # Get the full device info for each selected device
@@ -245,6 +239,10 @@ def show_traffic_capture_ui(netwatch, devices):
         else:
             st.info("No devices are currently being tracked")
 
+    # Refresh button
+    if st.button("🔄 Refresh Device List", type="secondary", use_container_width=True):
+        st.rerun()
+
     # Start capture button
     if capture_all or selected_devices:
         start_capture = st.button("🎥 Start Capture", type="primary", use_container_width=True)
@@ -266,19 +264,15 @@ def show_traffic_capture_ui(netwatch, devices):
                 try:
                     netwatch.capture.capture_traffic(
                         target_ips=target_ips,
-                        duration=duration
+                        duration=duration,
+                        filename=filename
                     )
                     st.success("✅ Capture completed successfully!")
                     st.info(f"💾 Saved as: {filename}")
                 except Exception as e:
                     st.error(f"Error capturing traffic: {str(e)}. Please try again.")
-    elif capture_all is False and not selected_devices:
-        st.info("👆 Please select at least one device to start capturing")
-
-        button_label = "🔥 CAPTURE ALL TRAFFIC ☠️"
-        button_type = "secondary"
-        can_capture = True
-        target_ips = None
+    elif not selected_devices:
+        st.info("👆 Select devices to monitor or use 'Capture All Traffic'")
     else:  # Device selection mode
         num_devices = len(selected_devices)
         if num_devices == 0:
@@ -335,11 +329,11 @@ def show_traffic_capture_ui(netwatch, devices):
 
 def format_bytes(size):
     """Format bytes to human readable format"""
-    for unit in ['B', 'KB', 'MB', 'GB']:
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
         if size < 1024.0:
-            return f"{size:.1f} {unit}"
+            return f"{size:.2f} {unit}"
         size /= 1024.0
-    return f"{size:.1f} TB"
+    return f"{size:.2f} PB"
 
 def show_pcap_analysis(stats):
     """Display PCAP analysis results with interactive visualizations"""
@@ -450,11 +444,10 @@ def show_pcap_analysis(stats):
         Returns:
             str: Device hostname if found, None otherwise
         """
-        if not scanner:
-            return None
-        for device in scanner.device_history["devices"].values():
-            if device.ip_address == ip:
-                return device.hostname or None
+        if scanner:
+            device = scanner.get_device_by_ip(ip)
+            if device and device.hostname:
+                return device.hostname
         return None
 
     with web_tab:
@@ -795,29 +788,66 @@ def show_pcap_analysis(stats):
                         st.text("  Protocols:")
                         for proto, proto_count in sorted(src['protocols'].items(), key=lambda x: x[1], reverse=True):
                             st.text(f"    {proto}: {proto_count:,} packets")
-    with col3:
-        st.markdown("**Top Conversations**")
-        for conv, count in sorted(stats['ips']['conversations'].items(), key=lambda x: x[1], reverse=True)[:10]:
-            src, dst = conv.split(' → ')
-            src_info = get_device_info(src)
-            dst_info = get_device_info(dst)
-            src_title = f"{src_info} ({src})" if src_info else src
-            dst_title = f"{dst_info} ({dst})" if dst_info else dst
-            with st.expander(f"{src_title} → {dst_title} - {count:,} packets"):
-                # Show protocol breakdown
-                if conv in stats['ips']['conversation_protocols']:
-                    st.markdown("**Protocol Breakdown:**")
-                    protocols = stats['ips']['conversation_protocols'][conv]
-                    for proto, proto_count in sorted(protocols.items(), key=lambda x: x[1], reverse=True):
-                        percentage = (proto_count / count) * 100
-                        st.text(f"{proto}: {proto_count:,} packets ({percentage:.1f}%)")
 
-                # Show data transfer
-                src_data = stats['ips']['data_usage'].get(src, 0)
-                dst_data = stats['ips']['data_usage'].get(dst, 0)
-                st.markdown("**Data Transfer:**")
-                st.text(f"Source → Destination: {format_bytes(src_data)}")
-                st.text(f"Destination → Source: {format_bytes(dst_data)}")
+def show_pcap_analysis(stats):
+    """Display PCAP analysis results with interactive visualizations"""
+    # Create tabs for different analysis views
+    overview_tab, conversation_tab, protocol_tab = st.tabs(["Overview", "Conversations", "Protocols"])
+
+    # Overview tab
+    with overview_tab:
+        # Basic statistics
+        st.subheader("📊 Basic Statistics")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Total Packets", f"{stats['total_packets']:,}")
+            st.metric("Total Bytes", format_bytes(stats['total_bytes']))
+        with col2:
+            st.metric("Duration", get_duration_label(stats['duration']))
+            st.metric("Average Packet Size", format_bytes(stats['avg_packet_size']))
+
+        # Traffic over time
+        if stats['traffic_over_time']:
+            st.subheader("📈 Traffic Over Time")
+            time_df = pd.DataFrame([
+                {'Time': time, 'Packets': count}
+                for time, count in stats['traffic_over_time'].items()
+            ])
+            fig = px.line(time_df, x='Time', y='Packets',
+                         title='Packet Count Over Time')
+            st.plotly_chart(fig, use_container_width=True)
+
+    # Conversations tab
+    with conversation_tab:
+        st.subheader("🗣️ Top Conversations")
+        conversations = stats['ips']['conversations']
+        if conversations:
+            # Sort conversations by packet count
+            sorted_convs = sorted(conversations.items(),
+                                 key=lambda x: x[1], reverse=True)
+            for conv, count in sorted_convs[:10]:
+                src, dst = conv.split(' → ')
+                src_info = get_device_info(src)
+                dst_info = get_device_info(dst)
+                src_title = f"{src_info} ({src})" if src_info else src
+                dst_title = f"{dst_info} ({dst})" if dst_info else dst
+                with st.expander(f"{src_title} → {dst_title} - {count:,} packets"):
+                    # Show protocol breakdown
+                    if conv in stats['ips']['conversation_protocols']:
+                        st.markdown("**Protocol Breakdown:**")
+                        protocols = stats['ips']['conversation_protocols'][conv]
+                        for proto, proto_count in sorted(protocols.items(),
+                                                       key=lambda x: x[1],
+                                                       reverse=True):
+                            percentage = (proto_count / count) * 100
+                            st.text(f"{proto}: {proto_count:,} packets ({percentage:.1f}%)")
+
+                    # Show data transfer
+                    src_data = stats['ips']['data_usage'].get(src, 0)
+                    dst_data = stats['ips']['data_usage'].get(dst, 0)
+                    st.markdown("**Data Transfer:**")
+                    st.text(f"Source → Destination: {format_bytes(src_data)}")
+                    st.text(f"Destination → Source: {format_bytes(dst_data)}")
 
     with protocol_tab:
         # Protocol Analysis with better organization
@@ -831,7 +861,7 @@ def show_pcap_analysis(stats):
                 ]).sort_values('Count', ascending=False)
 
                 st.dataframe(proto_df, hide_index=True, use_container_width=True)
-            
+
             with col2:
                 fig = px.pie(proto_df, values='Count', names='Protocol',
                             title='Protocol Distribution')
@@ -845,7 +875,7 @@ def show_pcap_analysis(stats):
             if stats['ports']['src']:
                 # Create DataFrame for source ports
                 src_ports = pd.DataFrame([
-                    {'Port': f"{port}", 'Count': count}
+                    {'Port': str(port), 'Count': count}
                     for port, count in stats['ports']['src'].items()
                 ]).sort_values('Count', ascending=False).head(10)
 
@@ -865,7 +895,7 @@ def show_pcap_analysis(stats):
             if stats['ports']['dst']:
                 # Create DataFrame for destination ports
                 dst_ports = pd.DataFrame([
-                    {'Port': f"{port}", 'Count': count}
+                    {'Port': str(port), 'Count': count}
                     for port, count in stats['ports']['dst'].items()
                 ]).sort_values('Count', ascending=False).head(10)
 
