@@ -77,15 +77,15 @@ def main():
                     if devices:
                         # Get activity status for each device
                         devices_with_status = []
-                        for d in devices:
+                        for device in devices:
                             try:
                                 # Get device history
-                                device_history = netwatch.scanner.device_history['devices'].get(d['mac'], {})
+                                device_history = netwatch.scanner.device_history['devices'].get(device.mac_address, {})
                                 activity = netwatch.scanner._get_activity_status(device_history) if device_history else "New Device"
-                                d['activity'] = activity
-                                devices_with_status.append(d)
+                                device.activity = activity
+                                devices_with_status.append(device)
                             except Exception as e:
-                                st.warning(f"Error processing device {d.get('mac', 'unknown')}: {str(e)}")
+                                st.warning(f"Error processing device {device.mac_address}: {str(e)}")
                                 continue
                         st.session_state.traffic_capture_devices = devices_with_status
                     else:

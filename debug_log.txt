@@ -142,3 +142,13 @@ Technical Context:
     Context: Trying to use .get() on NetworkDevice objects
     Impact: Error when trying to access device data
     Resolution: Updated get_new_devices to use NetworkDevice objects directly from device_history
+
+2025-04-15 17:17:00 - Fix: Traffic capture UI
+    Context: Trying to access device data as dictionary instead of NetworkDevice object
+    Impact: Error when trying to access device attributes in traffic capture UI
+    Resolution: Updated all device data access to use NetworkDevice object attributes
+
+2025-04-15 18:17:00 - Fix: Device data handling in traffic capture
+    Context: Inconsistent device data handling in traffic capture section
+    Impact: No devices available in traffic capture UI
+    Resolution: Updated device data handling to consistently use NetworkDevice objects

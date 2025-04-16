@@ -232,7 +232,7 @@ def show_traffic_capture_ui(netwatch, devices):
             with col1:
                 st.subheader("🔍 Select Target Devices")
                 # Create a list of all device options
-                device_options = [f"{d['ip']} ({d.get('hostname', 'N/A')})" for d in devices]
+                device_options = [f"{d.ip_address} ({d.hostname or 'N/A'})" for d in devices]
                 selected_options = st.multiselect(
                     "Select Devices to Monitor",
                     options=device_options,
@@ -241,7 +241,7 @@ def show_traffic_capture_ui(netwatch, devices):
                 # Get the full device info for each selected device
                 for option in selected_options:
                     for device in devices:
-                        if f"{device['ip']} ({device.get('hostname', 'N/A')})" == option:
+                        if f"{device.ip_address} ({device.hostname or 'N/A'})" == option:
                             selected_devices.append(device)
                             break
 
@@ -251,11 +251,11 @@ def show_traffic_capture_ui(netwatch, devices):
                 tracked_devices = netwatch.scanner.get_tracked_devices()
                 if tracked_devices:
                     for device in tracked_devices:
-                        with st.expander(f"{device['hostname'] or 'Unknown Device'} ({device['ip']})"):
-                            st.text(f"MAC: {device['mac']}")
-                            st.text(f"First Seen: {datetime.fromisoformat(device['first_seen']).strftime('%Y-%m-%d %H:%M')}")
-                            st.text(f"Last Seen: {datetime.fromisoformat(device['last_seen']).strftime('%Y-%m-%d %H:%M')}")
-                            st.text(f"Status: {device['activity']}")
+                        with st.expander(f"{device.hostname or 'Unknown Device'} ({device.ip_address})"):
+                            st.text(f"MAC: {device.mac_address}")
+                            st.text(f"First Seen: {device.first_seen.strftime('%Y-%m-%d %H:%M')}")
+                            st.text(f"Last Seen: {device.last_seen.strftime('%Y-%m-%d %H:%M')}")
+                            st.text(f"Status: {device.activity}")
                 else:
                     st.info("No devices are currently being tracked")
         else:
@@ -297,7 +297,7 @@ def show_traffic_capture_ui(netwatch, devices):
     # Start capture button
     if capture_mode == "All Traffic 🔥" or (capture_mode == "Select Devices 🏳" and selected_devices):
         if st.button("🎥 Start Capture", type="primary", use_container_width=True):
-            target_ips = None if capture_mode == "All Traffic 🔥" else [d['ip'] for d in selected_devices]
+            target_ips = None if capture_mode == "All Traffic 🔥" else [d.ip_address for d in selected_devices]
 
             # Create a unique filename for this capture
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
