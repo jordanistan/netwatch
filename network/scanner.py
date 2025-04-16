@@ -1,7 +1,6 @@
 """Network scanning functionality for NetWatch"""
 import json
-import socket
-import time
+import logging
 from datetime import datetime
 from pathlib import Path
 import scapy.all as scapy
@@ -108,109 +107,43 @@ class NetworkScanner:
             return None
 
     def scan_devices(self, interface, network_range):
-        """Scan network for devices using ARP"""
+        """Scan the network for devices using ARP only (restored to previous working state)."""
+        logging.debug(f"Starting network scan on {interface} for range {network_range}")
+        devices_found = []
         try:
-            # Create and send ARP request
-            arp = scapy.ARP(pdst=network_range)
-            ether = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
-            packet = ether/arp
+            # ARP Scan only
+            logging.debug("Performing ARP scan...")
+            arp_request = scapy.Ether(dst="ff:ff:ff:ff:ff:ff") / scapy.ARP(pdst=network_range)
+            answered, _ = scapy.srp(arp_request, timeout=2, iface=interface, verbose=False)
+            logging.debug(f"ARP scan finished. {len(answered)} devices responded.")
 
-            # Send multiple ARP requests to ensure we catch all devices
-            devices = []
-            for attempt in range(2):  # Try twice
-                try:
-                    ans, _ = scapy.srp(packet, timeout=2, verbose=0, iface=interface)
-                except scapy.Scapy_Exception as e:
-                    print(f"[Scanner] Error sending ARP request: {str(e)}")
-                    continue
+            for _, received in answered:
+                mac = received.hwsrc
+                ip = received.psrc
+                device = NetworkDevice(ip_address=ip, mac_address=mac)
+                devices_found.append(device)
+                logging.debug(f"ARP found: IP={ip}, MAC={mac}")
 
-                # Process responses
-                for _, received in ans:
-                    try:
-                        # Try to get hostname but don't fail if we can't
-                        try:
-                            hostname = socket.gethostbyaddr(received.psrc)[0]
-                        except (socket.gaierror, socket.herror):
-                            hostname = "N/A"
-                        
-                        # Create NetworkDevice object
-                        device = NetworkDevice(
-                            mac_address=received.hwsrc,
-                            ip_address=received.psrc,
-                            hostname=hostname,
-                            tracked=received.hwsrc in self.tracked_devices["devices"],
-                            first_seen=datetime.now(),
-                            last_seen=datetime.now(),
-                            activity="New"
-                        )
-                        if not any(d.ip_address == device.ip_address for d in devices):
-                            devices.append(device)
-                            # Update device history
-                            mac = device.mac_address
-                            current_time = datetime.now()
-                            if mac not in self.device_history["devices"]:
-                                # New device
-                                self.device_history["devices"][mac] = device
-                            else:
-                                # Update existing device
-                                existing_device = self.device_history["devices"][mac]
-                                existing_device.last_seen = current_time
-                                existing_device.ip_address = device.ip_address
-                                if device.ip_address not in existing_device.ip_history:
-                                    existing_device.ip_history.append(device.ip_address)
-                                existing_device.hostname = device.hostname
-                                existing_device.update_activity()
-                            # Save device history
-                            history_data = {
-                                "devices": {mac: dev.to_dict() for mac, dev in self.device_history["devices"].items()}
-                            }
-                            self.device_history_file.write_text(json.dumps(history_data, indent=4))
-                    except Exception as e:
-                        print(f"[Scanner] Could not process device {received.psrc}: {str(e)}")
-                        continue
-                
-                # Small delay between attempts
-                if attempt == 0:
-                    time.sleep(0.5)
-            
-            # Cache the devices
-            self.cached_devices = devices
-            return devices
-        except Exception as e:
-            print(f"[Scanner] Error scanning network: {str(e)}")
-            return []
-    
-    def _get_activity_status(self, device_history):
-        """Get activity status for a device based on its history
-        Args:
-            device_history: Device history dictionary
-        Returns:
-            str: Activity status
-        """
-        if not device_history:
-            return "New Device"
+            # Update device history
+            now = datetime.now()
+            logging.debug("Updating device history...")
+            for device in devices_found:
+                self._update_device_entry(device.mac_address, device.ip_address, getattr(device, 'hostname', None), now)
+            self.save_device_history()
+            logging.debug("Device history updated and saved.")
 
-        # Get last seen time
-        last_seen = device_history.get('last_seen')
-        if not last_seen:
-            return "Unknown"
-        
-        now = datetime.now()
-        time_ago = now - last_seen
+        except PermissionError:
+            logging.error("Permission denied for raw socket access. Try running with sudo.")
+        except OSError as e:
+            if "No such device" in str(e):
+                logging.error(f"Network interface '{interface}' not found.")
+            else:
+                logging.exception("An OS error occurred during scanning")
+        except Exception:
+            logging.exception("An unexpected error occurred during network scan")
 
-        # Determine activity status based on time since last seen
-        if time_ago.days > 7:
-            return "Inactive"
-        elif time_ago.days > 1:
-            return f"Last seen {time_ago.days} days ago"
-        elif time_ago.seconds > 3600:
-            hours = time_ago.seconds // 3600
-            return f"Last seen {hours} hours ago"
-        elif time_ago.seconds > 60:
-            minutes = time_ago.seconds // 60
-            return f"Last seen {minutes} minutes ago"
-        else:
-            return "Active"
+        logging.debug(f"Network scan completed. Found {len(devices_found)} devices.")
+        return devices_found
 
     def get_cached_devices(self):
         """Get the list of devices from the last scan, sorted by discovery time"""
@@ -318,3 +251,35 @@ class NetworkScanner:
             device.update_activity()
 
         return sorted_devices[:limit]
+
+    def _get_activity_status(self, device_history):
+        """Get activity status for a device based on its history
+        Args:
+            device_history: Device history dictionary
+        Returns:
+            str: Activity status
+        """
+        if not device_history:
+            return "New Device"
+
+        # Get last seen time
+        last_seen = device_history.get('last_seen')
+        if not last_seen:
+            return "Unknown"
+
+        now = datetime.now()
+        time_ago = now - last_seen
+
+        # Determine activity status based on time since last seen
+        if time_ago.days > 7:
+            return "Inactive"
+        elif time_ago.days > 1:
+            return f"Last seen {time_ago.days} days ago"
+        elif time_ago.seconds > 3600:
+            hours = time_ago.seconds // 3600
+            return f"Last seen {hours} hours ago"
+        elif time_ago.seconds > 60:
+            minutes = time_ago.seconds // 60
+            return f"Last seen {minutes} minutes ago"
+        else:
+            return "Active"

@@ -6,7 +6,7 @@
             "hostname": "N/A",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.745831",
-            "last_seen": "2025-04-16T00:28:58.771876",
+            "last_seen": "2025-04-16T01:10:22.705426",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.1"
@@ -18,7 +18,7 @@
             "hostname": "nest-cam.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.757761",
-            "last_seen": "2025-04-16T00:14:25.716544",
+            "last_seen": "2025-04-16T01:06:54.280945",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.40"
@@ -42,7 +42,7 @@
             "hostname": "N/A",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.780181",
-            "last_seen": "2025-04-16T00:29:09.763741",
+            "last_seen": "2025-04-16T01:10:22.716560",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.27"
@@ -54,7 +54,7 @@
             "hostname": "home-tv.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.793311",
-            "last_seen": "2025-04-16T00:29:09.749791",
+            "last_seen": "2025-04-16T01:10:22.736593",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.22"
@@ -66,7 +66,7 @@
             "hostname": "nest-audio.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.801794",
-            "last_seen": "2025-04-16T00:29:09.793173",
+            "last_seen": "2025-04-16T01:10:22.820097",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.34"
@@ -78,7 +78,7 @@
             "hostname": "nest-audio.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.810051",
-            "last_seen": "2025-04-16T00:29:09.781124",
+            "last_seen": "2025-04-16T01:10:33.173245",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.28"
@@ -86,11 +86,11 @@
         },
         "1c:53:f9:85:fc:83": {
             "mac": "1c:53:f9:85:fc:83",
-            "ip": "192.168.86.31",
+            "ip": "192.168.86.255",
             "hostname": "N/A",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.818899",
-            "last_seen": "2025-04-16T00:29:09.835490",
+            "last_seen": "2025-04-16T01:10:33.219044",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.31",
@@ -103,7 +103,7 @@
             "hostname": "N/A",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.829180",
-            "last_seen": "2025-04-16T00:29:09.804750",
+            "last_seen": "2025-04-16T01:10:22.801735",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.30"
@@ -115,7 +115,7 @@
             "hostname": "tl-sg116e.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.836377",
-            "last_seen": "2025-04-16T00:29:09.817051",
+            "last_seen": "2025-04-16T01:10:22.747983",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.37"
@@ -127,7 +127,7 @@
             "hostname": "xbox.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.845179",
-            "last_seen": "2025-04-16T00:29:09.826701",
+            "last_seen": "2025-04-16T01:10:22.759180",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.38"
@@ -139,7 +139,7 @@
             "hostname": "N/A",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.853688",
-            "last_seen": "2025-04-16T00:14:25.705714",
+            "last_seen": "2025-04-16T01:10:22.788084",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.35",
@@ -152,7 +152,7 @@
             "hostname": "birdy.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.862530",
-            "last_seen": "2025-04-16T00:29:09.852229",
+            "last_seen": "2025-04-16T01:10:22.810204",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.42"
@@ -164,7 +164,7 @@
             "hostname": "wombatcombat",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.870109",
-            "last_seen": "2025-04-16T00:29:09.853262",
+            "last_seen": "2025-04-16T01:10:22.829521",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.100"
@@ -176,7 +176,7 @@
             "hostname": "n8n.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.883015",
-            "last_seen": "2025-04-16T00:29:09.862368",
+            "last_seen": "2025-04-16T01:10:22.837982",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.102"
@@ -188,7 +188,7 @@
             "hostname": "jellyfin.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.891281",
-            "last_seen": "2025-04-16T00:29:09.873047",
+            "last_seen": "2025-04-16T01:10:22.847971",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.103"
@@ -200,7 +200,7 @@
             "hostname": "openwebui.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.899989",
-            "last_seen": "2025-04-16T00:29:09.881783",
+            "last_seen": "2025-04-16T01:10:22.856474",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.108"
@@ -212,7 +212,7 @@
             "hostname": "checkmk.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.908334",
-            "last_seen": "2025-04-16T00:29:09.901374",
+            "last_seen": "2025-04-16T01:10:22.866955",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.109"
@@ -224,7 +224,7 @@
             "hostname": "paperless-ngx.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.917014",
-            "last_seen": "2025-04-16T00:29:09.911811",
+            "last_seen": "2025-04-16T01:10:22.876118",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.111"
@@ -236,7 +236,7 @@
             "hostname": "nest-audio.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.925544",
-            "last_seen": "2025-04-16T00:29:09.890876",
+            "last_seen": "2025-04-16T01:10:22.908824",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.106"
@@ -248,7 +248,7 @@
             "hostname": "wazuh.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.934432",
-            "last_seen": "2025-04-16T00:29:09.946418",
+            "last_seen": "2025-04-16T01:10:22.885472",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.117"
@@ -260,7 +260,7 @@
             "hostname": "N/A",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.943110",
-            "last_seen": "2025-04-16T00:29:09.990163",
+            "last_seen": "2025-04-16T01:06:54.378318",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.114"
@@ -272,7 +272,7 @@
             "hostname": "grafana.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.952379",
-            "last_seen": "2025-04-16T00:29:09.960844",
+            "last_seen": "2025-04-16T01:10:22.897184",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.118"
@@ -284,7 +284,7 @@
             "hostname": "mac.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:38.960950",
-            "last_seen": "2025-04-16T00:29:10.007199",
+            "last_seen": "2025-04-16T01:06:54.442839",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.120"
@@ -308,7 +308,7 @@
             "hostname": "nest-audio.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:49.188507",
-            "last_seen": "2025-04-16T00:29:09.843029",
+            "last_seen": "2025-04-16T01:10:22.768258",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.32"
@@ -320,7 +320,7 @@
             "hostname": "nest-cam.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:49.216232",
-            "last_seen": "2025-04-16T00:14:14.801309",
+            "last_seen": "2025-04-16T01:07:05.480033",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.101"
@@ -332,7 +332,7 @@
             "hostname": "macbookpro.lan",
             "tracked": false,
             "first_seen": "2025-04-14T02:08:49.226230",
-            "last_seen": "2025-04-16T00:28:58.798641",
+            "last_seen": "2025-04-16T01:10:22.918758",
             "activity": "Active",
             "ip_history": [
                 "192.168.86.21"
@@ -357,7 +357,7 @@
             "tracked": false,
             "first_seen": "2025-04-16T00:11:00.261555",
             "last_seen": "2025-04-16T00:14:14.990808",
-            "activity": "Active",
+            "activity": "Recent",
             "ip_history": [
                 "192.168.86.133"
             ]

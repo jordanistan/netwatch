@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 from datetime import datetime
 from pathlib import Path
+import logging
 
 import streamlit as st
 
 from network.scanner import NetworkScanner
 from network.capture import TrafficCapture
 from network.monitor import DeviceMonitor
-from ui.components import setup_page, show_network_info, show_scan_results, show_pcap_analysis, show_traffic_capture_ui
+from ui.components import setup_page, show_network_info, show_scan_results, show_pcap_analysis_ui, show_traffic_capture_page
 
 class NetWatch:
     def __init__(self):
@@ -70,8 +71,14 @@ def main():
                         st.info(f"🌐 Network: {network_range}")
                         # Scan for devices
                         with st.spinner("Scanning network..."):
-                            devices = netwatch.scanner.scan_devices(interface, network_range)
-                            show_scan_results(devices, netwatch)
+                            try:
+                                devices = netwatch.scanner.scan_devices(interface, network_range)
+                                # Log the raw devices list returned by the scanner
+                                logging.debug(f"Devices returned from scan: {devices}")
+                                show_scan_results(devices, netwatch)
+                            except Exception as e:
+                                st.error(f"Error during network scan: {e}")
+                                logging.exception("Network scan failed") # Log traceback
                 else:
                     st.error("No suitable network interface found")
 
@@ -121,7 +128,7 @@ def main():
 
             # Show traffic capture UI with the devices we found
             if 'traffic_capture_devices' in st.session_state:
-                show_traffic_capture_ui(netwatch, st.session_state.traffic_capture_devices)
+                show_traffic_capture_page(netwatch, st.session_state.traffic_capture_devices)
 
         elif action == "PCAP Analysis":
             st.header("PCAP Analysis")
@@ -135,24 +142,33 @@ def main():
                     pcap_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
                     col1, col2 = st.columns([3, 1])
                     with col1:
-                        selected_file = st.selectbox(
+                        selected_pcap = st.selectbox(
                             "Select PCAP file",
                             pcap_files,
                             format_func=lambda x: f"{x.name} ({datetime.fromtimestamp(x.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S')})"
                         )
                     with col2:
-                        file_size = selected_file.stat().st_size
-                        st.info(f"File size: {file_size / (1024*1024):.1f} MB")
-
-                    if st.button("🔍 Analyze", type="primary", use_container_width=True):
+                        # Display file size
+                        file_size = selected_pcap.stat().st_size
+                        st.info(f"Size: {file_size / (1024*1024):.2f} MB")
+                        st.info(f"Selected PCAP: {selected_pcap.name}")
+                    # Place Analyze button below selectbox and size info
+                    if st.button("\U0001f50d Analyze", type="primary", use_container_width=True):
                         try:
                             with st.spinner("Analyzing PCAP file..."):
-                                stats = netwatch.capture.analyze_pcap(selected_file)
-                                show_pcap_analysis(stats)
+                                # Correctly call analyze_pcap on the netwatch instance
+                                analysis_results = netwatch.capture.analyze_pcap(selected_pcap)
+                                if analysis_results:
+                                    # Pass both netwatch and analysis_results
+                                    show_pcap_analysis_ui(netwatch, analysis_results)
+                                else:
+                                    st.warning("No analysis results generated.")
                         except Exception as e:
-                            st.error(f"Error analyzing PCAP file: {str(e)}")
+                            st.error(f"Error analyzing PCAP file: {e}")
+                            logging.exception("PCAP Analysis failed") # Log traceback
             except Exception as e:
                 st.error(f"Error accessing captures directory: {str(e)}")
+                logging.exception("Error listing PCAP files") # Log traceback
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")

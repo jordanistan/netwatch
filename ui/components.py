@@ -3,9 +3,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import netifaces
-from datetime import datetime
 from pathlib import Path
 from network.capture import TrafficCapture
+import logging
 
 def setup_page():
     """Setup the main page configuration"""
@@ -36,131 +36,150 @@ def show_scan_results(devices, netwatch):
         devices: List of network devices
         netwatch: NetWatch instance
     """
-    if devices:
-        # Show tracked devices first
-        st.subheader("Tracked Devices")
-        tracked_devices = netwatch.scanner.get_tracked_devices()
-        if tracked_devices:
-            device_count = len(tracked_devices)
-            st.success(f"Found {device_count} tracked devices")
-            with st.expander("📌 Tracked Devices", expanded=False):
-                for device in tracked_devices:
+    try:
+        if devices:
+            # Show tracked devices first
+            st.subheader("Tracked Devices")
+            tracked_devices = netwatch.scanner.get_tracked_devices()
+            if tracked_devices:
+                device_count = len(tracked_devices)
+                st.success(f"Found {device_count} tracked devices")
+                with st.expander("📌 Tracked Devices", expanded=False):
+                    for device in tracked_devices:
+                        try:
+                            st.markdown(f"**{device.hostname or 'Unknown Device'} ({device.ip_address})**")
+                            st.text(f"MAC: {device.mac_address}")
+                            st.text(f"First Seen: {device.first_seen.strftime('%Y-%m-%d %H:%M') if device.first_seen else 'N/A'}")
+                            st.text(f"Last Seen: {device.last_seen.strftime('%Y-%m-%d %H:%M') if device.last_seen else 'N/A'}")
+                            st.text(f"Status: {device.activity}")
+                            st.divider()
+                        except AttributeError:
+                            st.error("Error displaying device info. Please refresh the device list.")
+                tracked_df = pd.DataFrame([
+                    {
+                        'IP Address': device.ip_address,
+                        'MAC Address': device.mac_address,
+                        'Device Name': device.hostname or 'Unknown',
+                        'Activity': device.activity,
+                        'First Seen': device.first_seen.strftime('%Y-%m-%d %H:%M:%S') if device.first_seen else 'N/A',
+                        'Last Seen': device.last_seen.strftime('%Y-%m-%d %H:%M:%S') if device.last_seen else 'N/A',
+                        'Actions': False
+                    }
+                    for device in tracked_devices
+                ])
+                # Display tracked devices with untrack button
+                edited_tracked_df = st.data_editor(
+                    tracked_df,
+                    column_config={
+                        'IP Address': st.column_config.TextColumn(width="medium"),
+                        'MAC Address': st.column_config.TextColumn(width="medium"),
+                        'Device Name': st.column_config.TextColumn(width="medium"),
+                        'Activity': st.column_config.TextColumn(
+                            width="small",
+                            help="Device activity status"
+                        ),
+                        'First Seen': st.column_config.TextColumn(width="medium"),
+                        'Last Seen': st.column_config.TextColumn(width="medium"),
+                        'Actions': st.column_config.CheckboxColumn(
+                            "Untrack Device",
+                            help="Uncheck to stop tracking this device",
+                            default=False
+                        )
+                    },
+                    hide_index=True,
+                    use_container_width=True
+                )
+                # Handle untracking devices
+                for row in edited_tracked_df.itertuples():
                     try:
-                        st.markdown(f"**{device.hostname or 'Unknown Device'} ({device.ip_address})**")
-                        st.text(f"MAC: {device.mac_address}")
-                        st.text(f"First Seen: {device.first_seen.strftime('%Y-%m-%d %H:%M') if device.first_seen else 'N/A'}")
-                        st.text(f"Last Seen: {device.last_seen.strftime('%Y-%m-%d %H:%M') if device.last_seen else 'N/A'}")
-                        st.text(f"Status: {device.activity}")
-                        st.divider()
-                    except AttributeError:
-                        st.error("Error displaying device info. Please refresh the device list.")
-            tracked_df = pd.DataFrame([
-                {
-                    'IP Address': device.ip_address,
-                    'MAC Address': device.mac_address,
-                    'Device Name': device.hostname or 'Unknown',
-                    'Activity': device.activity,
-                    'First Seen': device.first_seen.strftime('%Y-%m-%d %H:%M:%S') if device.first_seen else 'N/A',
-                    'Last Seen': device.last_seen.strftime('%Y-%m-%d %H:%M:%S') if device.last_seen else 'N/A',
-                    'Actions': False
-                }
-                for device in tracked_devices
-            ])
-            # Display tracked devices with untrack button
-            edited_tracked_df = st.data_editor(
-                tracked_df,
-                column_config={
-                    'IP Address': st.column_config.TextColumn(width="medium"),
-                    'MAC Address': st.column_config.TextColumn(width="medium"),
-                    'Device Name': st.column_config.TextColumn(width="medium"),
-                    'Activity': st.column_config.TextColumn(
-                        width="small",
-                        help="Device activity status"
-                    ),
-                    'First Seen': st.column_config.TextColumn(width="medium"),
-                    'Last Seen': st.column_config.TextColumn(width="medium"),
-                    'Actions': st.column_config.CheckboxColumn(
-                        "Untrack Device",
-                        help="Uncheck to stop tracking this device",
-                        default=False
-                    )
-                },
-                hide_index=True,
-                use_container_width=True
-            )
-            # Handle untracking devices
-            for row in edited_tracked_df.itertuples():
-                try:
-                    mac_address = row.mac
-                    netwatch.scanner.untrack_device(mac_address)
-                except Exception as e:
-                    st.error(f"Error untracking device: {str(e)}")
+                        mac_address = row.mac
+                        netwatch.scanner.untrack_device(mac_address)
+                    except Exception as e:
+                        st.error(f"Error untracking device: {str(e)}")
+            else:
+                st.info("No tracked devices yet")
+            # Show other devices
+            st.subheader("Other Network Devices")
+            new_devices = netwatch.scanner.get_new_devices(limit=50, include_tracked=True)
+            untracked_devices = [d for d in new_devices if not d.tracked]
+            if untracked_devices:
+                device_count = len(untracked_devices)
+                st.info(f"Found {device_count} untracked devices")
+                # Create a DataFrame for untracked devices
+                new_df = pd.DataFrame([
+                    {
+                        'IP Address': d.ip_address,
+                        'MAC Address': d.mac_address,
+                        'Device Name': d.hostname or 'Unknown',
+                        'Activity': d.activity,
+                        'First Seen': d.first_seen.strftime('%Y-%m-%d %H:%M:%S') if d.first_seen else 'N/A',
+                        'Last Seen': d.last_seen.strftime('%Y-%m-%d %H:%M:%S') if d.last_seen else 'N/A',
+                        'Track': False
+                    }
+                    for d in untracked_devices
+                ])
+                # Display untracked devices with track button
+                edited_df = st.data_editor(
+                    new_df,
+                    column_config={
+                        'IP Address': st.column_config.TextColumn(width="medium"),
+                        'MAC Address': st.column_config.TextColumn(width="medium"),
+                        'Device Name': st.column_config.TextColumn(width="medium"),
+                        'Activity': st.column_config.TextColumn(
+                            width="small",
+                            help="Device activity status"
+                        ),
+                        'First Seen': st.column_config.TextColumn(width="medium"),
+                        'Last Seen': st.column_config.TextColumn(width="medium"),
+                        'Track': st.column_config.CheckboxColumn(
+                            "Track Device",
+                            help="Check to track this device",
+                            default=False
+                        )
+                    },
+                    hide_index=True,
+                    use_container_width=True
+                )
+                # Handle device tracking
+                for _, row in edited_df.iterrows():
+                    device_mac = row['MAC Address']
+                    is_tracked = netwatch.scanner.is_device_tracked(device_mac)
+                    if row['Track'] != is_tracked:  # Only update if tracking status changed
+                        if row['Track']:
+                            netwatch.scanner.track_device(device_mac)
+                            st.success(f"Now tracking {row['Device Name']}")
+                            st.rerun()
+                        else:
+                            netwatch.scanner.untrack_device(device_mac)
+                            st.success(f"Stopped tracking {row['Device Name']}")
+                            st.rerun()
+                    if 'tracking_changed' not in st.session_state:
+                        st.session_state.tracking_changed = True
+                        st.rerun()
+            else:
+                st.info("No new devices found")
         else:
-            st.info("No tracked devices yet")
-        # Show other devices
-        st.subheader("Other Network Devices")
-        new_devices = netwatch.scanner.get_new_devices(limit=50, include_tracked=True)
-        untracked_devices = [d for d in new_devices if not d.tracked]
-        if untracked_devices:
-            device_count = len(untracked_devices)
-            st.info(f"Found {device_count} untracked devices")
-            # Create a DataFrame for untracked devices
-            new_df = pd.DataFrame([
-                {
+            st.warning("No devices found. Please refresh the device list.")
+            # Consider showing previously tracked devices if available
+            tracked_devices = netwatch.scanner.get_tracked_devices()
+            if tracked_devices:
+                st.subheader("Previously Tracked Devices")
+                # (Simplified display for brevity, reuse tracked display logic if needed)
+                tracked_df = pd.DataFrame([{
                     'IP Address': d.ip_address,
                     'MAC Address': d.mac_address,
                     'Device Name': d.hostname or 'Unknown',
-                    'Activity': d.activity,
-                    'First Seen': d.first_seen.strftime('%Y-%m-%d %H:%M:%S') if d.first_seen else 'N/A',
-                    'Last Seen': d.last_seen.strftime('%Y-%m-%d %H:%M:%S') if d.last_seen else 'N/A',
-                    'Track': False
-                }
-                for d in untracked_devices
-            ])
-            # Display untracked devices with track button
-            edited_df = st.data_editor(
-                new_df,
-                column_config={
-                    'IP Address': st.column_config.TextColumn(width="medium"),
-                    'MAC Address': st.column_config.TextColumn(width="medium"),
-                    'Device Name': st.column_config.TextColumn(width="medium"),
-                    'Activity': st.column_config.TextColumn(
-                        width="small",
-                        help="Device activity status"
-                    ),
-                    'First Seen': st.column_config.TextColumn(width="medium"),
-                    'Last Seen': st.column_config.TextColumn(width="medium"),
-                    'Track': st.column_config.CheckboxColumn(
-                        "Track Device",
-                        help="Check to track this device",
-                        default=False
-                    )
-                },
-                hide_index=True,
-                use_container_width=True
-            )
-            # Handle device tracking
-            for _, row in edited_df.iterrows():
-                device_mac = row['MAC Address']
-                is_tracked = netwatch.scanner.is_device_tracked(device_mac)
-                if row['Track'] != is_tracked:  # Only update if tracking status changed
-                    if row['Track']:
-                        netwatch.scanner.track_device(device_mac)
-                        st.success(f"Now tracking {row['Device Name']}")
-                        st.rerun()
-                    else:
-                        netwatch.scanner.untrack_device(device_mac)
-                        st.success(f"Stopped tracking {row['Device Name']}")
-                        st.rerun()
-                if 'tracking_changed' not in st.session_state:
-                    st.session_state.tracking_changed = True
-                    st.rerun()
-        else:
-            st.info("No new devices found")
-    else:
-        st.warning("No devices found. Please refresh the device list.")
+                    'Last Seen': d.last_seen.strftime('%Y-%m-%d %H:%M') if d.last_seen else 'N/A',
+                    'Status': d.activity
+                    } for d in tracked_devices])
+                st.dataframe(tracked_df, hide_index=True, use_container_width=True)
+    except Exception as e:
+        st.error(f"An error occurred displaying scan results: {e}")
+        logging.exception("Error in show_scan_results")
+    finally:
+        pass
 
-def show_traffic_capture_page():
+def show_traffic_capture_page(netwatch, devices):
     """Display the Traffic Capture page with device selection and capture controls"""
     st.header("Traffic Capture 🚀")
     if 'network_devices' not in st.session_state:
@@ -203,57 +222,21 @@ def show_traffic_capture_page():
             disabled=duration_selection != "Custom"
         )
     if st.button("🚨 Capture Traffic", type='primary', use_container_width=True):
-        target_ips = None
-        if capture_mode == "Select Devices" and selected_devices:
-            target_ips = []
-            for device in netwatch.scanner.get_cached_devices():
-                if device.mac_address in [d['value'] for d in selected_devices]:
-                    target_ips.append(device.ip_address)
-            captures_dir = Path("captures")
-        capture = TrafficCapture(captures_dir)
-        progress_text = "Capturing network traffic..."
-        progress_bar = st.progress(0, text=progress_text)
-
-            selected_devices = st.multiselect(
-                "Select devices to capture traffic from/to",
-                options=device_options,
-                format_func=lambda x: x['label']
-            )
-
-            if selected_devices:
+        try:
+            target_ips = None
+            if capture_mode == "Select Devices" and selected_devices:
                 target_ips = []
-                for device in cached_devices:
+                for device in netwatch.scanner.get_cached_devices():
                     if device.mac_address in [d['value'] for d in selected_devices]:
                         target_ips.append(device.ip_address)
+            captures_dir = Path("captures")
+            capture = TrafficCapture(captures_dir)
+            progress_text = "Capturing network traffic..."
+            progress_bar = st.progress(0, text=progress_text)
 
-    with col2:
-        st.subheader("Duration")
-        duration_option = st.selectbox(
-            "Select Duration",
-            ["1 minute", "10 minutes", "30 minutes", "Custom"],
-            index=0
-        )
+            def update_progress(percent):
+                progress_bar.progress(percent, text=f"{progress_text} ({percent:.0f}%)")
 
-        if duration_option == "Custom":
-            capture_duration = st.slider(
-                "Capture Duration (minutes)",
-                min_value=1,
-                max_value=60,
-                value=5,
-                format="%d minutes"
-            )
-        else:
-            capture_duration = int(duration_option.split()[0])
-
-        # Store the duration in session state for use in capture
-        st.session_state.capture_duration = capture_duration
-
-    if st.button("🚨 Capture Traffic", type='primary', use_container_width=True):
-        progress_text = "Capturing network traffic..."
-        progress_bar = st.progress(0, text=progress_text)
-        def update_progress(percent):
-            progress_bar.progress(percent, text=f"{progress_text} ({percent:.0f}%)")
-        try:
             pcap_file = capture.capture_traffic(
                 target_ips=target_ips,
                 duration=capture_duration * 60,
@@ -268,6 +251,8 @@ def show_traffic_capture_page():
                 st.error("❌ Failed to capture traffic. Please check the logs.")
         except Exception as e:
             st.error(f"❌ Error during capture: {str(e)}")
+        finally:
+            progress_bar.empty()
 
 def show_pcap_analysis_ui(netwatch, stats):
     """Display PCAP analysis results with interactive visualizations
@@ -297,12 +282,23 @@ def show_pcap_analysis_ui(netwatch, stats):
         # Show traffic over time if available
         if stats.get('traffic_over_time'):
             st.subheader("Traffic Over Time")
-            time_df = pd.DataFrame([
-                {'Time': time, 'Packets': count}
-                for time, count in stats['traffic_over_time'].items()
-            ])
-            fig = px.line(time_df, x='Time', y='Packets', title='Packet Count Over Time')
-            st.plotly_chart(fig, use_container_width=True)
+            # Convert keys to datetime if they are strings
+            traffic_data = {
+                pd.to_datetime(k): v 
+                for k, v in stats['traffic_over_time'].items()
+            }
+            time_df = pd.DataFrame(
+                list(traffic_data.items()),
+                columns=['Time', 'Packets']
+            ).sort_values('Time')
+            
+            if not time_df.empty:
+                fig = px.line(time_df, x='Time', y='Packets', title='Packet Count Over Time')
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No traffic over time data to display.")
+        else:
+            st.info("No traffic over time data available.")
 
     with conversations_tab:
         if stats.get('conversations'):
@@ -311,45 +307,14 @@ def show_pcap_analysis_ui(netwatch, stats):
                 {'Conversation': conv, 'Packets': count}
                 for conv, count in stats['conversations'].items()
             ]).sort_values('Packets', ascending=False)
-            st.dataframe(conversations_df, hide_index=True)
+            st.dataframe(conversations_df, hide_index=True, use_container_width=True)
         else:
             st.info("No conversation data available")
 
     with protocols_tab:
+        # Protocol Analysis
         if stats.get('protocols'):
             st.subheader("Protocol Distribution")
-            protocols_df = pd.DataFrame([
-                {'Protocol': proto, 'Count': count}
-                for proto, count in stats['protocols'].items()
-            ]).sort_values('Count', ascending=False)
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.dataframe(protocols_df, hide_index=True)
-            with col2:
-                fig = px.pie(protocols_df, values='Count', names='Protocol', title='Protocol Distribution')
-                st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("No protocol data available")
-                        st.markdown("**Protocol Breakdown:**")
-                        protocols = stats['ips']['conversation_protocols'][conv]
-                        for proto, proto_count in sorted(protocols.items(),
-                                                       key=lambda x: x[1],
-                                                       reverse=True):
-                            percentage = (proto_count / count) * 100
-                            st.text(f"{proto}: {proto_count:,} packets ({percentage:.1f}%)")
-
-                    # Show data transfer
-                    src_data = stats['ips']['data_usage'].get(src, 0)
-                    dst_data = stats['ips']['data_usage'].get(dst, 0)
-                    st.markdown("**Data Transfer:**")
-                    st.text(f"Source → Destination: {format_bytes(src_data)}")
-                    st.text(f"Destination → Source: {format_bytes(dst_data)}")
-
-    # Protocol tab
-    with analysis_tabs[2]:
-        # Protocol Analysis with better organization
-        if stats['protocols']:
             col1, col2 = st.columns(2)
             with col1:
                 # Create DataFrame for protocols
@@ -357,20 +322,21 @@ def show_pcap_analysis_ui(netwatch, stats):
                     {'Protocol': proto, 'Count': count}
                     for proto, count in stats['protocols'].items()
                 ]).sort_values('Count', ascending=False)
-
                 st.dataframe(proto_df, hide_index=True, use_container_width=True)
 
             with col2:
                 fig = px.pie(proto_df, values='Count', names='Protocol',
                             title='Protocol Distribution')
                 st.plotly_chart(fig, use_container_width=True)
+        else:
+             st.info("No protocol data available")
 
         # Port Analysis
         st.markdown("### Port Analysis")
         port_source_tab, port_dest_tab = st.tabs(["Source Ports", "Destination Ports"])
 
         with port_source_tab:
-            if stats['ports']['src']:
+            if stats.get('ports', {}).get('src'):
                 # Create DataFrame for source ports
                 src_ports = pd.DataFrame([
                     {'Port': str(port), 'Count': count}
@@ -390,13 +356,15 @@ def show_pcap_analysis_ui(netwatch, stats):
                 st.info("No source port data available")
 
         with port_dest_tab:
-            if stats['ports']['dst']:
+            if stats.get('ports', {}).get('dst'):
                 # Create DataFrame for destination ports
                 dst_ports = pd.DataFrame([
                     {'Port': str(port), 'Count': count}
                     for port, count in stats['ports']['dst'].items()
                 ]).sort_values('Count', ascending=False).head(10)
                 st.dataframe(dst_ports, hide_index=True, use_container_width=True)
+            else:
+                st.info("No destination port data available")
 
     with web_tab:
         show_web_analysis(stats)
@@ -408,7 +376,8 @@ def show_pcap_analysis_ui(netwatch, stats):
         show_voip_analysis(stats)
 
 def show_pcap_analysis(netwatch, stats):
-    """Display PCAP analysis results with interactive visualizations
+    """DEPRECATED: Use show_pcap_analysis_ui instead.
+    Display PCAP analysis results with interactive visualizations
     Args:
         netwatch: NetWatch instance
         stats: Dictionary containing PCAP analysis statistics
@@ -652,3 +621,33 @@ def show_voip_analysis(stats):
             st.metric("Active Calls", calls['active'])
         with col3:
             st.metric("Failed Calls", calls['failed'])
+
+def format_bytes(size):
+    """Format bytes to human readable format"""
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if size < 1024:
+            return f"{size:.2f} {unit}"
+        size /= 1024
+    return f"{size:.2f} PB"
+
+def get_duration_parts(seconds):
+    """Convert seconds into days, hours, minutes, seconds"""
+    days = seconds // 86400
+    hours = (seconds % 86400) // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    parts = []
+    if days:
+        parts.append(f"{days}d")
+    if hours:
+        parts.append(f"{hours}h")
+    if minutes:
+        parts.append(f"{minutes}m")
+    if seconds or not parts:
+        # Ensure seconds are formatted correctly, especially if zero
+        parts.append(f"{seconds:.0f}s" if seconds % 1 == 0 else f"{seconds:.2f}s")
+    return ", ".join(parts) if parts else "0s"
+
+def get_duration_label(value):
+    """Format duration for display"""
+    return get_duration_parts(value)
