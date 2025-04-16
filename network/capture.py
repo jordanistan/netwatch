@@ -834,4 +834,61 @@ class TrafficCapture:
             for ip in stats['torrents']['peers']:
                 stats['torrents']['peers'][ip] = list(stats['torrents']['peers'][ip])
         
+        # --- Minimal Alerting Logic ---
+        alerts = []
+        # Port scan detection: many SYNs from one source to many ports
+        syn_counts = {}
+        for pkt in packets:
+            if pkt.haslayer(scapy.TCP):
+                tcp = pkt[scapy.TCP]
+                if tcp.flags == 'S':  # SYN flag
+                    src = pkt[scapy.IP].src if pkt.haslayer(scapy.IP) else None
+                    dst_port = tcp.dport
+                    if src:
+                        if src not in syn_counts:
+                            syn_counts[src] = set()
+                        syn_counts[src].add(dst_port)
+        for src, ports in syn_counts.items():
+            if len(ports) > 20:
+                alerts.append({
+                    'type': 'port_scan',
+                    'source': src,
+                    'details': f'Port scan detected: {len(ports)} ports targeted',
+                })
+        # Brute force detection: many failed logins (simple heuristic: many TCP connections to common auth ports)
+        auth_ports = {22, 23, 21, 25, 110, 143, 3389, 5900}
+        auth_attempts = {}
+        for pkt in packets:
+            if pkt.haslayer(scapy.TCP):
+                tcp = pkt[scapy.TCP]
+                dport = tcp.dport
+                src = pkt[scapy.IP].src if pkt.haslayer(scapy.IP) else None
+                if dport in auth_ports and src:
+                    if src not in auth_attempts:
+                        auth_attempts[src] = 0
+                    auth_attempts[src] += 1
+        for src, count in auth_attempts.items():
+            if count > 30:
+                alerts.append({
+                    'type': 'brute_force',
+                    'source': src,
+                    'details': f'Brute force attempts detected: {count} connections to auth ports',
+                })
+        # Save alerts to file
+        alerts_dir = Path('reports/alerts')
+        alerts_dir.mkdir(parents=True, exist_ok=True)
+        alerts_file = alerts_dir / 'alerts.json'
+        try:
+            import json
+            if alerts_file.exists():
+                with alerts_file.open('r', encoding='utf-8') as f:
+                    existing_alerts = json.load(f)
+            else:
+                existing_alerts = []
+            existing_alerts.extend(alerts)
+            with alerts_file.open('w', encoding='utf-8') as f:
+                json.dump(existing_alerts, f, indent=2)
+        except Exception as e:
+            print(f"[Alert] Error saving alerts: {e}")
+        # --- End Alerting Logic ---
         return stats

@@ -655,3 +655,22 @@ def get_duration_parts(seconds):
 def get_duration_label(value):
     """Format duration for display"""
     return get_duration_parts(value)
+
+def show_alerts_page():
+    """Display alerts from reports/alerts/alerts.json"""
+    import json
+    from pathlib import Path
+    import streamlit as st
+    alerts_file = Path('reports/alerts/alerts.json')
+    st.header('Security Alerts')
+    if alerts_file.exists():
+        with alerts_file.open('r', encoding='utf-8') as f:
+            alerts = json.load(f)
+        if alerts:
+            import pandas as pd
+            df = pd.DataFrame(alerts)
+            st.dataframe(df, hide_index=True, use_container_width=True)
+        else:
+            st.info('No alerts found.')
+    else:
+        st.info('No alerts have been generated yet.')
