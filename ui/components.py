@@ -214,90 +214,42 @@ def show_traffic_capture_ui(netwatch, devices):
     if st.button("🔄 Refresh Device List", type="secondary", use_container_width=True):
         st.rerun()
 
-    # Traffic capture mode selection
-    capture_mode = st.radio(
-        "Capture Mode",
-        ["All Traffic 🔥", "Select Devices 🏳"],
-        horizontal=True,
-        help="Choose to capture all network traffic or select specific devices"
     )
 
-    # Device selection (only shown for device selection mode)
+    # Get the full device info for each selected device
     selected_devices = []
-    if capture_mode == "Select Devices 🏳":
-        if devices:
-            # Create columns for devices and tracked info
-            col1, col2 = st.columns([3, 2])
+    for option in selected_options:
+        for device in devices:
+            try:
+                if f"{device.ip_address} ({device.hostname or 'N/A'})" == option:
+                    selected_devices.append(device)
+                    break
+            except AttributeError:
+                st.error(f"Error processing device: {device}. Please refresh the device list.")
+                break
 
-            with col1:
-                st.subheader("🔍 Select Target Devices")
-                # Create a list of all device options
-                device_options = [f"{d.ip_address} ({d.hostname or 'N/A'})" for d in devices]
-                selected_options = st.multiselect(
-                    "Select Devices to Monitor",
-                    options=device_options,
-                    help="Choose devices to capture traffic from"
-                )
-                # Get the full device info for each selected device
-                for option in selected_options:
-                    for device in devices:
-                        if f"{device.ip_address} ({device.hostname or 'N/A'})" == option:
-                            selected_devices.append(device)
-                            break
-
-            with col2:
-                st.subheader("📌 Tracked Devices")
-                # Get and display tracked devices
-                tracked_devices = netwatch.scanner.get_tracked_devices()
-                if tracked_devices:
-                    for device in tracked_devices:
-                        with st.expander(f"{device.hostname or 'Unknown Device'} ({device.ip_address})"):
-                            st.text(f"MAC: {device.mac_address}")
-                            st.text(f"First Seen: {device.first_seen.strftime('%Y-%m-%d %H:%M')}")
-                            st.text(f"Last Seen: {device.last_seen.strftime('%Y-%m-%d %H:%M')}")
-                            st.text(f"Status: {device.activity}")
-                else:
-                    st.info("No devices are currently being tracked")
+    # Show tracked devices
+    with st.expander("📌 Tracked Devices", expanded=False):
+        tracked_devices = netwatch.scanner.get_tracked_devices()
+        if tracked_devices:
+            for device in tracked_devices:
+                try:
+                    st.markdown(f"**{device.hostname or 'Unknown Device'} ({device.ip_address})**")
+                    st.text(f"MAC: {device.mac_address}")
+                    st.text(f"First Seen: {device.first_seen.strftime('%Y-%m-%d %H:%M')}")
+                    st.text(f"Last Seen: {device.last_seen.strftime('%Y-%m-%d %H:%M')}")
+                    st.text(f"Status: {device.activity}")
+                    st.divider()
+                except AttributeError:
+                    st.error(f"Error displaying device info. Please refresh the device list.")
         else:
-            st.warning("🛡️ No devices available. Please wait for the network scan to complete.")
-
-    # Duration settings
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        max_seconds = 3 * 24 * 60 * 60  # 3 days in seconds
-        days, hours, minutes, secs = get_duration_parts(max_seconds)
-        st.caption(f"Maximum duration: {days} days, {hours} hours, {minutes} minutes, {secs} seconds")
-
-        duration = st.slider(
-            "Capture Duration",
-            min_value=10,
-            max_value=max_seconds,
-            value=60,
-            format="%d",
-            help="Slide to adjust duration from 10 seconds up to 3 days"
-        )
-
-        # Show detailed duration breakdown
-        days, hours, minutes, secs = get_duration_parts(duration)
-        parts = []
-        if days > 0:
-            parts.append(f"{days} days")
-        if hours > 0:
-            parts.append(f"{hours} hours")
-        if minutes > 0:
-            parts.append(f"{minutes} minutes")
-        if secs > 0 or not parts:
-            parts.append(f"{secs} seconds")
-        st.caption("Duration: " + ", ".join(parts))
-    with col2:
-        unlimited = st.checkbox("Unlimited")
-        if unlimited:
-            duration = None
+            st.info("No devices are currently being tracked")
 
     # Start capture button
-    if capture_mode == "All Traffic 🔥" or (capture_mode == "Select Devices 🏳" and selected_devices):
-        if st.button("🎥 Start Capture", type="primary", use_container_width=True):
-            target_ips = None if capture_mode == "All Traffic 🔥" else [d.ip_address for d in selected_devices]
+    if capture_all or selected_devices:
+        start_capture = st.button("🎥 Start Capture", type="primary", use_container_width=True)
+        if start_capture:
+            target_ips = None if capture_all else [d.ip_address for d in selected_devices]
 
             # Create a unique filename for this capture
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -318,13 +270,11 @@ def show_traffic_capture_ui(netwatch, devices):
                     )
                     st.success("✅ Capture completed successfully!")
                     st.info(f"💾 Saved as: {filename}")
-                except (OSError, IOError) as e:
-                    st.error(f"❌ Capture failed: {str(e)}")
-    elif capture_mode == "Select Devices 🏳":
+                except Exception as e:
+                    st.error(f"Error capturing traffic: {str(e)}. Please try again.")
+    elif capture_all is False and not selected_devices:
         st.info("👆 Please select at least one device to start capturing")
 
-    # Show capture button with dynamic text and color based on mode
-    if capture_mode == "All Traffic 🔥":
         button_label = "🔥 CAPTURE ALL TRAFFIC ☠️"
         button_type = "secondary"
         can_capture = True

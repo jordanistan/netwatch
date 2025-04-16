@@ -63,17 +63,28 @@ def main():
                     st.error("No suitable network interface found")
 
         elif action == "Traffic Capture":
+            st.header("Traffic Capture")
             # Initialize session state for devices if not exists
-            if 'traffic_capture_devices' not in st.session_state or st.button("🔄 Refresh Device List"):
+            refresh_clicked = st.button("🔄 Refresh Device List")
+            if 'traffic_capture_devices' not in st.session_state or refresh_clicked:
                 try:
-                    # First try to get cached devices
-                    devices = netwatch.scanner.get_cached_devices() or []
-                    # Do a fresh scan only if we have no cached devices
-                    if not devices and interface and ip:
+                    devices = []
+                    # Always do a fresh scan when refresh is clicked
+                    if refresh_clicked and interface and ip:
                         network_range = netwatch.scanner.get_network_range(interface, ip)
                         if network_range:
                             with st.spinner("Scanning network for devices..."):
                                 devices = netwatch.scanner.scan_devices(interface, network_range)
+                    else:
+                        # Try to get cached devices if not refreshing
+                        devices = netwatch.scanner.get_cached_devices() or []
+                        # Do a fresh scan if no cached devices
+                        if not devices and interface and ip:
+                            network_range = netwatch.scanner.get_network_range(interface, ip)
+                            if network_range:
+                                with st.spinner("Scanning network for devices..."):
+                                    devices = netwatch.scanner.scan_devices(interface, network_range)
+
                     if devices:
                         # Get activity status for each device
                         devices_with_status = []
@@ -90,12 +101,14 @@ def main():
                         st.session_state.traffic_capture_devices = devices_with_status
                     else:
                         st.warning("No devices found in cache or network scan")
+                        st.session_state.traffic_capture_devices = []
                 except Exception as e:
                     st.error(f"Error scanning network: {str(e)}")
                     st.session_state.traffic_capture_devices = []
 
             # Show traffic capture UI with the devices we found
-            show_traffic_capture_ui(netwatch, st.session_state.traffic_capture_devices)
+            if 'traffic_capture_devices' in st.session_state:
+                show_traffic_capture_ui(netwatch, st.session_state.traffic_capture_devices)
 
         elif action == "PCAP Analysis":
             st.header("PCAP Analysis")

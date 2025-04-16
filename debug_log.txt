@@ -152,3 +152,8 @@ Technical Context:
     Context: Inconsistent device data handling in traffic capture section
     Impact: No devices available in traffic capture UI
     Resolution: Updated device data handling to consistently use NetworkDevice objects
+
+2025-04-15 19:24:00 - Fix: Traffic capture refresh
+    Context: Refresh button causing RerunData error and no devices showing
+    Impact: Unable to refresh device list in traffic capture UI
+    Resolution: Improved device refresh logic and session state handling
