@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 
 import scapy.all as scapy
 from scapy.utils import wrpcap, rdpcap
+from .content_analyzer import ContentAnalyzer
 
 # Import additional Scapy layers
 from scapy.layers.inet import UDP, IP, TCP
@@ -174,18 +175,14 @@ class TrafficCapture:
     def analyze_pcap(self, pcap_file):
         """Analyze a PCAP file and return statistics"""
         try:
-            print(f"[Analysis] Reading PCAP file: {pcap_file}")
-            # Ensure the file exists
-            pcap_path = Path(pcap_file)
-            if not pcap_path.exists():
-                print(f"[Analysis] Error: PCAP file not found at {pcap_file}")
-                return None
-
-            # Read the PCAP file
             packets = rdpcap(str(pcap_file))
-            print(f"[Analysis] Successfully read {len(packets)} packets")
+            print(f"[Capture] Loaded {len(packets)} packets from {pcap_file}")
+            
+            # Also perform content analysis for advanced features
+            content_analyzer = ContentAnalyzer(self.captures_dir.parent / 'reports')
+            content_results = content_analyzer.analyze_pcap(pcap_file)
         except Exception as e:
-            print(f"[Analysis] Error reading PCAP file: {e}")
+            print(f"[Capture] Error reading PCAP file: {e}")
             return None
         
         stats = {
@@ -891,4 +888,14 @@ class TrafficCapture:
         except Exception as e:
             print(f"[Alert] Error saving alerts: {e}")
         # --- End Alerting Logic ---
+        
+        # Add content analysis results if available
+        try:
+            content_analyzer = ContentAnalyzer(self.captures_dir.parent / 'reports')
+            content_results = content_analyzer.analyze_pcap(pcap_file)
+            if content_results:
+                stats['content'] = content_results
+        except Exception as e:
+            print(f"[Capture] Error in content analysis: {e}")
+            
         return stats

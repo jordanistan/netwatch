@@ -6,6 +6,7 @@ import netifaces
 from pathlib import Path
 from network.capture import TrafficCapture
 import logging
+from ui.content_display import show_content_analysis
 
 def setup_page():
     """Setup the main page configuration"""
@@ -268,11 +269,19 @@ def show_pcap_analysis_ui(netwatch, stats):
     if not stats:
         st.warning("No PCAP analysis data available")
         return
+        
+    # Check for advanced content analysis results
+    has_content = 'content' in stats
 
     # Create tabs for different analysis views
-    overview_tab, conversations_tab, protocols_tab, web_tab, dns_tab, voip_tab = st.tabs([
-        "Overview", "Conversations", "Protocols", "Web", "DNS", "VoIP"
-    ])
+    if has_content:
+        overview_tab, conversations_tab, protocols_tab, web_tab, dns_tab, voip_tab, content_tab = st.tabs([
+            "Overview", "Conversations", "Protocols", "Web", "DNS", "VoIP", "Content Analysis"
+        ])
+    else:
+        overview_tab, conversations_tab, protocols_tab, web_tab, dns_tab, voip_tab = st.tabs([
+            "Overview", "Conversations", "Protocols", "Web", "DNS", "VoIP"
+        ])
 
     with overview_tab:
         st.subheader("Basic Statistics")
