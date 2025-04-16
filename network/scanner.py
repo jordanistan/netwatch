@@ -120,7 +120,27 @@ class NetworkScanner:
             for _, received in answered:
                 mac = received.hwsrc
                 ip = received.psrc
-                device = NetworkDevice(ip_address=ip, mac_address=mac)
+
+                # Look up device history if available
+                history_entry = self.device_history["devices"].get(mac.lower(), {})
+                hostname = history_entry.hostname if hasattr(history_entry, "hostname") else None
+                first_seen = history_entry.first_seen if hasattr(history_entry, "first_seen") else None
+                last_seen = history_entry.last_seen if hasattr(history_entry, "last_seen") else None
+                tracked = self.is_device_tracked(mac)
+                activity = history_entry.activity if hasattr(history_entry, "activity") else "Unknown"
+                ip_history = history_entry.ip_history if hasattr(history_entry, "ip_history") else [ip]
+
+                device = NetworkDevice(
+                    ip_address=ip,
+                    mac_address=mac,
+                    hostname=hostname,
+                    tracked=tracked,
+                    first_seen=first_seen,
+                    last_seen=last_seen,
+                    activity=activity,
+                    ip_history=ip_history
+                )
+                device.update_activity()
                 devices_found.append(device)
                 logging.debug(f"ARP found: IP={ip}, MAC={mac}")
 
