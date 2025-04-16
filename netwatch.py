@@ -25,6 +25,19 @@ class NetWatch:
         # Start device monitoring
         self.monitor.start_monitoring()
 
+    def start_capture(self, target_ips=None):
+        """Start network traffic capture
+        Args:
+            target_ips: List of IP addresses to capture traffic for, or None for all traffic
+        Returns:
+            Path: Path to the saved capture file, or None if capture failed
+        """
+        if target_ips:
+            print(f"[Capture] Starting capture for IPs: {target_ips}")
+        else:
+            print("[Capture] Starting capture for all traffic")
+        return self.capture.capture_traffic(target_ips=target_ips)
+
 def main():
     try:
         # Initialize session state

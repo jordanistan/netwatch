@@ -2,7 +2,7 @@
 import json
 import socket
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 import scapy.all as scapy
 import netifaces
@@ -39,17 +39,18 @@ class NetworkScanner:
             self.device_history = {"devices": {}}
             for mac, data in history_data.get("devices", {}).items():
                 mac = mac.lower()  # Normalize MAC address
-                device_data = {
-                    "mac": mac,
-                    "ip": data.get("ip_history", ["N/A"])[-1],
-                    "hostname": data.get("hostname", "Unknown"),
-                    "tracked": mac in self.tracked_devices["devices"],
-                    "first_seen": data.get("first_seen"),
-                    "last_seen": data.get("last_seen"),
-                    "activity": data.get("activity", "Unknown"),
-                    "ip_history": data.get("ip_history", [])
-                }
-                self.device_history["devices"][mac] = NetworkDevice.from_dict(device_data)
+                device = NetworkDevice(
+                    mac_address=mac,
+                    ip_address=data.get("ip_address") or data.get("ip_history", ["N/A"])[-1],
+                    hostname=data.get("hostname", "Unknown"),
+                    tracked=mac in self.tracked_devices["devices"],
+                    first_seen=datetime.fromisoformat(data["first_seen"]) if data.get("first_seen") else None,
+                    last_seen=datetime.fromisoformat(data["last_seen"]) if data.get("last_seen") else None,
+                    activity=data.get("activity", "Unknown")
+                )
+                device.ip_history = data.get("ip_history", [])
+                device.update_activity()
+                self.device_history["devices"][mac] = device
         else:
             self.device_history = {"devices": {}}
             self.device_history_file.write_text(json.dumps({"devices": {}}, indent=4))
@@ -73,7 +74,7 @@ class NetworkScanner:
             
             print("[Scanner] No suitable network interface found")
             return None, None
-        except Exception as e:
+        except (netifaces.NetifacesError, KeyError, IndexError) as e:
             print(f"[Scanner] Error finding network interface: {str(e)}")
             return None, None
 
@@ -117,8 +118,12 @@ class NetworkScanner:
             # Send multiple ARP requests to ensure we catch all devices
             devices = []
             for attempt in range(2):  # Try twice
-                ans, _ = scapy.srp(packet, timeout=2, verbose=0, iface=interface)
-                
+                try:
+                    ans, _ = scapy.srp(packet, timeout=2, verbose=0, iface=interface)
+                except scapy.Scapy_Exception as e:
+                    print(f"[Scanner] Error sending ARP request: {str(e)}")
+                    continue
+
                 # Process responses
                 for _, received in ans:
                     try:
@@ -128,36 +133,38 @@ class NetworkScanner:
                         except (socket.gaierror, socket.herror):
                             hostname = "N/A"
                         
-                        # Check if device already found
-                        device = {
-                            'ip': received.psrc,
-                            'mac': received.hwsrc,
-                            'hostname': hostname
-                        }
-                        if not any(d['ip'] == device['ip'] for d in devices):
+                        # Create NetworkDevice object
+                        device = NetworkDevice(
+                            mac_address=received.hwsrc,
+                            ip_address=received.psrc,
+                            hostname=hostname,
+                            tracked=received.hwsrc in self.tracked_devices["devices"],
+                            first_seen=datetime.now(),
+                            last_seen=datetime.now(),
+                            activity="New"
+                        )
+                        if not any(d.ip_address == device.ip_address for d in devices):
                             devices.append(device)
-                            
                             # Update device history
-                            mac = device['mac']
-                            current_time = datetime.now().isoformat()
-                            
+                            mac = device.mac_address
+                            current_time = datetime.now()
                             if mac not in self.device_history["devices"]:
                                 # New device
-                                self.device_history["devices"][mac] = {
-                                    "first_seen": current_time,
-                                    "last_seen": current_time,
-                                    "ip_history": [device['ip']],
-                                    "hostname": device.get('hostname', 'N/A')
-                                }
+                                self.device_history["devices"][mac] = device
                             else:
                                 # Update existing device
-                                self.device_history["devices"][mac]["last_seen"] = current_time
-                                if device['ip'] not in self.device_history["devices"][mac]["ip_history"]:
-                                    self.device_history["devices"][mac]["ip_history"].append(device['ip'])
-                                self.device_history["devices"][mac]["hostname"] = device.get('hostname', 'N/A')
-                            
+                                existing_device = self.device_history["devices"][mac]
+                                existing_device.last_seen = current_time
+                                existing_device.ip_address = device.ip_address
+                                if device.ip_address not in existing_device.ip_history:
+                                    existing_device.ip_history.append(device.ip_address)
+                                existing_device.hostname = device.hostname
+                                existing_device.update_activity()
                             # Save device history
-                            self.device_history_file.write_text(json.dumps(self.device_history, indent=4))
+                            history_data = {
+                                "devices": {mac: dev.to_dict() for mac, dev in self.device_history["devices"].items()}
+                            }
+                            self.device_history_file.write_text(json.dumps(history_data, indent=4))
                     except Exception as e:
                         print(f"[Scanner] Could not process device {received.psrc}: {str(e)}")
                         continue
@@ -173,38 +180,44 @@ class NetworkScanner:
             print(f"[Scanner] Error scanning network: {str(e)}")
             return []
     
-    def _get_activity_status(self, device_info):
-        """Get the activity status for a device
+    def _get_activity_status(self, device_history):
+        """Get activity status for a device based on its history
         Args:
-            device_info: Device history info containing first_seen and last_seen
+            device_history: Device history dictionary
         Returns:
-            Activity status string
+            str: Activity status
         """
-        if device_info["first_seen"] == device_info["last_seen"]:
+        if not device_history:
             return "New Device"
+
+        # Get last seen time
+        last_seen = device_history.get('last_seen')
+        if not last_seen:
+            return "Unknown"
         
-        last_seen = datetime.fromisoformat(device_info["last_seen"])
         now = datetime.now()
         time_ago = now - last_seen
-        
-        if time_ago < timedelta(minutes=1):
-            return "Rejoined just now"
-        elif time_ago < timedelta(hours=1):
-            minutes = int(time_ago.total_seconds() / 60)
-            return f"Rejoined {minutes}m ago"
-        elif time_ago < timedelta(days=1):
-            hours = int(time_ago.total_seconds() / 3600)
-            return f"Rejoined {hours}h ago"
+
+        # Determine activity status based on time since last seen
+        if time_ago.days > 7:
+            return "Inactive"
+        elif time_ago.days > 1:
+            return f"Last seen {time_ago.days} days ago"
+        elif time_ago.seconds > 3600:
+            hours = time_ago.seconds // 3600
+            return f"Last seen {hours} hours ago"
+        elif time_ago.seconds > 60:
+            minutes = time_ago.seconds // 60
+            return f"Last seen {minutes} minutes ago"
         else:
-            days = time_ago.days
-            return f"Rejoined {days}d ago"
-    
+            return "Active"
+
     def get_cached_devices(self):
         """Get the list of devices from the last scan, sorted by discovery time"""
         # Sort devices by first_seen time if available
         return sorted(
             self.cached_devices,
-            key=lambda d: self.device_history["devices"].get(d["mac"], {}).get("first_seen", ""),
+            key=lambda d: getattr(self.device_history["devices"].get(d.mac_address, {}), 'first_seen', ''),
             reverse=True  # Newest first
         )
     
@@ -236,6 +249,17 @@ class NetworkScanner:
             tracked_json = {"devices": list(self.tracked_devices["devices"])}
             self.tracked_devices_file.write_text(json.dumps(tracked_json, indent=4))
 
+    def _save_device_history(self):
+        """Save device history to file"""
+        try:
+            # Convert NetworkDevice objects to dictionaries
+            history_data = {
+                "devices": {mac: dev.to_dict() for mac, dev in self.device_history["devices"].items()}
+            }
+            self.device_history_file.write_text(json.dumps(history_data, indent=4))
+        except Exception as e:
+            print(f"[Scanner] Error saving device history: {str(e)}")
+    
     def untrack_device(self, mac):
         """Remove a device from tracked devices
         Args:
@@ -247,12 +271,10 @@ class NetworkScanner:
             if mac_str in self.device_history["devices"]:
                 self.device_history["devices"][mac_str].tracked = False
                 self._save_device_history()
-                
             self.tracked_devices["devices"].remove(mac_str)
-            # Convert set to list for JSON serialization
             tracked_json = {"devices": list(self.tracked_devices["devices"])}
             self.tracked_devices_file.write_text(json.dumps(tracked_json, indent=4))
-    
+
     def get_tracked_devices(self):
         """Get all tracked devices that are currently active
         Returns:
