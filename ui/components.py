@@ -200,6 +200,13 @@ def show_traffic_capture_page(netwatch, devices):
                     "Select Devices for Traffic Capture",
                     options=device_options
                 )
+                # Map selected labels back to IP addresses
+                selected_ips = []
+                for label in selected_devices:
+                    for dev in st.session_state['network_devices']:
+                        if label == f"{dev.hostname or 'Unknown'} ({dev.ip_address})":
+                            selected_ips.append(dev.ip_address)
+                selected_devices = selected_ips
             else:
                 st.warning("No devices found. Please run a network scan first.")
     with capture_col2:
@@ -225,10 +232,7 @@ def show_traffic_capture_page(netwatch, devices):
         try:
             target_ips = None
             if capture_mode == "Select Devices" and selected_devices:
-                target_ips = []
-                for device in netwatch.scanner.get_cached_devices():
-                    if device.mac_address in [d['value'] for d in selected_devices]:
-                        target_ips.append(device.ip_address)
+                target_ips = selected_devices  # Already a list of selected IPs
             captures_dir = Path("captures")
             capture = TrafficCapture(captures_dir)
             progress_text = "Capturing network traffic..."
