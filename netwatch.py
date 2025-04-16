@@ -52,7 +52,7 @@ def main():
         st.sidebar.title("Navigation")
         action = st.sidebar.radio(
             "Select Action",
-            ["Network Scan", "Traffic Capture", "PCAP Analysis"]
+            ["Network Scan", "Traffic Capture", "PCAP Analysis", "Alerts"]
         )
 
         # Get network interface
@@ -169,6 +169,10 @@ def main():
             except Exception as e:
                 st.error(f"Error accessing captures directory: {str(e)}")
                 logging.exception("Error listing PCAP files") # Log traceback
+
+        elif action == "Alerts":
+            from ui.components import show_alerts_page
+            show_alerts_page()
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
