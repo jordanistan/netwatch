@@ -188,19 +188,35 @@ def main():
                         st.info(f"Size: {file_size / (1024*1024):.2f} MB")
                         st.info(f"Selected PCAP: {selected_pcap.name}")
                     # Place Analyze button below selectbox and size info
-                    if st.button("\U0001f50d Analyze", type="primary", use_container_width=True):
-                        try:
-                            with st.spinner("Analyzing PCAP file..."):
-                                # Correctly call analyze_pcap on the netwatch instance
-                                analysis_results = netwatch.capture.analyze_pcap(selected_pcap)
-                                if analysis_results:
-                                    # Pass both netwatch and analysis_results
-                                    show_pcap_analysis_ui(netwatch, analysis_results)
-                                else:
-                                    st.warning("No analysis results generated.")
-                        except Exception as e:
-                            st.error(f"Error analyzing PCAP file: {e}")
-                            logging.exception("PCAP Analysis failed") # Log traceback
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.button("🔍 Standard Analysis", type="primary", use_container_width=True):
+                            try:
+                                with st.spinner("Analyzing PCAP file..."):
+                                    # Correctly call analyze_pcap on the netwatch instance
+                                    analysis_results = netwatch.capture.analyze_pcap(selected_pcap)
+                                    if analysis_results:
+                                        # Pass both netwatch and analysis_results
+                                        show_pcap_analysis_ui(netwatch, analysis_results)
+                                    else:
+                                        st.warning("No analysis results generated.")
+                            except Exception as e:
+                                st.error(f"Error analyzing PCAP file: {e}")
+                                logging.exception("PCAP Analysis failed") # Log traceback
+                    
+                    with col2:
+                        if st.button("🔎 Advanced Analysis", type="secondary", use_container_width=True):
+                            try:
+                                st.info("Launching Advanced PCAP Analyzer...")
+                                import subprocess
+                                import os
+                                # Launch the advanced analyzer with the selected PCAP file
+                                cmd = ["streamlit", "run", "advanced_pcap_analyzer.py", "--", "--pcap", str(selected_pcap)]
+                                subprocess.Popen(cmd, cwd=os.getcwd())
+                                st.success("Advanced PCAP Analyzer launched in a new window!")
+                            except Exception as e:
+                                st.error(f"Error launching Advanced PCAP Analyzer: {e}")
+                                logging.exception("Advanced PCAP Analyzer launch failed") # Log traceback
             except Exception as e:
                 st.error(f"Error accessing captures directory: {str(e)}")
                 logging.exception("Error listing PCAP files") # Log traceback
