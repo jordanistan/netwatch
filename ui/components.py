@@ -229,14 +229,15 @@ def show_traffic_capture_page(netwatch, devices):
             disabled=duration_selection != "Custom"
         )
     if st.button("🚨 Capture Traffic", type='primary', use_container_width=True):
+        # Initialize progress bar outside try block to ensure it's defined for finally
+        progress_text = "Capturing network traffic..."
+        progress_bar = st.progress(0, text=progress_text)
         try:
             target_ips = None
             if capture_mode == "Select Devices" and selected_devices:
                 target_ips = selected_devices  # Already a list of selected IPs
             captures_dir = Path("captures")
             capture = TrafficCapture(captures_dir)
-            progress_text = "Capturing network traffic..."
-            progress_bar = st.progress(0, text=progress_text)
 
             def update_progress(percent):
                 progress_bar.progress(percent, text=f"{progress_text} ({percent:.0f}%)")

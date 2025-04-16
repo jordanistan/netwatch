@@ -108,6 +108,9 @@ def main():
                                 # Log the raw devices list returned by the scanner
                                 logging.debug(f"Devices returned from scan: {devices}")
                                 show_scan_results(devices, netwatch)
+                                # Celebration effect when scan completes successfully
+                                st.balloons()
+                                st.success("🎉 Network scan completed successfully!")
                             except Exception as e:
                                 st.error(f"Error during network scan: {e}")
                                 logging.exception("Network scan failed") # Log traceback
