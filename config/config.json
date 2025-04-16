@@ -1,0 +1,16 @@
+{
+  "network": {
+    "interface": "auto",
+    "scan_interval": 300,
+    "exclude_ips": ["127.0.0.1"]
+  },
+  "capture": {
+    "rotate_size": "1GB",
+    "max_files": 10,
+    "compression": true
+  },
+  "monitoring": {
+    "check_interval": 60,
+    "alert_threshold": 1000
+  }
+}

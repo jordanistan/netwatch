@@ -10,21 +10,40 @@ from network.capture import TrafficCapture
 from network.monitor import DeviceMonitor
 from ui.components import setup_page, show_network_info, show_scan_results, show_pcap_analysis_ui, show_traffic_capture_page
 
+import json
+
 class NetWatch:
     def __init__(self):
         self.base_dir = Path(__file__).parent
         self.captures_dir = self.base_dir / "captures"
         self.reports_dir = self.base_dir / "reports"
         self.logs_dir = self.base_dir / "logs"
+        self.config_path = self.base_dir / "config" / "config.json"
+        # Load config
+        self.config = self._load_config()
         # Create necessary directories
         for dir_path in [self.captures_dir, self.reports_dir, self.logs_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
-        # Initialize components
+        # Initialize components with config
         self.scanner = NetworkScanner()
         self.capture = TrafficCapture(self.captures_dir)
         self.monitor = DeviceMonitor(self.captures_dir)
         # Start device monitoring
         self.monitor.start_monitoring()
+
+    def _load_config(self):
+        try:
+            if self.config_path.exists():
+                with open(self.config_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            print(f"[Config] Error loading config: {e}")
+        # Return defaults if not found or error
+        return {
+            "network": {"interface": "auto", "scan_interval": 300, "exclude_ips": ["127.0.0.1"]},
+            "capture": {"rotate_size": "1GB", "max_files": 10, "compression": True},
+            "monitoring": {"check_interval": 60, "alert_threshold": 1000}
+        }
 
     def start_capture(self, target_ips=None):
         """Start network traffic capture
@@ -55,8 +74,21 @@ def main():
             ["Network Scan", "Traffic Capture", "PCAP Analysis", "Alerts"]
         )
 
-        # Get network interface
-        interface, ip = netwatch.scanner.get_default_interface()
+        # Get network interface (from config if set)
+        interface = None
+        ip = None
+        config_iface = netwatch.config.get('network', {}).get('interface', 'auto')
+        if config_iface != 'auto':
+            # Try to get IP for specified interface
+            import netifaces
+            try:
+                addrs = netifaces.ifaddresses(config_iface)
+                ip = addrs[netifaces.AF_INET][0]['addr'] if netifaces.AF_INET in addrs else None
+                interface = config_iface
+            except Exception:
+                interface, ip = netwatch.scanner.get_default_interface()
+        else:
+            interface, ip = netwatch.scanner.get_default_interface()
         show_network_info(interface, ip)
 
         if action == "Network Scan":
