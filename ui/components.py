@@ -173,9 +173,6 @@ def show_scan_results(devices, netwatch):
                             netwatch.scanner.untrack_device(device_mac)
                             st.success(f"Stopped tracking {row['Device Name']}")
                             st.rerun()
-                    if 'tracking_changed' not in st.session_state:
-                        st.session_state.tracking_changed = True
-                        st.rerun()
             else:
                 st.info("No new devices found")
         else:
@@ -205,33 +202,40 @@ def show_scan_results(devices, netwatch):
 def show_traffic_capture_page(netwatch, devices):
     """Display the Traffic Capture page with device selection and capture controls"""
     st.header("Traffic Capture 🚀")
-    if 'network_devices' not in st.session_state:
-        st.session_state['network_devices'] = []
+    # Prepare device list for UI
+    device_list = devices or []
+    # Fallback to previously detected devices if scan returned none
+    if not device_list:
+        history_devices = netwatch.scanner.get_new_devices(limit=50, include_tracked=True)
+        if history_devices:
+            device_list = history_devices
+            st.info("Loaded previously detected devices from history")
+        else:
+            st.warning("No devices found. Please run a network scan first.")
+    # Columns for mode and duration
     capture_col1, capture_col2 = st.columns([2, 1])
     with capture_col1:
+        # Default to select devices mode
         capture_mode = st.radio(
             "Capture Mode",
             ["All Traffic", "Select Devices"],
+            index=1,
             horizontal=True
         )
-        selected_devices = []
-        if capture_mode == "Select Devices":
-            if st.session_state['network_devices']:
-                device_options = [f"{dev.hostname or 'Unknown'} ({dev.ip_address})"
-                                for dev in st.session_state['network_devices']]
-                selected_devices = st.multiselect(
-                    "Select Devices for Traffic Capture",
-                    options=device_options
-                )
-                # Map selected labels back to IP addresses
-                selected_ips = []
-                for label in selected_devices:
-                    for dev in st.session_state['network_devices']:
-                        if label == f"{dev.hostname or 'Unknown'} ({dev.ip_address})":
-                            selected_ips.append(dev.ip_address)
-                selected_devices = selected_ips
-            else:
-                st.warning("No devices found. Please run a network scan first.")
+        # Prepare device selection
+        device_options = [f"{dev.hostname or 'Unknown'} ({dev.ip_address})" for dev in device_list]
+        selected_labels = st.multiselect(
+            "Select Devices for Traffic Capture",
+            options=device_options,
+            disabled=(capture_mode != "Select Devices")
+        )
+        if capture_mode == "Select Devices" and not device_list:
+            st.warning("No devices found. Please run a network scan first.")
+        # Map selected labels to IP addresses
+        selected_devices = [
+            dev.ip_address for dev in device_list
+            if f"{dev.hostname or 'Unknown'} ({dev.ip_address})" in selected_labels
+        ]
     with capture_col2:
         duration_options = {
             "Quick (1 min)": 60,
@@ -267,7 +271,7 @@ def show_traffic_capture_page(netwatch, devices):
 
             pcap_file = capture.capture_traffic(
                 target_ips=target_ips,
-                duration=capture_duration * 60,
+                duration=capture_duration,
                 progress_callback=update_progress
             )
             if pcap_file:
@@ -351,7 +355,6 @@ def show_pcap_analysis_ui(netwatch, stats):
     with protocols_tab:
         # Protocol Analysis
         if stats.get('protocols'):
-            st.subheader("Protocol Distribution")
             col1, col2 = st.columns(2)
             with col1:
                 # Aggregate transport and application protocol counts
