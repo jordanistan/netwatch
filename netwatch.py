@@ -2,15 +2,16 @@
 from datetime import datetime
 from pathlib import Path
 import logging
+import json
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 import streamlit as st
 from network.scanner import NetworkScanner
 from network.capture import TrafficCapture
 from network.monitor import DeviceMonitor
 from ui.components import setup_page, show_network_info, show_scan_results, show_pcap_analysis_ui, show_traffic_capture_page
 
-import json
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 class NetWatch:
     def __init__(self):
