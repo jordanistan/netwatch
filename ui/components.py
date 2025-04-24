@@ -7,11 +7,29 @@ from pathlib import Path
 from network.capture import TrafficCapture
 import logging
 from ui.content_display import show_content_analysis
+import functools
+from streamlit.runtime.scriptrunner import RerunData
 
+def safe_ui(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            # Let Streamlit's rerun signal propagate
+            if isinstance(e, RerunData):
+                raise
+            logging.exception(f"Error in UI component {func.__name__}")
+            st.error(f"UI error in {func.__name__}: {e}")
+            st.exception(e)
+    return wrapper
+
+@safe_ui
 def setup_page():
     """Setup the main page configuration"""
     st.title("📶 NetWatch")
 
+@safe_ui
 def show_network_info(interface, ip):
     """Display network information in the sidebar
     Args:
@@ -31,6 +49,7 @@ def show_network_info(interface, ip):
                     addr = netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['addr']
                     st.write(f"{iface}: {addr}")
 
+@safe_ui
 def show_scan_results(devices, netwatch):
     """Display network scan results
     Args:
@@ -175,11 +194,14 @@ def show_scan_results(devices, netwatch):
                     } for d in tracked_devices])
                 st.dataframe(tracked_df, hide_index=True, use_container_width=True)
     except Exception as e:
+        if isinstance(e, RerunData):
+            raise
         st.error(f"An error occurred displaying scan results: {e}")
         logging.exception("Error in show_scan_results")
     finally:
         pass
 
+@safe_ui
 def show_traffic_capture_page(netwatch, devices):
     """Display the Traffic Capture page with device selection and capture controls"""
     st.header("Traffic Capture 🚀")
@@ -260,6 +282,7 @@ def show_traffic_capture_page(netwatch, devices):
         finally:
             progress_bar.empty()
 
+@safe_ui
 def show_pcap_analysis_ui(netwatch, stats):
     """Display PCAP analysis results with interactive visualizations
     Args:
@@ -331,11 +354,14 @@ def show_pcap_analysis_ui(netwatch, stats):
             st.subheader("Protocol Distribution")
             col1, col2 = st.columns(2)
             with col1:
-                # Create DataFrame for protocols
-                proto_df = pd.DataFrame([
-                    {'Protocol': proto, 'Count': count}
-                    for proto, count in stats['protocols'].items()
-                ]).sort_values('Count', ascending=False)
+                # Aggregate transport and application protocol counts
+                combined = {}
+                for layer_counts in stats.get('protocols', {}).values():
+                    for proto, count in layer_counts.items():
+                        combined[proto] = combined.get(proto, 0) + count
+                proto_df = pd.DataFrame(
+                    [{'Protocol': p, 'Count': c} for p, c in combined.items()]
+                ).sort_values('Count', ascending=False)
                 st.dataframe(proto_df, hide_index=True, use_container_width=True)
 
             with col2:
@@ -389,6 +415,11 @@ def show_pcap_analysis_ui(netwatch, stats):
     with voip_tab:
         show_voip_analysis(stats)
 
+    if has_content:
+        with content_tab:
+            show_content_analysis(stats['content'])
+
+@safe_ui
 def show_pcap_analysis(netwatch, stats):
     """DEPRECATED: Use show_pcap_analysis_ui instead.
     Display PCAP analysis results with interactive visualizations
@@ -538,6 +569,7 @@ def show_pcap_analysis(netwatch, stats):
     with voip_tab:
         show_voip_analysis(stats)
 
+@safe_ui
 def show_web_analysis(stats):
     """Display web traffic analysis
     Args:
@@ -598,6 +630,7 @@ def show_web_analysis(stats):
                         title='HTTP Status Codes')
             st.plotly_chart(fig, use_container_width=True)
 
+@safe_ui
 def show_voip_analysis(stats):
     """Display VoIP traffic analysis
     Args:
@@ -636,6 +669,26 @@ def show_voip_analysis(stats):
         with col3:
             st.metric("Failed Calls", calls['failed'])
 
+@safe_ui
+def show_alerts_page():
+    """Display alerts from reports/alerts/alerts.json"""
+    import json
+    from pathlib import Path
+    import streamlit as st
+    alerts_file = Path('reports/alerts/alerts.json')
+    st.header('Security Alerts')
+    if alerts_file.exists():
+        with alerts_file.open('r', encoding='utf-8') as f:
+            alerts = json.load(f)
+        if alerts:
+            import pandas as pd
+            df = pd.DataFrame(alerts)
+            st.dataframe(df, hide_index=True, use_container_width=True)
+        else:
+            st.info('No alerts found.')
+    else:
+        st.info('No alerts have been generated yet.')
+
 def format_bytes(size):
     """Format bytes to human readable format"""
     for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
@@ -665,22 +718,3 @@ def get_duration_parts(seconds):
 def get_duration_label(value):
     """Format duration for display"""
     return get_duration_parts(value)
-
-def show_alerts_page():
-    """Display alerts from reports/alerts/alerts.json"""
-    import json
-    from pathlib import Path
-    import streamlit as st
-    alerts_file = Path('reports/alerts/alerts.json')
-    st.header('Security Alerts')
-    if alerts_file.exists():
-        with alerts_file.open('r', encoding='utf-8') as f:
-            alerts = json.load(f)
-        if alerts:
-            import pandas as pd
-            df = pd.DataFrame(alerts)
-            st.dataframe(df, hide_index=True, use_container_width=True)
-        else:
-            st.info('No alerts found.')
-    else:
-        st.info('No alerts have been generated yet.')

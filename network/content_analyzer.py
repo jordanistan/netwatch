@@ -3,6 +3,9 @@ import re
 import json
 from pathlib import Path
 import logging
+import wave
+import audioop
+import importlib.util
 
 # Import scapy components
 import scapy.all as scapy
@@ -10,23 +13,11 @@ from scapy.layers.http import HTTPRequest, HTTPResponse
 from scapy.layers.inet import IP, TCP
 from scapy.packet import Raw
 
-# Try to import optional components
-# TLS support check
-HAS_TLS = False
-try:
-    from scapy.layers.tls import TLS
-    HAS_TLS = True
-except ImportError:
-    pass
-
-# VoIP support check
-HAS_VOIP = False
-try:
+# VoIP support check (SIP and RTP layers)
+HAS_VOIP = importlib.util.find_spec("scapy.contrib.sip") is not None and importlib.util.find_spec("scapy.layers.rtp") is not None
+if HAS_VOIP:
     from scapy.contrib.sip import SIP
     from scapy.layers.rtp import RTP
-    HAS_VOIP = True
-except ImportError:
-    pass
 
 # Content type patterns
 IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
@@ -46,6 +37,10 @@ class ContentAnalyzer:
         self.reports_dir.mkdir(parents=True, exist_ok=True)
         self.media_dir = self.reports_dir / 'media'
         self.media_dir.mkdir(parents=True, exist_ok=True)
+        self.calls_dir = self.reports_dir / 'calls'
+        self.calls_dir.mkdir(parents=True, exist_ok=True)
+        # Buffer for RTP payloads per call
+        self.rtp_payloads = {}
         
         # Initialize content storage
         self.http_streams = {}
@@ -68,6 +63,31 @@ class ContentAnalyzer:
             
         # Process packets for content extraction
         self._process_packets(packets)
+        
+        # Reassemble collected RTP streams into WAV for playback
+        for call in self.sip_calls:
+            cid = call['call_id']
+            payload = self.rtp_payloads.get(cid)
+            if payload:
+                try:
+                    pcm = audioop.ulaw2lin(bytes(payload), 2)
+                    wavfile = self.calls_dir / f"{cid}.wav"
+                    with wave.open(str(wavfile), 'wb') as wf:
+                        wf.setnchannels(1)
+                        wf.setsampwidth(2)
+                        wf.setframerate(8000)
+                        wf.writeframes(pcm)
+                    call['audio_file'] = str(wavfile)
+                except Exception as e:
+                    logging.error(f"Error writing audio for call {cid}: {e}")
+        
+        # Post-process: flag adult sites in websites list
+        for site in self.websites:
+            # Thumbnail URL for adult sites
+            if site.get('is_adult'):
+                site['thumbnail'] = 'https://cdn-icons-png.flaticon.com/512/2641/2641884.png'
+            else:
+                site['thumbnail'] = None
         
         # Prepare results
         results = {
@@ -108,7 +128,13 @@ class ContentAnalyzer:
             # SIP/VoIP Analysis
             if HAS_VOIP and packet.haslayer(SIP):
                 self._process_sip(packet)
-                
+            
+            # Collect RTP payloads into corresponding call buffer
+            if HAS_VOIP and packet.haslayer(RTP) and packet.haslayer(Raw):
+                if self.sip_calls:
+                    cid = self.sip_calls[-1]['call_id']
+                    self.rtp_payloads.setdefault(cid, bytearray()).extend(packet[Raw].load)
+        
         # Second pass: Reassemble and analyze TCP streams
         for stream_id, stream_packets in streams.items():
             self._analyze_stream(stream_id, stream_packets)
@@ -166,6 +192,9 @@ class ContentAnalyzer:
                 'audio_file': None  # Will be populated if RTP audio is extracted
             }
             self.sip_calls.append(call)
+            
+            # Initialize RTP buffer for this call
+            self.rtp_payloads[call_id] = bytearray()
     
     def _extract_media(self, packet, content_type):
         """Extract media content from packet"""

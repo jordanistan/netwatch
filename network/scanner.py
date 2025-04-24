@@ -279,9 +279,27 @@ class NetworkScanner:
         Returns:
             str: Activity status
         """
+        # Handle NetworkDevice instances to avoid calling .get on object
+        if isinstance(device_history, NetworkDevice):
+            last_seen = device_history.last_seen
+            if not last_seen:
+                return "Unknown"
+            now = datetime.now()
+            time_ago = now - last_seen
+            if time_ago.days > 7:
+                return "Inactive"
+            elif time_ago.days > 1:
+                return f"Last seen {time_ago.days} days ago"
+            elif time_ago.seconds > 3600:
+                hours = time_ago.seconds // 3600
+                return f"Last seen {hours} hours ago"
+            elif time_ago.seconds > 60:
+                minutes = time_ago.seconds // 60
+                return f"Last seen {minutes} minutes ago"
+            else:
+                return "Active"
         if not device_history:
             return "New Device"
-
         # Get last seen time
         last_seen = device_history.get('last_seen')
         if not last_seen:

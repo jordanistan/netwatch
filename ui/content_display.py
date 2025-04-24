@@ -4,6 +4,7 @@ import pandas as pd
 from pathlib import Path
 import base64
 import mimetypes
+from datetime import datetime
 
 def show_content_analysis(content_data):
     """Display advanced content analysis results
@@ -47,8 +48,15 @@ def show_content_analysis(content_data):
             if adult_sites:
                 st.subheader("⚠️ Adult Websites")
                 with st.expander("Show Adult Websites (Click to Expand)", expanded=False):
-                    websites_df = pd.DataFrame(adult_sites)
-                    st.dataframe(websites_df, hide_index=True, use_container_width=True)
+                    for site in adult_sites:
+                        col1, col2 = st.columns([1, 3])
+                        with col1:
+                            if site.get('thumbnail'):
+                                st.image(site['thumbnail'], width=100)
+                        with col2:
+                            st.write(f"**URL:** {site.get('url')}")
+                            st.write(f"**Method:** {site.get('method')}")
+                            st.write(f"**Timestamp:** {datetime.fromtimestamp(site.get('timestamp')).strftime('%Y-%m-%d %H:%M:%S')}")
             
         else:
             st.info("No website visits detected")
@@ -75,6 +83,8 @@ def show_content_analysis(content_data):
                                     st.image("https://cdn-icons-png.flaticon.com/512/337/337932.png", width=100)
                                 elif 'excel' in mime_type or 'sheet' in mime_type:
                                     st.image("https://cdn-icons-png.flaticon.com/512/337/337958.png", width=100)
+                                elif mime_type.startswith('image/'):
+                                    st.image(download['filename'], width=100)
                                 else:
                                     st.image("https://cdn-icons-png.flaticon.com/512/2965/2965335.png", width=100)
                         except Exception:

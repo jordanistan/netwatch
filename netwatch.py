@@ -3,8 +3,8 @@ from datetime import datetime
 from pathlib import Path
 import logging
 
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 import streamlit as st
-
 from network.scanner import NetworkScanner
 from network.capture import TrafficCapture
 from network.monitor import DeviceMonitor
@@ -226,7 +226,14 @@ def main():
             show_alerts_page()
 
     except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+        logging.exception("Unhandled exception in Streamlit main")
+        st.error(f"An error occurred: {e}")
+        st.exception(e)
 
 if __name__ == "__main__":
+    # Enable Streamlit debug logging when run as script
+    try:
+        st.set_option('logger.level', 'debug')
+    except Exception:
+        pass
     main()
