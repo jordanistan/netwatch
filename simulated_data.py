@@ -6,6 +6,7 @@ from test_traffic import generate_voip_sample
 def generate_simulated_stats() -> Dict[str, Any]:
     """Generate simulated statistics for testing"""
     voip_data = generate_voip_sample()
+    voip_data['start_time'] = voip_data['start_time'].timestamp()
     
     return {
         'total_packets': 15783,
