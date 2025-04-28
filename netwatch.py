@@ -106,15 +106,16 @@ def main():
                         with st.spinner("Scanning network..."):
                             try:
                                 devices = netwatch.scanner.scan_devices(interface, network_range)
-                                # Log the raw devices list returned by the scanner
                                 logging.debug(f"Devices returned from scan: {devices}")
                                 show_scan_results(devices, netwatch)
-                                # Celebration effect when scan completes successfully
                                 st.balloons()
                                 st.success("🎉 Network scan completed successfully!")
+                            except PermissionError as err:
+                                st.error("Permission denied for raw socket access. Please run NetWatch as sudo or grant CAP_NET_RAW to your Python interpreter.")
+                                logging.exception("Network scan failed due to permission error")
                             except Exception as e:
                                 st.error(f"Error during network scan: {e}")
-                                logging.exception("Network scan failed") # Log traceback
+                                logging.exception("Network scan failed")
                 else:
                     st.error("No suitable network interface found")
 
