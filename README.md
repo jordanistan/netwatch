@@ -237,6 +237,29 @@ docker-compose up --build -d
 
 > The included `docker-compose.yml` uses `network_mode: host` and grants `NET_RAW` and `NET_ADMIN` capabilities, so ARP scanning and raw sockets work without sudo on the host.
 
+### 🚨 Troubleshooting Build Issues
+
+If you encounter errors like `pivot_root .: permission denied` during `docker-compose build`, try one of the following fixes:
+
+1. **Enable BuildKit** (Docker 20.10+):
+   ```bash
+   export DOCKER_BUILDKIT=1
+   docker-compose build
+   docker-compose up -d
+   ```
+2. **Use a rootful Docker daemon**:
+   Uninstall any rootless docker setup and install Docker via your distro package.
+   Then rebuild:
+   ```bash
+   docker-compose up --build -d
+   ```
+3. **Disable seccomp sandbox** (advanced):
+   In `docker-compose.yml`, under the `netwatch` service, add:
+   ```yaml
+   security_opt:
+     - seccomp:unconfined
+   ```
+
 ## 🐳 Raspberry Pi Deployment
 
 ### Setting up Raspberry Pi
