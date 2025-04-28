@@ -82,7 +82,7 @@ class TrafficCapture:
                 return None
             
             self.interface = default_iface
-            print(f"[Capture] 📶 Capturing on interface: {self.interface}")
+            print(f"[Capture] Capturing on interface: {self.interface}")
         except Exception as e:
             print(f"[Capture] Error finding network interface: {str(e)}")
             return None
@@ -830,6 +830,12 @@ class TrafficCapture:
             # Convert sets to lists for JSON serialization
             for ip in stats['torrents']['peers']:
                 stats['torrents']['peers'][ip] = list(stats['torrents']['peers'][ip])
+        
+        # Flatten summary stats into top-level fields for UI compatibility
+        stats['total_packets']   = stats['summary'].get('total_packets', 0)
+        stats['total_bytes']     = stats['summary'].get('total_bytes', 0)
+        stats['duration']        = stats['summary'].get('duration', 0)
+        stats['avg_packet_size'] = stats['summary'].get('avg_packet_size', 0)
         
         # --- Minimal Alerting Logic ---
         alerts = []
