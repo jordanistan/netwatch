@@ -36,28 +36,36 @@ class DeviceMonitor:
             try:
                 # Load tracked devices
                 with open('data/tracked_devices.json', 'r', encoding='utf-8') as f:
-                    tracked_devices = json.load(f)['devices']
+                    tracked_devices = json.load(f).get('devices', [])
                 
-                # Get list of IPs to monitor
+                # Load device history for IP lookup
+                history_path = Path('data') / 'device_history.json'
+                try:
+                    raw = history_path.read_text(encoding='utf-8')
+                    history = json.loads(raw).get('devices', {})
+                except Exception:
+                    history = {}
+                # Build list of IPs to monitor
                 target_ips = []
-                for device in tracked_devices:
-                    # Use current IP from device info
-                    ip = device.get('ip')
+                for entry in tracked_devices:
+                    if isinstance(entry, str):
+                        mac = entry.lower()
+                        dev = history.get(mac, {})
+                        ip = dev.get('ip_address') or (dev.get('ip_history', [])[-1] if dev.get('ip_history', []) else None)
+                    elif isinstance(entry, dict):
+                        ip = entry.get('ip')
+                    else:
+                        continue
                     if ip:
                         target_ips.append(ip)
                 
                 if target_ips:
-                    # Start a new capture for each device
-                    for device in tracked_devices:
-                        ip = device.get('ip')
-                        if ip:
-                            device_id = device.get('mac', '').replace(':', '')
-                            if device_id:
-                                # Create device-specific capture
-                                self.traffic_capture.capture_traffic(
-                                    target_ips=[ip],
-                                    duration=60  # 1 minute capture
-                                )
+                    # Start a new capture for each IP
+                    for ip in target_ips:
+                        self.traffic_capture.capture_traffic(
+                            target_ips=[ip],
+                            duration=60  # 1 minute capture
+                        )
                 
                 # Wait for 5 minutes before next check
                 for _ in range(30):  # 30 x 10 seconds = 5 minutes
