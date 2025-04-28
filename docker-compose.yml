@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   netwatch:
-    build: .
+    build:
+      context: .
+    privileged: true
+
     container_name: netwatch
     volumes:
       - ./captures:/app/captures
