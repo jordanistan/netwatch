@@ -43,7 +43,8 @@ def analyze_pcap(pcap_file):
         'protocols': {},
         'ports': {
             'src': {},
-            'dst': {}
+            'dst': {},
+            'pairs': {}
         },
         'ips': {
             'src': {},
@@ -92,6 +93,9 @@ def analyze_pcap(pcap_file):
             layer = pkt['TCP'] if 'TCP' in pkt else pkt['UDP']
             stats['ports']['src'][layer.sport] = stats['ports']['src'].get(layer.sport, 0) + 1
             stats['ports']['dst'][layer.dport] = stats['ports']['dst'].get(layer.dport, 0) + 1
+            # Track source→destination port pairs
+            pair = f"{layer.sport} → {layer.dport}"
+            stats['ports']['pairs'][pair] = stats['ports']['pairs'].get(pair, 0) + 1
 
     return stats
 
@@ -214,6 +218,20 @@ def show_pcap_analysis(stats):
                      color='Count',
                      color_continuous_scale='Viridis')
         st.plotly_chart(fig, use_container_width=True)
+
+    # Port Conversations
+    st.subheader("🔗 Port Conversations")
+    port_pairs = pd.DataFrame(
+        stats['ports']['pairs'].items(),
+        columns=['Port Pair', 'Count']
+    ).sort_values('Count', ascending=False).head(10)
+    fig = px.bar(
+        port_pairs,
+        x='Port Pair', y='Count',
+        title="Top Port Conversations",
+        color='Count', color_continuous_scale='Viridis'
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 def main():
     setup_page()
