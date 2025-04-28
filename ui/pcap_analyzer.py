@@ -52,7 +52,9 @@ def analyze_pcap(pcap_file):
             'conversations': {},
             'conversation_protocols': {},
             'data_usage': {}
-        }
+        },
+        # Map of ports used by each IP
+        'ip_ports': {'src': {}, 'dst': {}}
     }
 
     if packets:
@@ -91,11 +93,20 @@ def analyze_pcap(pcap_file):
         # Port analysis
         if 'TCP' in pkt or 'UDP' in pkt:
             layer = pkt['TCP'] if 'TCP' in pkt else pkt['UDP']
-            stats['ports']['src'][layer.sport] = stats['ports']['src'].get(layer.sport, 0) + 1
-            stats['ports']['dst'][layer.dport] = stats['ports']['dst'].get(layer.dport, 0) + 1
+            sport = layer.sport
+            dport = layer.dport
+            # Port counts
+            stats['ports']['src'][sport] = stats['ports']['src'].get(sport, 0) + 1
+            stats['ports']['dst'][dport] = stats['ports']['dst'].get(dport, 0) + 1
             # Track source→destination port pairs
-            pair = f"{layer.sport} → {layer.dport}"
+            pair = f"{sport} → {dport}"
             stats['ports']['pairs'][pair] = stats['ports']['pairs'].get(pair, 0) + 1
+            # Track ports by IP if IP layer present
+            if 'IP' in pkt:
+                src_ip = pkt['IP'].src
+                dst_ip = pkt['IP'].dst
+                stats['ip_ports']['src'].setdefault(src_ip, {})[sport] = stats['ip_ports']['src'][src_ip].get(sport, 0) + 1
+                stats['ip_ports']['dst'].setdefault(dst_ip, {})[dport] = stats['ip_ports']['dst'][dst_ip].get(dport, 0) + 1
 
     return stats
 
@@ -232,6 +243,18 @@ def show_pcap_analysis(stats):
         color='Count', color_continuous_scale='Viridis'
     )
     st.plotly_chart(fig, use_container_width=True)
+
+    # Source IP-Port Mapping
+    st.subheader("🔗 Source IP-Port Mapping")
+    ip_port_rows = []
+    for ip, ports in stats.get('ip_ports', {}).get('src', {}).items():
+        for port, cnt in ports.items():
+            ip_port_rows.append({'IP': ip, 'Port': port, 'Count': cnt})
+    if ip_port_rows:
+        ip_port_df = pd.DataFrame(ip_port_rows).sort_values('Count', ascending=False).head(20)
+        st.dataframe(ip_port_df, hide_index=True, use_container_width=True)
+    else:
+        st.info("No IP-Port mapping data available.")
 
 def main():
     setup_page()
