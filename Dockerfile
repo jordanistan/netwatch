@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpcap-dev \
     gcc \
     python3-dev \
+    libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create directories and set up Python environment
@@ -52,4 +53,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Run the application
 ENTRYPOINT ["python3", "-m", "streamlit", "run", "--server.address", "0.0.0.0", "--server.port", "8502", "netwatch.py"]
-
