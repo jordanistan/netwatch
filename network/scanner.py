@@ -1,6 +1,7 @@
 """Network scanning functionality for NetWatch"""
 import json
 import logging
+import errno  # for checking permission errors
 from datetime import datetime
 from pathlib import Path
 import scapy.all as scapy
@@ -156,7 +157,11 @@ class NetworkScanner:
             logging.error("Permission denied for raw socket access. Try running with sudo.")
             raise PermissionError("Permission denied for raw socket access. Try running with sudo.") from err
         except OSError as e:
-            if "No such device" in str(e):
+            # Handle raw-socket permission errors
+            if getattr(e, 'errno', None) == errno.EPERM or 'Operation not permitted' in str(e):
+                logging.error("Permission denied for raw socket access. Try running with sudo.")
+                raise PermissionError("Permission denied for raw socket access. Try running with sudo.") from e
+            elif "No such device" in str(e):
                 logging.error(f"Network interface '{interface}' not found.")
             else:
                 logging.exception("An OS error occurred during scanning")
