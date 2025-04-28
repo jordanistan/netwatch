@@ -152,9 +152,9 @@ class NetworkScanner:
             self.save_device_history()
             logging.debug("Device history updated and saved.")
 
-        except PermissionError:
+        except PermissionError as err:
             logging.error("Permission denied for raw socket access. Try running with sudo.")
-            raise PermissionError("Permission denied for raw socket access. Try running with sudo.")
+            raise PermissionError("Permission denied for raw socket access. Try running with sudo.") from err
         except OSError as e:
             if "No such device" in str(e):
                 logging.error(f"Network interface '{interface}' not found.")
