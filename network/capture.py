@@ -226,6 +226,11 @@ class TrafficCapture:
                 'src': {},
                 'dst': {}
             },
+            # Map of ports used by each IP
+            'ip_ports': {
+                'src': defaultdict(lambda: defaultdict(int)),
+                'dst': defaultdict(lambda: defaultdict(int))
+            },
             'ips': {
                 'src': {},
                 'dst': {},
@@ -383,6 +388,11 @@ class TrafficCapture:
                 dport = packet[scapy.TCP].dport
                 stats['ports']['src'][sport] = stats['ports']['src'].get(sport, 0) + 1
                 stats['ports']['dst'][dport] = stats['ports']['dst'].get(dport, 0) + 1
+                # Track ports by IP
+                src_ip = packet[IP].src
+                dst_ip = packet[IP].dst
+                stats['ip_ports']['src'][src_ip][sport] += 1
+                stats['ip_ports']['dst'][dst_ip][dport] += 1
                 # Initialize application protocol
                 app_proto = f"TCP/{dport}"
                 # Identify application protocols
@@ -661,6 +671,12 @@ class TrafficCapture:
                 # Update port stats
                 stats['ports']['src'][sport] = stats['ports']['src'].get(sport, 0) + 1
                 stats['ports']['dst'][dport] = stats['ports']['dst'].get(dport, 0) + 1
+                # Track ports by IP
+                if IP in packet:
+                    src_ip = packet[IP].src
+                    dst_ip = packet[IP].dst
+                    stats['ip_ports']['src'][src_ip][sport] += 1
+                    stats['ip_ports']['dst'][dst_ip][dport] += 1
                 # SIP/RTP Analysis (if available)
                 if HAS_VOIP_LAYERS:
                     if packet.haslayer(SIP):
