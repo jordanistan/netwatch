@@ -12,8 +12,8 @@ services:
       - ./logs:/app/logs
       - ./reports:/app/reports
     ports:
-      - "8502:8502"
-    network_mode: "host"  # Required for network scanning
+      - 8502:8502
+    network_mode: host  # Required for network scanning
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -24,7 +24,7 @@ services:
       - STREAMLIT_SERVER_HEADLESS=true
       - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: 10m
+        max-file: 3
