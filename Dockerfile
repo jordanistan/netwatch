@@ -33,6 +33,12 @@ COPY . .
 RUN mkdir -p /app/captures /app/logs /app/reports && \
     chmod 755 /app
 
+# Create non-root user and assign ownership
+RUN groupadd -r netwatch && useradd --no-log-init -r -g netwatch netwatch && chown -R netwatch:netwatch /app
+
+# Switch to non-root user
+USER netwatch
+
 # Configure environment
 ENV STREAMLIT_SERVER_PORT=8502 \
     STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
