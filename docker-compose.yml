@@ -24,6 +24,8 @@ services:
       - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
     logging:
       driver: json-file
+      # yamllint disable quotes
       options:
-        max-size: 10m
-        max-file: 3
+        max-size: "10m"
+        max-file: "3"
+      # yamllint enable quotes
