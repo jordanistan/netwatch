@@ -32,8 +32,9 @@ COPY . .
 # Set up application directory and permissions
 RUN mkdir -p /app/captures /app/logs /app/reports && \
     chmod 755 /app
-# Grant raw-socket capability to Python so our non-root user can open raw sockets
-RUN setcap cap_net_raw+eip "$(which python3)"
+# Grant raw-socket capability on the system Python interpreter
+# hadolint disable=DL3042
+RUN setcap cap_net_raw+eip /usr/bin/python3
 
 # Create non-root user and assign ownership
 RUN groupadd -r netwatch && useradd --no-log-init -r -g netwatch netwatch && chown -R netwatch:netwatch /app
