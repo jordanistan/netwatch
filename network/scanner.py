@@ -154,13 +154,13 @@ class NetworkScanner:
             logging.debug("Device history updated and saved.")
 
         except PermissionError as err:
-            logging.error("Permission denied for raw socket access. Try running with sudo.")
-            raise PermissionError("Permission denied for raw socket access. Try running with sudo.") from err
+            logging.error("Permission denied for raw socket access. Please run NetWatch as sudo or grant CAP_NET_RAW to your Python interpreter.")
+            raise PermissionError("Permission denied for raw socket access. Please run NetWatch as sudo or grant CAP_NET_RAW to your Python interpreter.") from err
         except OSError as e:
             # Handle raw-socket permission errors
             if getattr(e, 'errno', None) == errno.EPERM or 'Operation not permitted' in str(e):
-                logging.error("Permission denied for raw socket access. Try running with sudo.")
-                raise PermissionError("Permission denied for raw socket access. Try running with sudo.") from e
+                logging.error("Permission denied for raw socket access. Please run NetWatch as sudo or grant CAP_NET_RAW to your Python interpreter.")
+                raise PermissionError("Permission denied for raw socket access. Please run NetWatch as sudo or grant CAP_NET_RAW to your Python interpreter.") from e
             elif "No such device" in str(e):
                 logging.error(f"Network interface '{interface}' not found.")
             else:
