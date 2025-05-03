@@ -29,7 +29,8 @@ RUN mkdir -p /app/captures /app/logs /app/reports && \
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --timeout 100 -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir --timeout 300 --retries 5 -r requirements.txt
 
 # Copy application files
 COPY . .

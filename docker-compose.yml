@@ -6,9 +6,9 @@ services:
       context: .
     privileged: true
     container_name: netwatch
-    ports:
-      - 8502:8502
-    # network_mode: host  ← remove or comment out on macOS
+    network_mode: host
+    # When using host network mode, port mappings are not needed
+    # as the container uses the host's network directly
     volumes:
       - ./captures:/app/captures
       - ./logs:/app/logs
