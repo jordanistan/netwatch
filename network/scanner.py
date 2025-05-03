@@ -59,11 +59,16 @@ class NetworkScanner:
         try:
             interfaces = netifaces.interfaces()
             
+            # Check if we're in a container environment
+            in_container = Path('/.dockerenv').exists()
             for iface in interfaces:
-                # Skip loopback and virtual interfaces
-                if any(iface.startswith(x) for x in ['lo', 'docker', 'br-', 'vbox', 'vmnet']):
+                # Skip loopback interfaces
+                if iface.startswith('lo'):
                     continue
                 
+                # In container environments, don't filter out docker/bridge interfaces
+                if not in_container and any(iface.startswith(x) for x in ['docker', 'br-', 'vbox', 'vmnet']):
+                    continue
                 addrs = netifaces.ifaddresses(iface)
                 
                 if netifaces.AF_INET in addrs:
@@ -327,3 +332,27 @@ class NetworkScanner:
             return f"Last seen {minutes} minutes ago"
         else:
             return "Active"
+
+    def _update_device_entry(self, mac, ip, hostname, now):
+        """Update device history entry with new data"""
+        if mac in self.device_history["devices"]:
+            device = self.device_history["devices"][mac]
+            device.ip_address = ip
+            device.hostname = hostname
+            device.last_seen = now
+            if ip not in device.ip_history:
+                device.ip_history.append(ip)
+        else:
+            device = NetworkDevice(
+                mac_address=mac,
+                ip_address=ip,
+                hostname=hostname,
+                first_seen=now,
+                last_seen=now,
+                activity="New Device"
+            )
+            self.device_history["devices"][mac] = device
+
+    def save_device_history(self):
+        """Save device history to file"""
+        self._save_device_history()
