@@ -32,17 +32,15 @@ COPY . .
 # Set up application directory and permissions
 RUN mkdir -p /app/captures /app/logs /app/reports && \
     chmod 755 /app
-
-# Grant raw-socket capability on the system Python interpreter AND on scapy
+# Grant raw-socket capability on the system Python interpreter
 # hadolint disable=DL3042
-RUN setcap cap_net_raw,cap_net_admin=eip /usr/bin/python3 && \
-    setcap cap_net_raw,cap_net_admin=eip /usr/local/bin/python3
+RUN setcap cap_net_raw+eip /usr/bin/python3
 
 # Create non-root user and assign ownership
 RUN groupadd -r netwatch && useradd --no-log-init -r -g netwatch netwatch && chown -R netwatch:netwatch /app
 
-# Make sure the non-root user can use raw sockets
-RUN chmod u+s /usr/bin/python3 /usr/local/bin/python3
+# Switch to non-root user
+USER netwatch
 
 # Configure environment
 ENV STREAMLIT_SERVER_PORT=8502 \
@@ -62,5 +60,5 @@ WORKDIR /app
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8502/_stcore/health || exit 1
 
-# Run the application with root privileges for network access
+# Run the application
 ENTRYPOINT ["python3", "-m", "streamlit", "run", "--server.address", "0.0.0.0", "--server.port", "8502", "netwatch.py"]
